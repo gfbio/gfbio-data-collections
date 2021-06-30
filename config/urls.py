@@ -18,14 +18,14 @@ urlpatterns = [
     path("users/", include("nfdi_collection.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
-    #path("api/v1/", include("nfdi_collection.dataid.urls", namespace="dataid")),
+    path("api/v1/", include("nfdi_collection.dataid.urls")),
     # path('api/v1/docs/', include_docs_urls(title='NFDI Data Collection'), name='api-docs'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # API URLS
 urlpatterns += [
     # API base url
-    path("api/", include("config.api_router")),
+    #path("api/", include("config.api_router")),
     # DRF auth token
     path("auth-token/", obtain_auth_token),
 ]
