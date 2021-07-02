@@ -1,3 +1,8 @@
+
+.idea/
+
+
+
 ### Python template
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -335,4 +340,3 @@ nfdi_collection/media/
 .envs/*
 !.envs/.local/
 
-.idea/
