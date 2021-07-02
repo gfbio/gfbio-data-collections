@@ -3,5 +3,5 @@
   <component name="JavaScriptSettings">
     <option name="languageLevel" value="ES6" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Remote Python 3.9.5 Docker Compose (django at [/Users/bsilva/dev/nfdi_collection/local.yml])" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Remote Python 3.9.5 Docker Compose (django at [/Users/bsilva/develop/nfdi_collection/local.yml])" project-jdk-type="Python SDK" />
 </project>

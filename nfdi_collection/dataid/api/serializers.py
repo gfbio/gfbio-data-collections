@@ -2,9 +2,8 @@ from nfdi_collection.dataid.models import DataId
 from rest_framework import serializers
 
 class DataIdSerializer(serializers.HyperlinkedModelSerializer):
-    reporter = serializers.ReadOnlyField(source='reporter.username')
-    #id = serializers.HyperlinkedRelatedField(many=False, view_name='api:dataid-detail', read_only=True)
-    url = serializers.HyperlinkedIdentityField(many=False, view_name='dataid:dataid-detail', read_only=True)
+    url = serializers.HyperlinkedIdentityField(view_name='dataid:dataid-detail')
+    reporter = serializers.HyperlinkedRelatedField(view_name='dataid:user-detail', lookup_field='username', many=False, read_only=True)
 
     class Meta:
         model = DataId

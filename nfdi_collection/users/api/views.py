@@ -45,6 +45,7 @@ class UserList(ListAPIView):
 class UserDetail(RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    lookup_field = "username"
 
 # class UsersList(ListModelMixin, GenericAPIView):
 #     queryset = User.objects.all()
