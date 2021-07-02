@@ -335,4 +335,4 @@ nfdi_collection/media/
 .envs/*
 !.envs/.local/
 
-.idea
+.idea/
