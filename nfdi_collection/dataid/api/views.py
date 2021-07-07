@@ -15,6 +15,8 @@ from rest_framework import viewsets
 
 
 class RootView(APIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
     def get(self, request, format=None):
         return Response(
             {

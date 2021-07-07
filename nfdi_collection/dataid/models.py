@@ -22,4 +22,4 @@ class DataId(models.Model):
         super(DataId, self).save(*args, **kwargs)
 
     def __str__(self):
-        return '%s' % (self.id_of_data)
+        return '%s' % (self.id_of_data) # display the default attribute
