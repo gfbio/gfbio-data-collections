@@ -12,5 +12,5 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        # Write permissions are only allowed to the owner of the dataid.
-        return obj.reporter == request.user
+        # Write permissions are only allowed to the owner of the collection.
+        return obj.owner == request.user

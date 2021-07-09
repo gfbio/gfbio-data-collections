@@ -79,7 +79,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "nfdi_collection.users.apps.UsersConfig",
     # Your stuff: custom apps go here
-    "nfdi_collection.dataid.apps.DataIdConfig",
+    "nfdi_collection.collection.apps.CollectionConfig",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

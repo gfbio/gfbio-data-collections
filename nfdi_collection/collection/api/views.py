@@ -1,6 +1,6 @@
-from nfdi_collection.dataid.models import DataId
-from .serializers import DataIdSerializer
-from nfdi_collection.dataid.permissions import IsOwnerOrReadOnly
+from nfdi_collection.collection.models import Collection
+from .serializers import CollectionSerializer
+from nfdi_collection.collection.permissions import IsOwnerOrReadOnly
 
 from rest_framework import permissions
 
@@ -20,16 +20,16 @@ class RootView(APIView):
     def get(self, request, format=None):
         return Response(
             {
-             'users': reverse('dataid:user-list', request=request, format=format),
-             'dataid': reverse('dataid:dataid-list', request=request, format=format)
+             'users': reverse('collection:user-list', request=request, format=format),
+             'collection': reverse('collection:collection-list', request=request, format=format)
              }
         )
 
 root_view = RootView.as_view()
 
-class DataIdList(ListModelMixin, CreateModelMixin, GenericAPIView):
-    queryset = DataId.objects.all()
-    serializer_class = DataIdSerializer
+class CollectionList(ListModelMixin, CreateModelMixin, GenericAPIView):
+    queryset = Collection.objects.all()
+    serializer_class = CollectionSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get(self, request, *args, **kwargs):
@@ -39,13 +39,13 @@ class DataIdList(ListModelMixin, CreateModelMixin, GenericAPIView):
         return self.create(request, *args, **kwargs)
 
     def perform_create(self, serializer):
-        serializer.save(reporter=self.request.user)
+        serializer.save(owner=self.request.user)
 
-dataid_view = DataIdList.as_view()
+collection_view = CollectionList.as_view()
 
-class DataIdDetail(RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericAPIView):
-    queryset = DataId.objects.all()
-    serializer_class = DataIdSerializer
+class CollectionDetail(RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericAPIView):
+    queryset = Collection.objects.all()
+    serializer_class = CollectionSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly,
                           IsOwnerOrReadOnly]
 
@@ -58,18 +58,18 @@ class DataIdDetail(RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, Gene
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
 
-dataid_detail_view = DataIdDetail.as_view()
+collection_detail_view = CollectionDetail.as_view()
 
 # rewriting as viewset
 
-class DataIdViewSet(viewsets.ModelViewSet):
+class CollectionViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions.
 
     """
-    queryset = DataId.objects.all()
-    serializer_class = DataIdSerializer
+    queryset = Collection.objects.all()
+    serializer_class = CollectionSerializer
 
     def get_permissions(self):
         """
