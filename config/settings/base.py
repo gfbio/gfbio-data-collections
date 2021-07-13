@@ -79,7 +79,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "nfdi_collection.users.apps.UsersConfig",
     # Your stuff: custom apps go here
-    "nfdi_collection.dataid.apps.DataIdConfig",
+    "nfdi_collection.collection.apps.CollectionConfig",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -305,9 +305,10 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.TokenAuthentication",
     ),
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",
+                                   "rest_framework.permissions.IsAdminUser"),
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    # 'PAGE_SIZE': 10
 }
 
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
