@@ -20,7 +20,7 @@ class RootView(APIView):
     def get(self, request, format=None):
         return Response(
             {
-             'users': reverse('collection:user-list', request=request, format=format),
+             # 'users': reverse('collection:user-list', request=request, format=format),
              'collection': reverse('collection:collection-list', request=request, format=format)
              }
         )
@@ -31,6 +31,7 @@ class CollectionList(ListModelMixin, CreateModelMixin, GenericAPIView):
     queryset = Collection.objects.all()
     serializer_class = CollectionSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.AllowAny]
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -38,8 +39,8 @@ class CollectionList(ListModelMixin, CreateModelMixin, GenericAPIView):
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+    # def perform_create(self, serializer):
+    #     serializer.save(owner=self.request.user)
 
 collection_view = CollectionList.as_view()
 
@@ -84,7 +85,3 @@ class CollectionViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
-
-    #
-    # def pre_save(self, obj):
-    #     obj.owner = self.request.user
