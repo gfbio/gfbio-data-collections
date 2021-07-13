@@ -1,6 +1,7 @@
-import uuid
 from django.db import models
-from nfdi_collection.users.models import User
+# from nfdi_collection.users.models import User
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 class Collection(models.Model):
     created = models.DateTimeField(auto_now_add=True)
