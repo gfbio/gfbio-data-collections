@@ -12,5 +12,5 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        # Write permissions are only allowed to the owner of the collection.
+        # Write permissions are only allowed to the owner of the collections.
         return obj.owner == request.user

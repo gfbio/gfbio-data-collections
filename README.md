@@ -18,8 +18,8 @@ Deployment using docker provides easier isolation and transferability.
 After installing the requirements, clone this source, then build and run the stack with docker-compose:
                             
 ```
-git clone https://gitlab.gwdg.de/gfbio/nfdi_collection.git
-cd nfdi_collection
+git clone https://gitlab.gwdg.de/gfbio/gfbio_collections.git
+cd collections.gfbio.org
 docker-compose -f local.yml build
 docker-compose -f local.yml up
 ``` 
@@ -27,6 +27,6 @@ docker-compose -f local.yml up
 
 ## Contribute
 
-Create a [new issue](https://gitlab.gwdg.de/gfbio/nfdi_collection/-/issues/new?issue%5Bassignee_id%5D=&issue%5Bmilestone_id%5D=) 
+Create a [new issue](https://gitlab.gwdg.de/gfbio/gfbio_collections/-/issues/new?issue%5Bassignee_id%5D=&issue%5Bmilestone_id%5D=) 
 
  

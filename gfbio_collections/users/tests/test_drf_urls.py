@@ -1,7 +1,7 @@
 import pytest
 from django.urls import resolve, reverse
 
-from nfdi_collection.users.models import User
+from gfbio_collections.users.models import User
 
 pytestmark = pytest.mark.django_db
 

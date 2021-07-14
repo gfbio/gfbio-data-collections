@@ -15,10 +15,10 @@ urlpatterns = [
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
     # User management
-    path("users/", include("nfdi_collection.users.urls", namespace="users")),
+    path("users/", include("gfbio_collections.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
-    path("api/", include("nfdi_collection.collection.urls")),
+    path("api/", include("gfbio_collections.collections.urls")),
     # path('api/v1/docs/', include_docs_urls(title='NFDI Data Collection'), name='api-docs'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

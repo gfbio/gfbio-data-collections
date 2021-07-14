@@ -10,7 +10,7 @@ services:
     build:
       context: .
       dockerfile: ./compose/production/django/Dockerfile
-    image: nfdi_collection_production_django
+    image: gfbio_collections_production_django
     depends_on:
       - postgres
       - redis
@@ -23,7 +23,7 @@ services:
     build:
       context: .
       dockerfile: ./compose/production/postgres/Dockerfile
-    image: nfdi_collection_production_postgres
+    image: gfbio_collections_production_postgres
     volumes:
       - production_postgres_data:/var/lib/postgresql/data:Z
       - production_postgres_data_backups:/backups:z
@@ -34,7 +34,7 @@ services:
     build:
       context: .
       dockerfile: ./compose/production/traefik/Dockerfile
-    image: nfdi_collection_production_traefik
+    image: gfbio_collections_production_traefik
     depends_on:
       - django
     volumes:
@@ -49,17 +49,17 @@ services:
 
   celeryworker:
     <<: *django
-    image: nfdi_collection_production_celeryworker
+    image: gfbio_collections_production_celeryworker
     command: /start-celeryworker
 
   celerybeat:
     <<: *django
-    image: nfdi_collection_production_celerybeat
+    image: gfbio_collections_production_celerybeat
     command: /start-celerybeat
 
   flower:
     <<: *django
-    image: nfdi_collection_production_flower
+    image: gfbio_collections_production_flower
     command: /start-flower
 
   awscli:

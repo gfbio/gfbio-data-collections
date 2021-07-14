@@ -1,6 +1,6 @@
-from nfdi_collection.collection.models import Collection
+from gfbio_collections.collections.models import Collection
 from .serializers import CollectionSerializer
-from nfdi_collection.collection.permissions import IsOwnerOrReadOnly
+from gfbio_collections.collections.permissions import IsOwnerOrReadOnly
 
 from rest_framework import permissions
 
@@ -20,8 +20,8 @@ class RootView(APIView):
     def get(self, request, format=None):
         return Response(
             {
-             # 'users': reverse('collection:user-list', request=request, format=format),
-             'collection': reverse('collection:collection-list', request=request, format=format)
+             # 'users': reverse('collections:user-list', request=request, format=format),
+             'collections': reverse('collections:collections-list', request=request, format=format)
              }
         )
 
