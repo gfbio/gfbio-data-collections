@@ -4,11 +4,11 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    collection = serializers.HyperlinkedRelatedField(many=True, view_name='collections:collections-detail', read_only=True)
+    #collections = serializers.HyperlinkedRelatedField(many=True, view_name='collections:collections-detail', read_only=True, required=False)
 
     class Meta:
         model = User
-        fields = ["username", "name", "url", "collections"]
+        fields = ["username", "name", "url"] # , "collections"
 
         extra_kwargs = {
             "url": {"view_name": "collections:user-detail", "lookup_field": "username"},
