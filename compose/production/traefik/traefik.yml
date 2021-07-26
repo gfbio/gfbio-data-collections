@@ -31,7 +31,7 @@ certificatesResolvers:
 http:
   routers:
     web-secure-router:
-      rule: "Host(`@gfbio.org`) || Host(`www.@gfbio.org`)"
+      rule: "Host(`collections.rdc.gfbio.dev`) || Host(`www.collections.rdc.gfbio.dev`) || Host(`c103-139.cloud.gwdg.de`)"
       entryPoints:
         - web-secure
       middlewares:
@@ -42,7 +42,7 @@ http:
         certResolver: letsencrypt
 
     flower-secure-router:
-      rule: "Host(`@gfbio.org`)"
+      rule: "Host(`collections.rdc.gfbio.dev`) || Host(`www.collections.rdc.gfbio.dev`) || Host(`c103-139.cloud.gwdg.de`)"
       entryPoints:
         - flower
       service: flower
