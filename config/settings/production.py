@@ -15,7 +15,7 @@ from .base import env
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["@gfbio.org"])
+ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["collections.rdc.gfbio.dev"])
 
 # DATABASES
 # ------------------------------------------------------------------------------
@@ -25,6 +25,7 @@ DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=60)  # no
 
 # CACHES
 # ------------------------------------------------------------------------------
+
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
@@ -35,9 +36,16 @@ CACHES = {
             # https://github.com/jazzband/django-redis#memcached-exceptions-behavior
             "IGNORE_EXCEPTIONS": True,
         },
+    # "default": {
+    #     "BACKEND": "speedinfo.backends.proxy_cache",
+    #     "CACHE_BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+    #     "LOCATION": "/var/tmp/django_cache",
+    # }
     }
 }
 
+# SPEEDINFO_CACHE_STORAGE_CACHE_ALIAS = "speedinfo-storage"
+# SPEEDINFO_STORAGE = "speedinfo.storage.database.storage.DatabaseStorage"
 # SECURITY
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-proxy-ssl-header
