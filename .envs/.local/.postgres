@@ -2,6 +2,6 @@
 # ------------------------------------------------------------------------------
 POSTGRES_HOST=postgres
 POSTGRES_PORT=5432
-POSTGRES_DB=nfdi_collection
+POSTGRES_DB=gfbio_collections
 POSTGRES_USER=cswgbuYXOloWbWNgnHvHsSVdlYxBYTSy
 POSTGRES_PASSWORD=UDFyHj5xvDaY15IkUNf2Mbq4mMHerVLYXdyKTbrR93FPjxqZ6inmCBtLerTJ28Sa

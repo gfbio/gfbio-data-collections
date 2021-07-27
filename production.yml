@@ -5,25 +5,41 @@ volumes:
   production_postgres_data_backups: {}
   production_traefik: {}
 
+networks:
+  default:
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1450
+
 services:
   django: &django
     build:
       context: .
       dockerfile: ./compose/production/django/Dockerfile
-    image: nfdi_collection_production_django
+    image: gfbio_collections_production_django
     depends_on:
       - postgres
       - redis
     env_file:
       - ./.envs/.production/.django
       - ./.envs/.production/.postgres
+    logging:
+      driver: syslog
+      options:
+        tag: 'GFBio-django'
+    restart: always
+    networks:
+      - default
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      #- django_media:/app/gfbio_collections/media
     command: /start
 
   postgres:
     build:
       context: .
       dockerfile: ./compose/production/postgres/Dockerfile
-    image: nfdi_collection_production_postgres
+    image: gfbio_collections_production_postgres
     volumes:
       - production_postgres_data:/var/lib/postgresql/data:Z
       - production_postgres_data_backups:/backups:z
@@ -34,7 +50,9 @@ services:
     build:
       context: .
       dockerfile: ./compose/production/traefik/Dockerfile
-    image: nfdi_collection_production_traefik
+    image: gfbio_collections_production_traefik
+    networks:
+      - default
     depends_on:
       - django
     volumes:
@@ -46,27 +64,39 @@ services:
 
   redis:
     image: redis:5.0
+    restart: always
 
   celeryworker:
     <<: *django
-    image: nfdi_collection_production_celeryworker
+    image: gfbio_collections_production_celeryworker
+    logging:
+      driver: syslog
+      options:
+        tag: 'GFBio-celery-worker'
     command: /start-celeryworker
 
   celerybeat:
     <<: *django
-    image: nfdi_collection_production_celerybeat
+    image: gfbio_collections_production_celerybeat
+    logging:
+      driver: syslog
+      options:
+        tag: 'GFBio-celery-beat'
     command: /start-celerybeat
-
   flower:
     <<: *django
-    image: nfdi_collection_production_flower
+    image: gfbio_collections_production_flower
+    logging:
+      driver: syslog
+      options:
+        tag: 'GFBio-flower'
     command: /start-flower
 
-  awscli:
-    build:
-      context: .
-      dockerfile: ./compose/production/aws/Dockerfile
-    env_file:
-      - ./.envs/.production/.django
-    volumes:
-      - production_postgres_data_backups:/backups:z
+#  awscli:
+#    build:
+#      context: .
+#      dockerfile: ./compose/production/aws/Dockerfile
+#    env_file:
+#      - ./.envs/.production/.django
+#    volumes:
+#      - production_postgres_data_backups:/backups:z

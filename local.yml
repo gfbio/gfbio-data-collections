@@ -9,7 +9,7 @@ services:
     build:
       context: .
       dockerfile: ./compose/local/django/Dockerfile
-    image: nfdi_collection_local_django
+    image: gfbio_collections_local_django
     container_name: django
     depends_on:
       - postgres
@@ -27,7 +27,7 @@ services:
     build:
       context: .
       dockerfile: ./compose/production/postgres/Dockerfile
-    image: nfdi_collection_production_postgres
+    image: gfbio_collections_production_postgres
     container_name: postgres
     volumes:
       - local_postgres_data:/var/lib/postgresql/data:Z
@@ -38,7 +38,7 @@ services:
       - "5432:5432"
 
   docs:
-    image: nfdi_collection_local_docs
+    image: gfbio_collections_local_docs
     container_name: docs
     build:
       context: .
@@ -48,7 +48,7 @@ services:
     volumes:
       - ./docs:/docs:z
       - ./config:/app/config:z
-      - ./nfdi_collection:/app/nfdi_collection:z
+      - ./gfbio_collections:/app/gfbio_collections:z
     ports:
       - "7000:7000"
     command: /start-docs
@@ -65,7 +65,7 @@ services:
 
   celeryworker:
     <<: *django
-    image: nfdi_collection_local_celeryworker
+    image: gfbio_collections_local_celeryworker
     container_name: celeryworker
     depends_on:
       - redis
@@ -76,7 +76,7 @@ services:
 
   celerybeat:
     <<: *django
-    image: nfdi_collection_local_celerybeat
+    image: gfbio_collections_local_celerybeat
     container_name: celerybeat
     depends_on:
       - redis
@@ -87,7 +87,7 @@ services:
 
   flower:
     <<: *django
-    image: nfdi_collection_local_flower
+    image: gfbio_collections_local_flower
     container_name: flower
     ports:
       - "5555:5555"

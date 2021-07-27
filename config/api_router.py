@@ -1,8 +1,8 @@
 from django.conf import settings
 from rest_framework.routers import DefaultRouter, SimpleRouter
 
-from nfdi_collection.users.api.views import UserViewSet
-from nfdi_collection.collection.api.views import CollectionViewSet
+from gfbio_collections.users.api.views import UserViewSet
+from gfbio_collections.collections.api.views import CollectionViewSet
 
 if settings.DEBUG:
     router = DefaultRouter()
@@ -10,7 +10,7 @@ else:
     router = SimpleRouter()
 
 router.register("users", UserViewSet)
-router.register("collection", CollectionViewSet)
+router.register("collections", CollectionViewSet)
 
 
 app_name = "api"

@@ -4,10 +4,11 @@ Base settings to build other settings files upon.
 from pathlib import Path
 
 import environ
+import rest_framework.permissions
 
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
-# nfdi_collection/
-APPS_DIR = ROOT_DIR / "nfdi_collection"
+# gfbio_collections/
+APPS_DIR = ROOT_DIR / "gfbio_collections"
 env = environ.Env()
 
 READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
@@ -72,14 +73,14 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "corsheaders",
-    "speedinfo",
-    "speedinfo.storage.database",
+    # "speedinfo",
+    # "speedinfo.storage.database",
 ]
 
 LOCAL_APPS = [
-    "nfdi_collection.users.apps.UsersConfig",
+    "gfbio_collections.users.apps.UsersConfig",
     # Your stuff: custom apps go here
-    "nfdi_collection.collection.apps.CollectionConfig",
+    "gfbio_collections.collections.apps.CollectionConfig",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -87,7 +88,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 # MIGRATIONS
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#migration-modules
-MIGRATION_MODULES = {"sites": "nfdi_collection.contrib.sites.migrations"}
+MIGRATION_MODULES = {"sites": "gfbio_collections.contrib.sites.migrations"}
 
 # AUTHENTICATION
 # ------------------------------------------------------------------------------
@@ -138,8 +139,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.common.BrokenLinkEmailsMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "speedinfo.middleware.ProfilerMiddleware",
-    "django.middleware.cache.FetchFromCacheMiddleware",
+    # "speedinfo.middleware.ProfilerMiddleware",
+    # "django.middleware.cache.FetchFromCacheMiddleware",
 ]
 
 # STATIC
@@ -189,7 +190,7 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
-                "nfdi_collection.utils.context_processors.settings_context",
+                "gfbio_collections.utils.context_processors.settings_context",
             ],
         },
     }
@@ -227,12 +228,28 @@ EMAIL_BACKEND = env(
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-timeout
 EMAIL_TIMEOUT = 5
 
+HOST_URL_ROOT = env(
+    "HOST_URL_ROOT",
+    default="https://collections.rdc.gfbio.dev/"
+)
+
 # ADMIN
 # ------------------------------------------------------------------------------
 # Django Admin URL.
-ADMIN_URL = "admin/"
+#ADMIN_URL = "admin/"
+ADMIN_URL = env("DJANGO_ADMIN_URL", default="admin/")
+
 # https://docs.djangoproject.com/en/dev/ref/settings/#admins
-ADMINS = [("""Brenner Silva""", "bsilva@gfbio.org")]
+# ADMINS = [("""Brenner Silva""", "bsilva@gfbio.org")]
+DJANGO_ADMINS = env.list('DJANGO_ADMINS', default=[
+    "Brenner Silva:bsilva@gfbio.org",
+    "Marc Weber:maweber@mpi-bremen.de",
+    "Ivaylo Kostadinov:ikostadi@gfbio.org",
+])
+ADMINS = [
+    ("""{}""".format(x.split(':')[0]), "{}".format(x.split(':')[1]))
+    for x in DJANGO_ADMINS
+]
 # https://docs.djangoproject.com/en/dev/ref/settings/#managers
 MANAGERS = ADMINS
 
@@ -277,10 +294,10 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 # http://docs.celeryproject.org/en/latest/userguide/configuration.html#task-time-limit
 # TODO: set to whatever value is adequate in your circumstances
-CELERY_TASK_TIME_LIMIT = 5 * 60
+CELERY_TASK_TIME_LIMIT = 15 * 60
 # http://docs.celeryproject.org/en/latest/userguide/configuration.html#task-soft-time-limit
 # TODO: set to whatever value is adequate in your circumstances
-CELERY_TASK_SOFT_TIME_LIMIT = 60
+CELERY_TASK_SOFT_TIME_LIMIT = 10 * 60
 # http://docs.celeryproject.org/en/latest/userguide/configuration.html#beat-scheduler
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 # django-allauth
@@ -290,12 +307,14 @@ ACCOUNT_ALLOW_REGISTRATION = env.bool("DJANGO_ACCOUNT_ALLOW_REGISTRATION", True)
 ACCOUNT_AUTHENTICATION_METHOD = "username"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = True
+
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_EMAIL_VERIFICATION = "optional"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_ADAPTER = "nfdi_collection.users.adapters.AccountAdapter"
+ACCOUNT_ADAPTER = "gfbio_collections.users.adapters.AccountAdapter"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-SOCIALACCOUNT_ADAPTER = "nfdi_collection.users.adapters.SocialAccountAdapter"
+SOCIALACCOUNT_ADAPTER = "gfbio_collections.users.adapters.SocialAccountAdapter"
 
 # django-rest-framework
 # -------------------------------------------------------------------------------
@@ -305,8 +324,10 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.TokenAuthentication",
     ),
+
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",
                                    "rest_framework.permissions.IsAdminUser"),
+
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     # 'PAGE_SIZE': 10
 }
@@ -315,3 +336,13 @@ REST_FRAMEWORK = {
 CORS_URLS_REGEX = r"^/api/.*$"
 # Your stuff...
 # ------------------------------------------------------------------------------
+
+# REST API Permissions
+# ------------------------------------------------------------------------------
+REST_SAFE_LIST_IPS = [
+    '127.0.0.1',
+    '[::1]',
+    '172.',  # docker local network /8
+    '10.',  # docker swarm network /8
+]
+REST_SAFE_DOMAINS = []
