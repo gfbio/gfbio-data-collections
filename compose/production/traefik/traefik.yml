@@ -32,12 +32,12 @@ http:
   routers:
     web-router:
       rule: "Host(`collections.rdc.gfbio.dev`) || Host(`www.collections.rdc.gfbio.dev`) || Host(`c103-139.cloud.gwdg.de`)"
-    entryPoints:
-      - web
-    middlewares:
-      - redirect
-      - csrf
-    service: django
+      entryPoints:
+        - web
+      middlewares:
+        - redirect
+        - csrf
+      service: django
 
     web-secure-router:
       rule: "Host(`collections.rdc.gfbio.dev`) || Host(`www.collections.rdc.gfbio.dev`) || Host(`c103-139.cloud.gwdg.de`)"
