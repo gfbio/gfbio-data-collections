@@ -20,9 +20,26 @@ After installing the requirements, clone this source, then build and run the sta
 ```
 git clone https://gitlab.gwdg.de/gfbio/gfbio_collections.git
 cd collections.gfbio.org
-docker-compose -f local.yml build
-docker-compose -f local.yml up
+docker-compose -f production.yml build
+docker-compose -f production.yml up
 ``` 
+
+## Usage
+
+Test the service by sending a JSON payload to the database, as follows:
+
+- Use curl:
+````console
+# GET collections
+curl --header "Content-Type: application/json" --request GET https://c103-139.cloud.gwdg.de/api/collections/
+
+# POST collection
+curl --header "Content-Type: application/json" --request POST --data '{"collection_name": "sample test", "payload": { "anykey": "anyvalue","anykey2": {"anyvalue": "orsubdict"}}}' https://c103-139.cloud.gwdg.de/api/collections/ 
+````
+- Use the 
+[browsable API](https://c103-139.cloud.gwdg.de/api)
+
+- Use the [API documentation](https://c103-139.cloud.gwdg.de/swagger)
 
 
 ## Contribute

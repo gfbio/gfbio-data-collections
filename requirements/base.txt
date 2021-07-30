@@ -21,7 +21,8 @@ django-redis==5.0.0  # https://github.com/jazzband/django-redis
 djangorestframework==3.12.4  # https://github.com/encode/django-rest-framework
 django-cors-headers==3.7.0 # https://github.com/adamchainz/django-cors-headers
 
-#
-#django-speedinfo
-uritemplate
-pyyaml
+# swagger documentation
+PyYAML==5.4.1
+uritemplate==3.0.1
+
+django-speedinfo==2.0.2
