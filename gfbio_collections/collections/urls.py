@@ -4,7 +4,7 @@ from gfbio_collections.collections.api.views import (
     root_view,
     collection_view,
     collection_detail_view,
-    )
+)
 
 from django.urls import path
 
@@ -18,4 +18,3 @@ urlpatterns = [
     path('users/<str:username>/', view=users_detail_view, name='user-detail'),
 
 ]
-
