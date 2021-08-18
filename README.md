@@ -2,7 +2,8 @@
 
 This project aims to collect Data IDs of different sources and provide the Data IDs for researcher applications and services.
 The Data IDs can be categorized by type, schema, and owner, as depicted by the
-[architecture](https://drive.google.com/file/d/1vhseWbXVzK9OCsqd00fmZaQ2CEmMfCbi/view?usp=sharing). 
+[diagram](https://drive.google.com/file/d/1vhseWbXVzK9OCsqd00fmZaQ2CEmMfCbi/view?usp=sharing) and
+[outline](https://gitlab.gwdg.de/gfbio/collections.gfbio.org/-/issues/14/designs/IMG_20210708_141625_1.jpg).
 
 Current implementation is a software stack based on Django web and REST frameworks.
 
@@ -37,9 +38,9 @@ curl --header "Content-Type: application/json" --request GET https://c103-139.cl
 curl --header "Content-Type: application/json" --request POST --data '{"collection_name": "sample test", "payload": { "anykey": "anyvalue","anykey2": {"anyvalue": "orsubdict"}}}' https://c103-139.cloud.gwdg.de/api/collections/ 
 ````
 - Use the 
-[browsable API](https://c103-139.cloud.gwdg.de/api)
+[browsable API](https://c103-139.cloud.gwdg.de/root)
 
-- Use the [API documentation](https://c103-139.cloud.gwdg.de/swagger)
+- Use the [API documentation](https://c103-139.cloud.gwdg.de/api)
 
 
 ## Contribute
