@@ -22,9 +22,7 @@ variables:
 
 build_image:
   stage: test
-  image: docker:latest # :1.29.2
-  services:
-    - docker:dind
+  image: docker/compose:latest # :1.29.2
   before_script:
     - docker info
   script:
