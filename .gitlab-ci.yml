@@ -25,9 +25,9 @@ build_image:
     - docker
   before_script:
     - docker info
+    - docker-compose -f local.yml build
   script:
-    - docker build -t my-docker-image .
-    - docker run my-docker-image /script/to/run/tests
+    - docker-compose -f local.yml run django pytest
 #
 #pytest:
 #  stage: test
