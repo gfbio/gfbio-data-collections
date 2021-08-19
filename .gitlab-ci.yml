@@ -20,7 +20,7 @@ flake8:
 
 pytest:
   stage: test
-  image: docker/compose:latest
+  image: docker/compose:20.10.7
   tags:
     - docker:20.10.7
   services:
