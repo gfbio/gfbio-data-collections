@@ -33,6 +33,12 @@ flake8:
 
 run_unit_tests:
   stage: unit_tests
+  image: docker/compose:latest # :1.29.2
+  services:
+    - docker:dind
+  before_script:
+    - docker info
+    #- docker-compose -f local.yml build
   script:
     #- rsync -a /home/gitlab-runner/.envs .
     - docker-compose -f local.yml build
