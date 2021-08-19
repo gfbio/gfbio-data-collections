@@ -20,7 +20,7 @@ flake8:
 
 before_script:
   - docker info
-  -
+
 build_image:
   script:
     - docker build -t my-docker-image .
