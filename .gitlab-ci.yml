@@ -22,7 +22,7 @@ build_image:
   stage: test
   image: docker/compose:latest # :1.29.2
   tags:
-    - docker:20.10.7
+    - docker
   before_script:
     - docker info
   script:
