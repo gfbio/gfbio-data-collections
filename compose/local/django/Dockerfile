@@ -10,6 +10,8 @@ ARG BUILD_ENVIRONMENT=local
 
 # Install apt packages
 RUN apt-get update && apt-get install --no-install-recommends -y \
+  # apt-utils after warning: "debconf: delaying package configuration, since apt-utils is not installed"
+  # apt-utils \
   # dependencies for building Python packages
   build-essential \
   # psycopg2 dependencies
@@ -21,9 +23,6 @@ COPY ./requirements .
 # Create Python Dependency and Sub-Dependency Wheels.
 RUN pip wheel --wheel-dir /usr/src/app/wheels  \
   -r ${BUILD_ENVIRONMENT}.txt
-
-
-RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
 
 # Python 'run' stage
 FROM python as python-run-stage
