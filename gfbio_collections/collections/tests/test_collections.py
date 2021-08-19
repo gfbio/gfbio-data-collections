@@ -12,9 +12,7 @@ TEST_DATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "test_da
 
 
 def _get_collection_request_data():
-    with open(os.path.join(
-        TEST_DATA_DIR,
-        'sample_awi.json'), 'r') as data_file:
+    with open(os.path.join(TEST_DATA_DIR, 'sample_awi.json'), 'r') as data_file:
         return json.load(data_file)
 
 
