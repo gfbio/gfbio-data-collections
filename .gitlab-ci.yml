@@ -18,7 +18,7 @@ flake8:
   script:
     - flake8
   tags:
-    - dev
+    - collections-dev
 
 #build_image:
 #  stage: test
@@ -37,13 +37,13 @@ run_unit_tests:
     #- rsync -a /home/gitlab-runner/.envs .
     - docker-compose -f local.yml build
   tags:
-    - dev
+    - collections-dev
 
 pytest:
   stage: test
   image: docker/compose:latest # :1.29.2
   tags:
-    - docker
+    - collections-dev
   services:
     - docker:dind
   before_script:
