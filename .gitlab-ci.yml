@@ -1,7 +1,7 @@
 stages:
   - lint
-  - unit_tests
   - test
+  - unit_tests
 
 variables:
   POSTGRES_USER: 'gfbio_collections'
@@ -10,37 +10,24 @@ variables:
   POSTGRES_HOST_AUTH_METHOD: trust
   CELERY_BROKER_URL: 'redis://redis:6379/0'
 
-flake8:
-  stage: lint
-  image: python:3.9-alpine
-  before_script:
-    - pip install -q flake8
-  script:
-    - flake8
-  tags:
-    - collections
-
-#build_image:
-#  stage: test
-#  image: docker/compose:latest # :1.29.2
-#  tags:
-#    - docker
+#flake8:
+#  stage: lint
+#  image: python:3.9-alpine
 #  before_script:
-#    - docker info
-#    - docker-compose -f local.yml build
+#    - pip install -q flake8
 #  script:
-#    - docker-compose -f local.yml run django pytest
+#    - flake8
+#  tags:
+#    - collections
 
-run_unit_tests:
-  stage: unit_tests
-  image: docker/compose:latest # :1.29.2
+build_image:
+  stage: test
+  image: docker:latest # :1.29.2
   services:
     - docker:dind
   before_script:
     - docker info
-    #- docker-compose -f local.yml build
   script:
-    #- rsync -a /home/gitlab-runner/.envs .
     - docker-compose -f local.yml build
   tags:
     - collections
