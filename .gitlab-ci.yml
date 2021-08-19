@@ -18,17 +18,20 @@ flake8:
   script:
     - flake8
 
-before_script:
-  - docker info
-
 build_image:
+  stage: test
+  image: docker/compose:latest # :1.29.2
+  tags:
+    - docker:20.10.7
+  before_script:
+    - docker info
   script:
     - docker build -t my-docker-image .
     - docker run my-docker-image /script/to/run/tests
 
 pytest:
   stage: test
-  image: docker/compose:1.29.2
+  image: docker/compose:latest # :1.29.2
   tags:
     - docker:20.10.7
   services:
