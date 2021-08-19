@@ -12,6 +12,7 @@ from gfbio_collections.users.api.serializers import UserSerializer
 
 User = get_user_model()
 
+
 class UserViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.all()
@@ -38,14 +39,17 @@ class UserViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericV
             permission_classes = [permissions.IsAuthenticated]
         return [permission() for permission in permission_classes]
 
+
 class UserList(ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
 
 class UserDetail(RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     lookup_field = "username"
+
 
 users_list_view = UserList.as_view()
 users_detail_view = UserDetail.as_view()

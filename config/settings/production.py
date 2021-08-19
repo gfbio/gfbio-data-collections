@@ -36,11 +36,11 @@ CACHES = {
             # https://github.com/jazzband/django-redis#memcached-exceptions-behavior
             "IGNORE_EXCEPTIONS": True,
         },
-    # "default": {
-    #     "BACKEND": "speedinfo.backends.proxy_cache",
-    #     "CACHE_BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
-    #     "LOCATION": "/var/tmp/django_cache",
-    # }
+        # "default": {
+        #     "BACKEND": "speedinfo.backends.proxy_cache",
+        #     "CACHE_BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        #     "LOCATION": "/var/tmp/django_cache",
+        # }
     }
 }
 
@@ -82,7 +82,7 @@ SECURE_CONTENT_TYPE_NOSNIFF = env.bool(
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 # MEDIA
 # ------------------------------------------------------------------------------
-#DEFAULT_FILE_STORAGE = "gfbio_collections.utils.storages.MediaRootS3Boto3Storage"
+# DEFAULT_FILE_STORAGE = "gfbio_collections.utils.storages.MediaRootS3Boto3Storage"
 
 # TEMPLATES
 # ------------------------------------------------------------------------------
@@ -135,7 +135,6 @@ EMAIL_BACKEND = env(
     default="django.core.mail.backends.smtp.EmailBackend"
 )
 
-
 # LOGGING
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#logging
@@ -148,7 +147,7 @@ LOGGING = {
     "formatters": {
         "verbose": {
             "format": "%(levelname)s %(asctime)s %(module)s "
-            "%(process)d %(thread)d %(message)s"
+                      "%(process)d %(thread)d %(message)s"
         }
     },
     "handlers": {

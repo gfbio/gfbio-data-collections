@@ -4,7 +4,6 @@ Base settings to build other settings files upon.
 from pathlib import Path
 
 import environ
-import rest_framework.permissions
 
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 # gfbio_collections/
@@ -236,7 +235,7 @@ HOST_URL_ROOT = env(
 # ADMIN
 # ------------------------------------------------------------------------------
 # Django Admin URL.
-#ADMIN_URL = "admin/"
+# ADMIN_URL = "admin/"
 ADMIN_URL = env("DJANGO_ADMIN_URL", default="admin/")
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#admins
@@ -264,7 +263,7 @@ LOGGING = {
     "formatters": {
         "verbose": {
             "format": "%(levelname)s %(asctime)s %(module)s "
-            "%(process)d %(thread)d %(message)s"
+                      "%(process)d %(thread)d %(message)s"
         }
     },
     "handlers": {
@@ -327,7 +326,7 @@ REST_FRAMEWORK = {
     ),
 
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",
-                                   #"rest_framework.permissions.IsAdminUser"
+                                   # "rest_framework.permissions.IsAdminUser"
                                    ),
 
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
