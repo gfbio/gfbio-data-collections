@@ -15,8 +15,8 @@ flake8:
   image: python:3.9-alpine
   before_script:
     - sudo apt-get update -q -y
-    - sudo apt-get install -y python-pip
-    - pip install -q flake8
+    - sudo apt-get install -y python3-pip
+    - pip3 install -q flake8
   script:
     - flake8
   tags:
