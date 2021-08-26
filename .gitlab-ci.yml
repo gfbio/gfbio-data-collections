@@ -15,7 +15,7 @@ flake8:
   image: python:3.9-alpine
   before_script:
     - whoami
-    - sudo pip install -q flake8
+    - sudo pip install -y flake8
   script:
     - flake8
   tags:
