@@ -15,8 +15,8 @@ flake8:
   image: python:3.9-alpine
   before_script:
     - whoami
-    - which pip
     - pip install -q flake8
+    - PATH=$PATH:/home/gitlab-runner/.local/bin
   script:
     - flake8
   tags:
