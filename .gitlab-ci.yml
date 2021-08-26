@@ -15,7 +15,6 @@ flake8:
   image: python:3.9-alpine
   before_script:
     - whoami
-    - ls -la /var/lib/gitlab-runner
     - pip3 install -q flake8
   script:
     - flake8
