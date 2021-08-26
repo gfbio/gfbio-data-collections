@@ -16,7 +16,6 @@ flake8:
   before_script:
     - whoami
     - pip install -q flake8
-    - PATH=$PATH:/home/gitlab-runner/.local/bin
   script:
     - flake8
   tags:
