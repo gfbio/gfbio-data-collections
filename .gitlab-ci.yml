@@ -29,7 +29,7 @@ pytest:
 #    - docker:dind
   before_script:
     - docker info
-    - rsync -a /home/gitlab-runner/.envs .
+    #- rsync -a /home/gitlab-runner/.envs .
     - docker-compose -f local.yml build
     # Ensure celerybeat does not crash due to non-existent tables
     - docker-compose -f local.yml run --rm django python manage.py migrate
