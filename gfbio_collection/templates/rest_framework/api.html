@@ -1,0 +1,17 @@
+{% extends "rest_framework/base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block branding %}
+    <a class="navbar-brand" rel="nofollow" href="{% url 'home' %}">
+        {% trans 'Collection' %}
+    </a>
+{% endblock %}
+
+{% comment %}
+{% block bootstrap_theme %}
+    <link rel="stylesheet" href="{% static 'bootstrap-5.0.2-dist/css/bootstrap.min.css' %}" type="text/css">
+{% endblock %}
+{% endcomment %}
+
+{% block bootstrap_navbar_variant %}{% endblock %}
