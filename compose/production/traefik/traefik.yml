@@ -30,17 +30,8 @@ certificatesResolvers:
 
 http:
   routers:
-    web-router:
-      rule: "Host(`collections.rdc.gfbio.dev`) || Host(`c103-139.cloud.gwdg.de`)"
-      entryPoints:
-        - web
-      middlewares:
-        - redirect
-        - csrf
-      service: django
-
     web-secure-router:
-      rule: "Host(`collections.rdc.gfbio.dev`) || Host(`c103-139.cloud.gwdg.de`)"
+      rule: "Host(`gfbio.org`) || Host(`www.gfbio.org`)"
       entryPoints:
         - web-secure
       middlewares:
@@ -51,7 +42,7 @@ http:
         certResolver: letsencrypt
 
     flower-secure-router:
-      rule: "Host(`collections.rdc.gfbio.dev`) || Host(`c103-139.cloud.gwdg.de`)"
+      rule: "Host(`gfbio.org`)"
       entryPoints:
         - flower
       service: flower
@@ -60,11 +51,6 @@ http:
         certResolver: letsencrypt
 
   middlewares:
-    redirect:
-      # https://docs.traefik.io/master/middlewares/redirectscheme/
-      redirectScheme:
-        scheme: https
-        permanent: true
     csrf:
       # https://docs.traefik.io/master/middlewares/headers/#hostsproxyheaders
       # https://docs.djangoproject.com/en/dev/ref/csrf/#ajax

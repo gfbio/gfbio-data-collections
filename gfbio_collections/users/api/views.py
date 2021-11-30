@@ -1,5 +1,3 @@
-from rest_framework import permissions
-
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.decorators import action
@@ -7,8 +5,9 @@ from rest_framework.mixins import ListModelMixin, RetrieveModelMixin, UpdateMode
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
+from rest_framework import permissions
 
-from gfbio_collections.users.api.serializers import UserSerializer
+from .serializers import UserSerializer
 
 User = get_user_model()
 
@@ -22,34 +21,22 @@ class UserViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericV
         if self.action == 'list':
             return User.objects.all()
         else:
+            assert isinstance(self.request.user.id, int)
             return self.queryset.filter(id=self.request.user.id)
 
-    @action(detail=False, methods=["GET"])
+    @action(detail=False)
     def me(self, request):
         serializer = UserSerializer(request.user, context={"request": request})
         return Response(status=status.HTTP_200_OK, data=serializer.data)
-
-    def get_permissions(self):
-        """
-        Instantiates and returns the list of permissions that this view requires.
-        """
-        if self.action == 'list':
-            permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-        else:
-            permission_classes = [permissions.IsAuthenticated]
-        return [permission() for permission in permission_classes]
-
 
 class UserList(ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-
 class UserDetail(RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     lookup_field = "username"
-
 
 users_list_view = UserList.as_view()
 users_detail_view = UserDetail.as_view()

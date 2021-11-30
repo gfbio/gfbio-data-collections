@@ -4,8 +4,7 @@ from gfbio_collections.collections.permissions import IsOwnerOrReadOnly
 
 from rest_framework import permissions
 
-from rest_framework.mixins import ListModelMixin, CreateModelMixin, RetrieveModelMixin, \
-    UpdateModelMixin, DestroyModelMixin
+from rest_framework.mixins import ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin
 from rest_framework.generics import GenericAPIView
 
 from rest_framework.views import APIView
@@ -21,14 +20,12 @@ class RootView(APIView):
     def get(self, request, format=None):
         return Response(
             {
-                # 'users': reverse('collections:user-list', request=request, format=format),
-                'collections': reverse('collections:collections-list', request=request, format=format)
-            }
+             # 'users': reverse('collections:user-list', request=request, format=format),
+             'collections': reverse('collections:collections-list', request=request, format=format)
+             }
         )
 
-
 root_view = RootView.as_view()
-
 
 class CollectionList(ListModelMixin, CreateModelMixin, GenericAPIView):
     queryset = Collection.objects.all()
@@ -45,9 +42,7 @@ class CollectionList(ListModelMixin, CreateModelMixin, GenericAPIView):
     # def perform_create(self, serializer):
     #     serializer.save(owner=self.request.user)
 
-
 collection_view = CollectionList.as_view()
-
 
 class CollectionDetail(RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericAPIView):
     queryset = Collection.objects.all()
@@ -64,9 +59,7 @@ class CollectionDetail(RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
 
-
 collection_detail_view = CollectionDetail.as_view()
-
 
 # rewriting as viewset
 
@@ -87,7 +80,7 @@ class CollectionViewSet(viewsets.ModelViewSet):
             permission_classes = [permissions.IsAuthenticatedOrReadOnly]
         else:
             permission_classes = [permissions.IsAuthenticatedOrReadOnly,
-                                  IsOwnerOrReadOnly]
+                          IsOwnerOrReadOnly]
         return [permission() for permission in permission_classes]
 
     def perform_create(self, serializer):

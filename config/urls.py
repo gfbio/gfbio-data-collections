@@ -5,26 +5,27 @@ from django.urls import include, path
 from django.views import defaults as default_views
 from django.views.generic import TemplateView
 from rest_framework.authtoken.views import obtain_auth_token
+from rest_framework.documentation import include_docs_urls
 from rest_framework.schemas import get_schema_view
-from rest_framework import permissions
 
 urlpatterns = [
-                  path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
-                  path("about/", TemplateView.as_view(template_name="pages/about.html"), name="about"),
-                  # Django Admin, use {% url 'admin:index' %}
-                  path(settings.ADMIN_URL, admin.site.urls),
-                  # User management
-                  path("users/", include("gfbio_collections.users.urls", namespace="users")),
-                  path("accounts/", include("allauth.urls")),
-                  # Your stuff: custom urls includes go here
-                  path("root/", include("gfbio_collections.collections.urls")),
-                  # path('api/v1/docs/', include_docs_urls(title='NFDI Data Collection'), name='api-docs'),
-              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
+    path(
+        "about/", TemplateView.as_view(template_name="pages/about.html"), name="about"
+    ),
+    # Django Admin, use {% url 'admin:index' %}
+    path(settings.ADMIN_URL, admin.site.urls),
+    # User management
+    path("users/", include("gfbio_collections.users.urls", namespace="users")),
+    path("accounts/", include("allauth.urls")),
+    # Your stuff: custom urls includes go here
+    path("api/", include("gfbio_collections.collections.urls")),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # API URLS
 urlpatterns += [
     # API base url
-    # path("api/", include("config.api_router")),
+    #path("api/", include("config.api_router")),
     # DRF auth token
     path("auth-token/", obtain_auth_token),
 ]
@@ -32,8 +33,10 @@ urlpatterns += [
 # for HTML documentation (swagger)
 
 schema_url_patterns = [
-    path('root/', include('gfbio_collections.collections.urls')),
+    path('api/', include('gfbio_collections.collections.urls')),
 ]
+
+from rest_framework import permissions
 
 urlpatterns += [
     # ...
@@ -54,9 +57,9 @@ urlpatterns += [
     # ...
     # Route TemplateView to serve Swagger UI template.
     #   * Provide `extra_context` with view name of `SchemaView`.
-    path('api/', TemplateView.as_view(
+    path('swagger/', TemplateView.as_view(
         template_name='swagger-ui.html',
-        extra_context={'schema_url': 'openapi-schema'},
+        extra_context={'schema_url':'openapi-schema'},
     ), name='swagger-ui'),
 ]
 
