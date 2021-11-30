@@ -2,7 +2,7 @@
 Collection Service
 ====================
 
-# NFDI collection service for Data Identificators
+# Collection service for Data Identificators
 
 This project aims to collect Data IDs of different sources and provide the Data IDs for researcher applications and services.
 The Data IDs can be categorized by type, schema, and owner, as depicted by the

@@ -10,7 +10,6 @@ networks:
     driver: bridge
     driver_opts:
       com.docker.network.driver.mtu: 1450
-
 services:
   django: &django
     build:
@@ -35,6 +34,7 @@ services:
       #- django_media:/app/gfbio_collections/media
     command: /start
 
+
   postgres:
     build:
       context: .
@@ -51,8 +51,7 @@ services:
       context: .
       dockerfile: ./compose/production/traefik/Dockerfile
     image: gfbio_collections_production_traefik
-    networks:
-      - default
+    
     depends_on:
       - django
     volumes:
@@ -63,40 +62,28 @@ services:
       - "0.0.0.0:5555:5555"
 
   redis:
-    image: redis:5.0
-    restart: always
+    image: redis:6
 
   celeryworker:
     <<: *django
     image: gfbio_collections_production_celeryworker
-    logging:
-      driver: syslog
-      options:
-        tag: 'GFBio-celery-worker'
     command: /start-celeryworker
 
   celerybeat:
     <<: *django
     image: gfbio_collections_production_celerybeat
-    logging:
-      driver: syslog
-      options:
-        tag: 'GFBio-celery-beat'
     command: /start-celerybeat
+
   flower:
     <<: *django
     image: gfbio_collections_production_flower
-    logging:
-      driver: syslog
-      options:
-        tag: 'GFBio-flower'
     command: /start-flower
 
-#  awscli:
-#    build:
-#      context: .
-#      dockerfile: ./compose/production/aws/Dockerfile
-#    env_file:
-#      - ./.envs/.production/.django
-#    volumes:
-#      - production_postgres_data_backups:/backups:z
+  awscli:
+    build:
+      context: .
+      dockerfile: ./compose/production/aws/Dockerfile
+    env_file:
+      - ./.envs/.production/.django
+    volumes:
+      - production_postgres_data_backups:/backups:z

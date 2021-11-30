@@ -1,20 +1,15 @@
 from .base import *  # noqa
 from .base import env
-import os
 
 # GENERAL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#debug
-DEBUG = False
-# DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
+DEBUG = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
-#SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', "6kEaEaaFQya1t7ud4y9LXD7r2uCYi2sSpr7BxVVs9kE9fLz1yGyxVpfZi7UjZkIp")
-
 SECRET_KEY = env(
-     "DJANGO_SECRET_KEY",
-     default="6kEaEaaFQya1t7ud4y9LXD7r2uCYi2sSpr7BxVVs9kE9fLz1yGyxVpfZi7UjZkIp",
+    "DJANGO_SECRET_KEY",
+    default="YUmFYsbG0TfQyZb5t4Jy6NpkjwRMLF7R50s4DcmPmxGcKD7Rt7HGFUT7Kxlh3c7n",
 )
-
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1"]
 
@@ -22,18 +17,11 @@ ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1"]
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#caches
 CACHES = {
-    # "default": {
-    #     "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-    #     "LOCATION": "",
-    # }
     "default": {
-        "BACKEND": "speedinfo.backends.proxy_cache",
-        "CACHE_BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
-        "LOCATION": "/var/tmp/django_cache",
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "",
     }
 }
-
-SPEEDINFO_STORAGE = "speedinfo.storage.database.storage.DatabaseStorage"
 
 # EMAIL
 # ------------------------------------------------------------------------------
