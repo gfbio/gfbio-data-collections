@@ -1,0 +1,26 @@
+{
+  "collection_name": "sample awi",
+  "payload": {
+    "@uuid": "968506ef-c0ef-45c5-b487-bf4eee1f540f",
+    "uuid": "40fab62e-1d37-4d2f-b980-22cddf942df3",
+    "lastModified": "2021-06-03T12:06:36.298Z",
+    "shortName": "oxygen_awi_574",
+    "longName": "Aanderaa_Oxygen sensor_574",
+    "description": "The Aanderaa oxygen optodes are based on the ability of selected substances to act as dynamic fluorescence quenchers. The fluorescent indicator is a special platinum porphyrin complex embedded in a gas permeable foil that is exposed to the surrounding water. A black optical isolation coating protects the complex from sunlight and fluorescent particles in the water. This sensing foil is attached to a window providing optical access for the measuring system from inside a watertight housing. The foil is excited by modulated blue light, and the phase of a returned red light is measured. By linearizing and temperature compensating, with an incorporated temperature sensor, the absolute O2 concentration can be determined.",
+    "serialNumber": "574",
+    "manufacturer": "Aanderaa",
+    "operationInstructions": null,
+    "model": "Oxygen Sensor 3835",
+    "inventoryNumber": "",
+    "urn": "station:svluwobs:fb_731101:oxygen_awi_574",
+    "citation": "10013\u002Fsensor.1944832f-0d25-45ac-9353-424252fd5440",
+    "itemStatus": {
+      "@uuid": "fecde8cf-69dd-4861-bc8a-109e9569e93a",
+      "uuid": "a080ff68-30b2-450a-9a44-06ecd244c0b7",
+      "lastModified": "2020-11-18T09:14:53.011Z",
+      "name": "public",
+      "meta": "Item is completly describe and in use",
+      "id": 1
+    }
+  }
+}
