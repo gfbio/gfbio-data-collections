@@ -27,7 +27,7 @@ django.setup()
 
 # -- Project information -----------------------------------------------------
 
-project = "NFDI Data Collection"
+project = "Collection Service"
 copyright = """2021, Brenner Silva"""
 author = "Brenner Silva"
 
