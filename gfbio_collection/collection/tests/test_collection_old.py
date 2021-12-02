@@ -2,24 +2,27 @@
 import os
 import json
 import responses
+
 from django.test import TestCase
 
-from gfbio_collection.collection.models import Collection
-from gfbio_collection.users.models import User
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
+from gfbio_collection.users.models import User
+from gfbio_collection.collection.models import Collection
+
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__)) # project root
-#fixme: how to get the correct directory?
+
 def _get_test_data_dir_path():
-    return '{0}{1}gfbio_colelctions{1}collections{1}tests{1}test_data'.format(
+    return '{0}{1}gfbio_colelction{1}collection{1}tests{1}test_data'.format(
         os.getcwd(),
         os.sep, )
     #return 'test_data'
 
 def _get_collection_request_data():
     with open(os.path.join(
-            _get_test_data_dir_path(),
+            #_get_test_data_dir_path(),
+            './test_data',
             'sample_awi.json'), 'r') as data_file:
         return json.load(data_file)
 
@@ -41,7 +44,7 @@ class TestCollectionView(TestCase):
         client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
 
         response = client.post(
-            '/api/collection/',
+            '/api/collections/',
             _get_collection_request_data(),
             format='json'
         )

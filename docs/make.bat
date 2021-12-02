@@ -10,7 +10,7 @@ if "%SPHINXBUILD%" == "" (
 )
 set SOURCEDIR=_source
 set BUILDDIR=_build
-set APP=..\gfbio_collections
+set APP=..\gfbio_collection
 
 if "%1" == "" goto help
 
