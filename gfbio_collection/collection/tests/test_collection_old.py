@@ -14,9 +14,11 @@ from gfbio_collection.collection.models import Collection
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__)) # project root
 
 def _get_test_data_dir_path():
-    return '{0}{1}gfbio_colelction{1}collection{1}tests{1}test_data'.format(
+    a='{0}{1}gfbio_colelction{1}collection{1}tests{1}test_data'.format(
         os.getcwd(),
         os.sep, )
+    print(a)
+    return a
     #return 'test_data'
 
 def _get_collection_request_data():

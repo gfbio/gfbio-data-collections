@@ -21,7 +21,7 @@ class Command(BaseCommand):
         options["interactive"] = False
         return super().handle(*test_labels, **options)
 
-
+#todo: use the simple self.client for tests without credentials
 class TestCollectionViewBase(TestCase):
 
     @classmethod
@@ -40,7 +40,6 @@ class TestCollectionViewBase(TestCase):
 class TestCollectionViewGetRequests(TestCollectionViewBase):
 
     @classmethod
-    @responses.activate
     def setUpTestData(cls):
         super().setUpTestData()
 
@@ -50,77 +49,71 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
         user.save()
 
     # 200 successful HTTP request
-    @responses.activate
     def test_get(self):
-        response = self.api_client.get('/api/collections/')
+        response = self.client.get('/api/collections/')
         self.assertEqual(200, response.status_code)
-        # 404 not found
+
+    # 404 not found
+    def test_get(self):
+        # "collection" without s requires an {id}
+        response = self.client.get('/api/collection/')
         self.assertEqual(404, response.status_code)
 
     # no text or bad format causes deserialization failure
-    @responses.activate
+    #todo: replace "assert(response.json())"
     def test_get_json(self):
-        response = self.api_client.get('/api/collections/')
-        self.assertEqual(200, response.status_code)
-        # deserialization fails with empty json
-        assert(response.json())
+        response = self.client.get('/api/collections/')
+        # following replaces deserialization with "assert(response.json())":
+        self.assertEqual(response.json(),list())
 
-    # unauthorized
-    @responses.activate
+    # not 401 unauthorized
     def test_get_without_credentials(self):
-        response = self.api_client.get('/api/collections/')
-        self.assertEqual(200, response.status_code)
-        self.assertEqual(401, response.status_code)
-
         # it does not make a difference if credentials are given
         self.api_client.credentials(
             HTTP_AUTHORIZATION='Basic ' + base64.b64encode(
                 b'user:invalidpassword').decode('utf-8')
         )
         response = self.api_client.get('/api/collections/')
-        self.assertEqual(200, response.status_code)
-        self.assertEqual(401, response.status_code)
+        self.assertNotEqual(401, response.status_code)
 
     # 201 created
-    @responses.activate
     def test_simple_post(self):
         self.assertEqual(0, len(Collection.objects.all()))
         response = self.api_client.post(
             '/api/collections/',
-            {'payload': {"dataid":"001.002.003", "content":[3,2,1], "valid":null}},
+            {'payload': {"dataid":"001.002.003", "content":[3,2,1], "valid":True}},
             format='json'
         )
         self.assertEqual(201, response.status_code)
         self.assertIn(b'id', response.content)
         self.assertIn(b'payload', response.content)
-        # raises an error, because one item is created
-        self.assertEqual(0, len(Collection.objects.all()))
 
+    #todo: test data case with local data request
     def test_get_json_and_post(self):
+
+        # get data remotely
         url = "http://ws.pangaea.de/es/portals/pansimple/_search?pretty="
         headers = requests.structures.CaseInsensitiveDict()
         headers["Accept"] = "application/json"
-
         response = requests.get(url, headers=headers)
         json_data = response.json()
-        print(response.status_code)
 
+        # get data locally
+        with open(os.path.join(
+            './test_data',
+            '_search.json'), 'r') as data_file:
+            json_data = json.load(data_file)
+
+        # post to collections
         response = self.api_client.post(
             '/api/collections/',
             {'payload': json_data},
             format='json'
         )
         self.assertEqual(201, response.status_code)
-        assert (response.json())
-        self.assertIn(b'id', response.content)
-        self.assertIn(b'payload', response.content)
 
-    #todo:
-    #  get the id, or make it id independent
-    #  test serializers ex. /api/collection/29/?format=json
-        response = self.api_client.get('/api/collections/?format=json', headers=headers)
-        self.assertJSONEqual(json_data, response.json(), msg=None)
-        # raises an error
-        self.assertJSONNotEqual(json_data, response.json(), msg=None)
-
-    #todo: 400 bad request
+        # get from collection
+        # compare entry json used in post with the retrieved one from collection (nothing changed)
+        response = self.api_client.get('/api/collections/', headers=headers)
+        json_data_get = response.json()[0]['payload']
+        self.assertEqual(json_data_get, json_data)
