@@ -11,3 +11,15 @@ class CollectionSerializer(serializers.HyperlinkedModelSerializer):
                   'collection_name', 'payload',
                   # 'owner'
                   ]
+
+    def validate(self, payload):
+        if bool(payload['payload']):
+            target = []
+            id_list = ['id', 'uuid', 'url']
+            content = payload.get('payload')
+            for id in id_list:
+                target.append(content.get(id, 'NO_' + id + '_PROVIDED'))
+        else:
+            raise serializers.ValidationError(
+                    'No payload')
+        return payload

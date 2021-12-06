@@ -19,15 +19,23 @@ class Command(BaseCommand):
 
 class CollectionSerializerTest(TestCase):
 
-    # test for attribute names, the model bellow should be hardwired
-    def test_simple_collection(self):
+    # test for attribute names, the model bellow should be hardwired, i.e. contains the attributes "payload" as written
+    def test_empty_collection(self):
+        attribute_name = "payload"
         serializer = CollectionSerializer(data={
             'id': 1,
-            'collection_name': "new name",
-            'payload': {"dataid": "001.002.003", "content": [3, 2, 1], "valid": False}
+            attribute_name: {}
+        })
+        valid = serializer.is_valid()
+        self.assertFalse(valid)
+
+    # test for attribute name, the model bellow should be hardwired, i.e. contains at least the attribute "payload" as written
+    def test_contains_expected_attribute(self):
+        attribute_name = "payload"
+        serializer = CollectionSerializer(data={
+            'id': 1,
+            attribute_name: {"dataid": "001.002.003", "content": [3, 2, 1], "valid": False}
         })
         valid = serializer.is_valid()
         self.assertTrue(valid)
-        self.assertIn('collection_name', serializer.validated_data)
-        self.assertIn('payload', serializer.validated_data)
-
+        self.assertIn(attribute_name, serializer.validated_data)
