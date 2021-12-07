@@ -21,7 +21,8 @@ class Command(BaseCommand):
         options["interactive"] = False
         return super().handle(*test_labels, **options)
 
-#todo: use the simple self.client for tests without credentials
+# TestCollectionViewBase instantiate a user and credentials into api_client
+# the simple self.client is used for tests without credentials
 class TestCollectionViewBase(TestCase):
 
     @classmethod
@@ -60,14 +61,13 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
         self.assertEqual(404, response.status_code)
 
     # no text or bad format causes deserialization failure
-    #todo: replace "assert(response.json())"
     def test_get_json(self):
         response = self.client.get('/api/collections/')
         # following replaces deserialization with "assert(response.json())":
         self.assertEqual(response.json(),list())
 
     # not 401 unauthorized
-    def test_get_without_credentials(self):
+    def test_get_with_wrong_credentials(self):
         # it does not make a difference if credentials are given
         self.api_client.credentials(
             HTTP_AUTHORIZATION='Basic ' + base64.b64encode(
@@ -88,7 +88,7 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
         self.assertIn(b'id', response.content)
         self.assertIn(b'payload', response.content)
 
-    #todo: test data case with local data request
+    # test data case with local data request
     def test_get_json_and_post(self):
 
         # get data remotely

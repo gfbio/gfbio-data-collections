@@ -23,7 +23,7 @@ class CollectionSerializerTest(TestCase):
     def test_empty_collection(self):
         attribute_name = "payload"
         serializer = CollectionSerializer(data={
-            'id': 1,
+            'collection_identifier': 1,
             attribute_name: {}
         })
         valid = serializer.is_valid()
@@ -33,7 +33,7 @@ class CollectionSerializerTest(TestCase):
     def test_contains_expected_attribute(self):
         attribute_name = "payload"
         serializer = CollectionSerializer(data={
-            'id': 1,
+            'collection_identifier': 1,
             attribute_name: {"dataid": "001.002.003", "content": [3, 2, 1], "valid": False}
         })
         valid = serializer.is_valid()

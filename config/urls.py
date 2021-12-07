@@ -45,7 +45,7 @@ urlpatterns += [
     #   * Provide view name for use with `reverse()`.
     path('openapi', get_schema_view(
         title="Collection Service",
-        description="Service for collection of Data Identificators",
+        description="Service for collection of Data Identifiers",
         version="0.0.1",
         patterns=schema_url_patterns,
         permission_classes=[permissions.AllowAny]

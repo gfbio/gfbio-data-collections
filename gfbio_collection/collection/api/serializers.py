@@ -7,19 +7,23 @@ class CollectionSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Collection
-        fields = ['url', 'id',
-                  'collection_name', 'payload',
+        fields = ['url', 'id'
+                  'collection_name',
+                  'collection_identifier',
+                  'payload',
                   # 'owner'
                   ]
 
+    # item must have the attribute payload, which includes a payload
     def validate(self, payload):
-        if bool(payload['payload']):
-            target = []
-            id_list = ['id', 'uuid', 'url']
-            content = payload.get('payload')
-            for id in id_list:
-                target.append(content.get(id, 'NO_' + id + '_PROVIDED'))
-        else:
-            raise serializers.ValidationError(
-                    'No payload')
-        return payload
+        return bool(payload['payload'])
+        # if bool(payload['payload']):
+        #     id_provided = []
+        #     id_list = ['id', 'uuid', 'url', 'dataid']
+        #     content = payload.get('payload')
+        #     for id in id_list:
+        #         id_provided.append(content.get(id, 'NO_' + id + '_PROVIDED'))
+        # else:
+        #     raise serializers.ValidationError(
+        #             'No payload')
+        # return payload
