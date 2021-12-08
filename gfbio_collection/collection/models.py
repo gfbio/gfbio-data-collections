@@ -6,7 +6,7 @@ class Collection(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     collection_identifier = models.CharField(max_length=128, blank=True)
     collection_name = models.CharField(max_length=128, blank=True)
-    payload = models.JSONField(default=dict)
+    collection_payload = models.JSONField(default=dict)
     # owner = models.ForeignKey(User, related_name='collection', on_delete=models.CASCADE)
 
     class Meta:

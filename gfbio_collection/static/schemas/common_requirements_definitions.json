@@ -1,0 +1,26 @@
+{
+  "minimal_requirements": {
+    "type": "object",
+    "properties": {
+      "collection_identifier": {
+        "type": "string",
+        "minLength": 6
+      },
+      "collection_name": {
+        "type": "string",
+        "minLength": 6
+      },
+      "collection_payload": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
+    },
+    "required": [
+      "collection_identifier",
+      "collection_name",
+      "collection_payload"
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://collections.gfbio.org/openapi/collection.json",
+  "title": "Collection",
+  "description": "A simple collection",
+  "type": "object",
+  "properties": {
+      "requirements": {
+          "allOf": [
+              {
+                  "$ref": "common_requirements_definitions.json#/minimal_requirements"
+              }
+          ]
+      }
+  },
+  "required": [
+      "requirements"
+  ]
+}

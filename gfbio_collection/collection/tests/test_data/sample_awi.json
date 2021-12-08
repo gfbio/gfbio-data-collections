@@ -1,6 +1,7 @@
 {
-  "collection_identifier": "sample awi",
-  "payload": {
+  "collection_identifier": "001.002.003",
+  "collection_name": "sample awi",
+  "collection_payload": {
     "@uuid": "968506ef-c0ef-45c5-b487-bf4eee1f540f",
     "uuid": "40fab62e-1d37-4d2f-b980-22cddf942df3",
     "lastModified": "2021-06-03T12:06:36.298Z",
