@@ -1,12 +1,10 @@
-from django.conf import settings
-import datetime
+
 import json
-import logging
 import os
 
 from django.conf import settings
 from django.forms import ValidationError
-from jsonschema.validators import Draft3Validator, Draft4Validator
+from jsonschema.validators import Draft4Validator
 from jsonschema import validate, ValidationError, SchemaError
 
 from gfbio_collection.collection.configuration.settings import STATIC_GENERIC_REQUIREMENTS_LOCATION

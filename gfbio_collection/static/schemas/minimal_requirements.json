@@ -20,7 +20,8 @@
       "type": "array",
       "items": {
         "type": "object"
-      }
+      },
+      "minItems": 1
     }
   },
   "required": [

@@ -23,14 +23,14 @@ class CollectionSerializerTest(TestCase):
     def test_empty_collection(self):
         attribute_name = "collection_payload"
         serializer = CollectionSerializer(data={
-            'collection_identifier': 1,
-            attribute_name: {}
+            'collection_identifier': "0123456",
+            'collection_name': "my collection",
+            attribute_name: [{"dataid": "001.002.003",}],
         })
         valid = serializer.is_valid()
         self.assertFalse(valid)
 
     # test for attribute name, the model bellow should be hardwired, i.e. contains at least the attribute "payload" as written
-    # fixme: the attribute contnt is already considered in the schema right?
     def test_contains_expected_attribute(self):
         attribute_name = "collection_payload"
         serializer = CollectionSerializer(data={
