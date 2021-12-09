@@ -15,12 +15,26 @@ class CollectionSerializer(serializers.HyperlinkedModelSerializer):
                   # 'owner'
                   ]
 
-    # item must have the attribute collection_payload, which pertains to collection_data
-    def validate(self, collection_data):
+    # item must have the attribute collection_payload, which pertains to collection_to_validate
+    def validate(self, collection_to_validate):
         validator = CollectionValidator()
-        if collection_data.get('collection_payload',False):
-            payload = collection_data.get('collection_payload', {})
-            valid, errors = validator.validate_data(data=payload)
+        if collection_to_validate:
+            valid, errors = validator.validate_collection(data=collection_to_validate)
         else:
-            raise serializers.ValidationError('NO_PAYLOAD')
+            raise serializers.ValidationError('NO_DATA')
+        if not valid:
+            raise serializers.ValidationError(
+                {'collection_to_validate': [e.message for e in errors]})
 
+        return collection_to_validate
+
+    #todo: validate payload
+    #def validate(self, collection_payload):
+    # if collection_to_validate.get('collection_payload',False):
+    #     payload = collection_to_validate.get('collection_payload', {})
+    #     valid, errors = validator.validate_payload(data=payload)
+    # else:
+    #     raise serializers.ValidationError('NO_PAYLOAD')
+    # if not valid:
+    #     raise serializers.ValidationError(
+    #         {'collection_payload': [e.message for e in errors]})
