@@ -81,7 +81,10 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
         self.assertEqual(0, len(Collection.objects.all()))
         response = self.api_client.post(
             '/api/collections/',
-            {'collection_payload': {"dataid":"001.002.003", "content":[3,2,1], "valid":True}},
+            {'collection_identifier': "0123456",
+             'collection_name': "my collection",
+             'collection_payload': [{"dataid": "001.002.003", "content": [3, 2, 1], "valid": True}]
+             },
             format='json'
         )
         self.assertEqual(201, response.status_code)
@@ -91,12 +94,13 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
     # test data case with local data request
     def test_get_json_and_post(self):
 
-        # get data remotely
-        url = "http://ws.pangaea.de/es/portals/pansimple/_search?pretty="
         headers = requests.structures.CaseInsensitiveDict()
         headers["Accept"] = "application/json"
-        response = requests.get(url, headers=headers)
-        json_data = response.json()
+
+        # # get data remotely
+        # url = "http://ws.pangaea.de/es/portals/pansimple/_search?pretty="
+        # response = requests.get(url, headers=headers)
+        # json_data = response.json()
 
         # get data locally
         with open(os.path.join(
@@ -107,7 +111,7 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
         # post to collections
         response = self.api_client.post(
             '/api/collections/',
-            {'collection_payload': json_data},
+            {'collection_payload': [json_data]},
             format='json'
         )
         self.assertEqual(201, response.status_code)
@@ -115,5 +119,6 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
         # get from collection
         # compare entry json used in post with the retrieved one from collection (nothing changed)
         response = self.api_client.get('/api/collections/', headers=headers)
-        json_data_get = response.json()[0]['collection_payload']
+        self.assertEqual(200, response.status_code)
+        json_data_get = response.json()[0]['collection_payload'][0]
         self.assertEqual(json_data_get, json_data)
