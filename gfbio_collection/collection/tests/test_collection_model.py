@@ -79,14 +79,57 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
     # 201 created
     def test_simple_post(self):
         self.assertEqual(0, len(Collection.objects.all()))
+        # response = self.api_client.post(
+        #     '/api/collections/',
+        #     {'metadata': "0123456",
+        #      'hits': {
+        #          'collection_payload':
+        #              [
+        #                  {
+        #                      "_id": "001.002.003",
+        #                      "_source": {"dataid": "001.002.003", "content": [3, 2, 1], "valid": False}
+        #                  }
+        #              ]
+        #      }
+        #      },
+        #     format='json'
+        # )
+
+        collection_payload = {
+            "took": 511,
+            "_shards": {
+                "total": 2,
+            },
+            "hits":
+                {
+                    "max_score": 1.0,
+                    "hits":
+                        [
+                            {
+                                "_index": "portals_v2",
+                                "_type": "pansimple",
+                                "_id": "urn:gfbio.org:abcd:2_292_277:7638959+/+22948775",
+                                "_score": 1.0,
+                                "_source": {
+                                    "accessRestricted": False,
+                                    "parameter": [
+                                        "Date",
+                                        "Locality",
+                                        "Longitude",
+                                        "Latitude"
+                                    ],
+                                }
+                            },
+                            {},
+                        ]
+                },
+        }
         response = self.api_client.post(
             '/api/collections/',
-            {'collection_identifier': "0123456",
-             'collection_name': "my collection",
-             'collection_payload': [{"dataid": "001.002.003", "content": [3, 2, 1], "valid": True}]
-             },
-            format='json'
+            {'collection_payload': collection_payload},
+            format='json',
         )
+
         self.assertEqual(201, response.status_code)
         self.assertIn(b'id', response.content)
         self.assertIn(b'collection_payload', response.content)
@@ -111,7 +154,7 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
         # post to collections
         response = self.api_client.post(
             '/api/collections/',
-            {'collection_payload': [json_data]},
+            {'collection_payload': json_data},
             format='json'
         )
         self.assertEqual(201, response.status_code)
@@ -120,5 +163,5 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
         # compare entry json used in post with the retrieved one from collection (nothing changed)
         response = self.api_client.get('/api/collections/', headers=headers)
         self.assertEqual(200, response.status_code)
-        json_data_get = response.json()[0]['collection_payload'][0]
+        json_data_get = response.json()[0]['collection_payload']
         self.assertEqual(json_data_get, json_data)
