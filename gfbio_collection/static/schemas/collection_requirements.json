@@ -5,27 +5,27 @@
   "description": "Schema based on the _search.json sample of pansimple type",
   "type": "object",
   "properties": {
-    "metadata": {
-      "type": "string"
+    "took": {
+      "type": "number"
     },
     "hits": {
       "type": "object",
       "properties": {
-        "max_score": {
+        "total": {
           "type": "number"
         },
         "hits": {
           "description": "The payload contains the collected one or more data identifiers",
           "type": "array",
           "items": {
-            "$ref": "#/$defs/collection_data"
+            "$ref": "#/$defs/hits"
           },
           "minItems": 1
         }
       }
     },
     "$defs": {
-      "collection_data": {
+      "hits": {
         "type": "object",
         "properties": {
           "required": [
@@ -43,5 +43,8 @@
         }
       }
     }
-  }
+  },
+    "required": [
+    "hits"
+  ]
 }

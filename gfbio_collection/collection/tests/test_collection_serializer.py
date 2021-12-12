@@ -29,11 +29,14 @@ class CollectionSerializerTest(TestCase):
         valid = serializer.is_valid()
         self.assertFalse(valid)
 
+    #fixme: not valid input data
     def test_contains_expected_attribute(self):
-        serializer = CollectionSerializer(data={
-            'collection_identifier': "0123456",
-            'collection_name': "my collection",
-            'collection_payload': [{"dataid": "001.002.003", "content": [3, 2, 1], "valid": False}],
-        })
+        input_data = {}
+        input_data['hits'] = {'hits':[]}
+        input_data['hits']['hits'].append({'_id': '1234567', '_source': {'data': [3, 2, 1]}})
+        input_data = {
+            'collection_payload':input_data
+        }
+        serializer = CollectionSerializer(data=input_data)
         valid = serializer.is_valid()
         self.assertTrue(valid)
