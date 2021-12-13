@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "$id": "http://collections.gfbio.org/openapi/collection.json",
-  "title": "Collection",
+  "title": "Minimal Collection",
   "description": "A simple collection",
   "type": "object",
   "properties": {

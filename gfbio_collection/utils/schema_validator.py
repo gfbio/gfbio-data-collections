@@ -4,14 +4,14 @@ import os
 
 from django.conf import settings
 from django.forms import ValidationError
-from jsonschema.validators import Draft4Validator
+from jsonschema.validators import Draft4Validator, Draft202012Validator
 from jsonschema import validate, ValidationError, SchemaError
 
-from gfbio_collection.collection.configuration.settings import STATIC_GENERIC_REQUIREMENTS_LOCATION
+from gfbio_collection.collection.configuration.settings import (
+    STATIC_COLLECTION_REQUIREMENTS_LOCATION,
+    )
 
 class CollectionValidator(object):
-
-    ROBOT_LIBRARY_SCOPE = 'GLOBAL'
 
     def _validate_json(self, json_file, schema):
         """
@@ -26,7 +26,8 @@ class CollectionValidator(object):
     def validate_collection(self, data={}, schema_file=None, schema_string='{}'):
         """
         """
-        schema_file = os.path.join(settings.STATICFILES_DIRS[0],STATIC_GENERIC_REQUIREMENTS_LOCATION)
+        #schema_file = os.path.join(settings.STATICFILES_DIRS[0],STATIC_GENERIC_REQUIREMENTS_LOCATION)
+        schema_file = os.path.join(settings.STATICFILES_DIRS[0],STATIC_COLLECTION_REQUIREMENTS_LOCATION)
 
         if schema_file:
             with open(schema_file, 'r') as schema:
@@ -34,7 +35,7 @@ class CollectionValidator(object):
         else:
             schema = json.loads(schema_string)
 
-        validator = Draft4Validator(schema)
+        validator = Draft202012Validator(schema)
 
         data_valid = validator.is_valid(data)
         errors = [] if data_valid else self.collect_validation_errors(data, validator)
