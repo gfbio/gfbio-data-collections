@@ -1,4 +1,3 @@
-
 import os
 import json
 import base64
@@ -15,19 +14,21 @@ from gfbio_collection.collection.models import Collection
 
 from django.core.management.commands.test import Command as BaseCommand
 
+
 # wrap django's built-in test command to always delete the database if it exists [ref](# https://adamj.eu/tech/2020/01/13/make-django-tests-always-rebuild-db/)
 class Command(BaseCommand):
     def handle(self, *test_labels, **options):
         options["interactive"] = False
         return super().handle(*test_labels, **options)
 
-# TestCollectionViewBase instantiate a user and credentials into api_client
-# the simple self.client is used for tests without credentials
+
 class TestCollectionViewBase(TestCase):
+    """
+    TestCollectionViewBase instantiate a user and credentials into api_client
+    """
 
     @classmethod
     def setUpTestData(cls):
-
         # fresh user
         user = User.objects.create_user(
             username='new_user', email='new@user.de', password='pass1234', )
@@ -39,6 +40,11 @@ class TestCollectionViewBase(TestCase):
 
 
 class TestCollectionViewGetRequests(TestCollectionViewBase):
+    """
+    The simple self.client is used for tests without credentials
+    Alternatively use setUpTestData for testing with credentials
+
+    """
 
     @classmethod
     def setUpTestData(cls):
@@ -64,7 +70,7 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
     def test_get_json(self):
         response = self.client.get('/api/collections/')
         # following replaces deserialization with "assert(response.json())":
-        self.assertEqual(response.json(),list())
+        self.assertEqual(response.json(), list())
 
     # not 401 unauthorized
     def test_get_with_wrong_credentials(self):
@@ -136,7 +142,6 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
 
     # test data case with local data request
     def test_get_json_and_post(self):
-
         headers = requests.structures.CaseInsensitiveDict()
         headers["Accept"] = "application/json"
 
