@@ -21,7 +21,7 @@ class Command(BaseCommand):
         options["interactive"] = False
         return super().handle(*test_labels, **options)
 
-# TestCollectionViewBase instantiate a user and credentials into api_client
+# TestCollectionViewBase instantiates a user and credentials into api_client
 # the simple self.client is used for tests without credentials
 class TestCollectionViewBase(TestCase):
 

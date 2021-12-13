@@ -1,10 +1,4 @@
 
-import os
-import json
-import base64
-import responses
-import requests
-
 from django.test import TestCase
 
 from gfbio_collection.collection.api.serializers import CollectionSerializer
