@@ -4,7 +4,7 @@ import os
 
 from django.conf import settings
 from django.forms import ValidationError
-from jsonschema.validators import Draft4Validator
+from jsonschema.validators import Draft4Validator, Draft202012Validator
 from jsonschema import validate, ValidationError, SchemaError
 
 from gfbio_collection.collection.configuration.settings import (
@@ -35,7 +35,7 @@ class CollectionValidator(object):
         else:
             schema = json.loads(schema_string)
 
-        validator = Draft4Validator(schema)
+        validator = Draft202012Validator(schema)
 
         data_valid = validator.is_valid(data)
         errors = [] if data_valid else self.collect_validation_errors(data, validator)

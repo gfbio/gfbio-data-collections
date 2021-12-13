@@ -1,6 +1,6 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "$id": "http://collections.gfbio.org/openapi/pansimple.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "file:///app/collections.gfbio.org/openapi/collection_requirements.json",
   "title": "Collection",
   "description": "Schema based on the _search.json sample of pansimple type",
   "type": "object",
@@ -19,32 +19,31 @@
           "type": "array",
           "items": {
             "$ref": "#/$defs/hits"
-          },
-          "minItems": 1
-        }
-      }
-    },
-    "$defs": {
-      "hits": {
-        "type": "object",
-        "properties": {
-          "required": [
-            "_id",
-            "_source"
-          ],
-          "_id": {
-            "description": "ID of type URI regex",
-            "type": "string",
-            "minLength": 6
-          },
-          "_source": {
-            "type": "object"
           }
         }
       }
     }
   },
-    "required": [
+  "required": [
     "hits"
-  ]
+  ],
+  "$defs": {
+    "hits": {
+      "type": "object",
+      "properties": {
+        "required": [
+          "_id",
+          "_source"
+        ],
+        "_id": {
+          "description": "ID of type URI regex",
+          "type": "string",
+          "minLength": 6
+        },
+        "_source": {
+          "type": "object"
+        }
+      }
+    }
+  }
 }

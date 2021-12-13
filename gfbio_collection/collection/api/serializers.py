@@ -19,7 +19,7 @@ class CollectionSerializer(serializers.HyperlinkedModelSerializer):
     def validate(self, collection_to_validate):
         validator = CollectionValidator()
         if collection_to_validate:
-            valid, errors = validator.validate_collection(data=collection_to_validate)
+            valid, errors = validator.validate_collection(data=collection_to_validate.get('collection_payload', {}))
         else:
             raise serializers.ValidationError('NO_DATA')
         if not valid:
