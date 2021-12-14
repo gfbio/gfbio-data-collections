@@ -88,7 +88,7 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
         #     '/api/collections/',
         #     {'metadata': "0123456",
         #      'hits': {
-        #          'collection_payload':
+        #          'hits':
         #              [
         #                  {
         #                      "_id": "001.002.003",
@@ -169,3 +169,19 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
         self.assertEqual(200, response.status_code)
         json_data_get = response.json()[0]['collection_payload']
         self.assertEqual(json_data_get, json_data)
+
+    # get anonymous user
+    def test_post_anonymous(self):
+        self.assertEqual(0, len(Collection.objects.all()))
+        collection_payload = {}
+        collection_payload['hits'] = {'hits': []}
+        collection_payload['hits']['hits'].append({'_id': '1234567', '_source': {'data': [3, 2, 1]}})
+        response = self.api_client.post(
+            '/api/collections/',
+            {'collection_payload': collection_payload},
+            format='json',
+        )
+
+        # check for AnonymousUser
+        self.assertTrue(Collection.objects.all().values_list('collection_user').exists())
+        self.assertTrue(Collection.objects.filter(collection_user='AnonymousUser').exists())

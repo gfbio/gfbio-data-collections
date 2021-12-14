@@ -5,16 +5,16 @@ from gfbio_collection.utils.schema_validator import CollectionValidator
 
 class CollectionSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='collection:collection-detail')
-
+    collection_user = serializers.ReadOnlyField(source='user.username')
     # owner = serializers.HyperlinkedRelatedField(view_name='collection:user-detail', lookup_field='username', many=False, read_only=True)
 
     class Meta:
         model = Collection
         fields = ['url',
                   'collection_name',
-                  'collection_identifier',
+                  'collection_user',
                   'collection_payload',
-                  # 'owner'
+                  #'owner'
                   ]
 
     # item must have the attribute collection_payload, which pertains to collection_to_validate

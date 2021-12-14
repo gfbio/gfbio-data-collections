@@ -38,7 +38,7 @@ Test the service by sending a JSON payload to the database, as follows:
 curl --header "Content-Type: application/json" --request GET https://c103-139.cloud.gwdg.de/api/collections/
 
 # POST collection
-curl --header "Content-Type: application/json" --request POST --data '{"collection_identifier": "00N", "collection_payload": { "anykey": "anyvalue","anykey2": {"anyvalue": "orsubdict"}}}' https://c103-139.cloud.gwdg.de/api/collections/ 
+curl --header "Content-Type: application/json" --request POST --data '{"collection_user": "00N", "collection_payload": { "anykey": "anyvalue","anykey2": {"anyvalue": "orsubdict"}}}' https://c103-139.cloud.gwdg.de/api/collections/ 
 ````
 - Use the 
 [browsable API](https://c103-139.cloud.gwdg.de/api)

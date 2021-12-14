@@ -39,8 +39,8 @@ class CollectionList(ListModelMixin, CreateModelMixin, GenericAPIView):
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
-    # def perform_create(self, serializer):
-    #     serializer.save(owner=self.request.user)
+    def perform_create(self, serializer):
+        serializer.save(collection_user=self.request.user)
 
 collection_view = CollectionList.as_view()
 

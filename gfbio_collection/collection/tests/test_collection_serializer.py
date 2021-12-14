@@ -22,7 +22,7 @@ class CollectionSerializerTest(TestCase):
     # must fail without payload
     def test_empty_collection(self):
         serializer = CollectionSerializer(data={
-            'collection_identifier': "0123456",
+            'collection_user': "0123456",
             'collection_name': "my collection",
             'collection_payload': None,
         })
