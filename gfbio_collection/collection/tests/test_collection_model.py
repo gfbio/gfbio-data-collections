@@ -84,51 +84,10 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
     # 201 created
     def test_simple_post(self):
         self.assertEqual(0, len(Collection.objects.all()))
-        # response = self.api_client.post(
-        #     '/api/collections/',
-        #     {'metadata': "0123456",
-        #      'hits': {
-        #          'hits':
-        #              [
-        #                  {
-        #                      "_id": "001.002.003",
-        #                      "_source": {"dataid": "001.002.003", "content": [3, 2, 1], "valid": False}
-        #                  }
-        #              ]
-        #      }
-        #      },
-        #     format='json'
-        # )
-
-        collection_payload = {
-            "took": 511,
-            "_shards": {
-                "total": 2,
-            },
-            "hits":
-                {
-                    "max_score": 1.0,
-                    "hits":
-                        [
-                            {
-                                "_index": "portals_v2",
-                                "_type": "pansimple",
-                                "_id": "urn:gfbio.org:abcd:2_292_277:7638959+/+22948775",
-                                "_score": 1.0,
-                                "_source": {
-                                    "accessRestricted": False,
-                                    "parameter": [
-                                        "Date",
-                                        "Locality",
-                                        "Longitude",
-                                        "Latitude"
-                                    ],
-                                }
-                            },
-                            {},
-                        ]
-                },
-        }
+        collection_payload = {'hits': {'hits': [
+            {'_id': '1234567', '_source': {'parameter': ['Time', 'Location']}},
+            {} # empty source
+            ]}}
         response = self.api_client.post(
             '/api/collections/',
             {'collection_payload': collection_payload},
@@ -138,6 +97,8 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
         self.assertEqual(201, response.status_code)
         self.assertIn(b'id', response.content)
         self.assertIn(b'collection_payload', response.content)
+        self.assertEqual(1, len(Collection.objects.all()))
+        self.assertEqual(2, len(Collection.objects.last().collection_payload['hits']['hits']))
 
     # test data case with local data request
     def test_get_json_and_post(self):
@@ -182,6 +143,7 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
             format='json',
         )
 
+        self.assertEqual(201, response.status_code)
         # check for AnonymousUser
         self.assertTrue(Collection.objects.all().values_list('collection_user').exists())
         self.assertTrue(Collection.objects.filter(collection_user='AnonymousUser').exists())
