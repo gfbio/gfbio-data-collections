@@ -15,7 +15,7 @@ from gfbio_collection.collection.models import Collection
 from django.core.management.commands.test import Command as BaseCommand
 
 
-# wrap django's built-in test command to always delete the database if it exists [ref](# https://adamj.eu/tech/2020/01/13/make-django-tests-always-rebuild-db/)
+# wrap django"s built-in test command to always delete the database if it exists [ref](# https://adamj.eu/tech/2020/01/13/make-django-tests-always-rebuild-db/)
 class Command(BaseCommand):
     def handle(self, *test_labels, **options):
         options["interactive"] = False
@@ -30,7 +30,7 @@ class TestCollectionViewBase(TestCase):
     def setUpTestData(cls):
         # fresh user
         user = User.objects.create_user(
-            username='new_user', email='new@user.de', password='pass1234', )
+            username="new_user", email="new@user.de", password="pass1234", )
         user.save()
 
         client = APIClient()
@@ -49,25 +49,25 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
     def setUpTestData(cls):
         super().setUpTestData()
 
-        user = User.objects.get(username='new_user')
+        user = User.objects.get(username="new_user")
         user.is_user = True
         user.is_site = False
         user.save()
 
     # 200 successful HTTP request
     def test_get(self):
-        response = self.client.get('/api/collections/')
+        response = self.client.get("/api/collections/")
         self.assertEqual(200, response.status_code)
 
     # 404 not found
     def test_get(self):
         # "collection" without s requires an {id}
-        response = self.client.get('/api/collection/')
+        response = self.client.get("/api/collection/")
         self.assertEqual(404, response.status_code)
 
     # no text or bad format causes deserialization failure
     def test_get_json(self):
-        response = self.client.get('/api/collections/')
+        response = self.client.get("/api/collections/")
         # following replaces deserialization with "assert(response.json())":
         self.assertEqual(response.json(), list())
 
@@ -75,30 +75,30 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
     def test_get_with_wrong_credentials(self):
         # it does not make a difference if credentials are given
         self.api_client.credentials(
-            HTTP_AUTHORIZATION='Basic ' + base64.b64encode(
-                b'user:invalidpassword').decode('utf-8')
+            HTTP_AUTHORIZATION="Basic " + base64.b64encode(
+                b"user:invalidpassword").decode("utf-8")
         )
-        response = self.api_client.get('/api/collections/')
+        response = self.api_client.get("/api/collections/")
         self.assertNotEqual(401, response.status_code)
 
     # 201 created
     def test_simple_post(self):
         self.assertEqual(0, len(Collection.objects.all()))
-        collection_payload = {'hits': {'hits': [
-            {'_id': '1234567', '_source': {'parameter': ['Time', 'Location']}},
+        collection_payload = {"hits": {"hits": [
+            {"_id": "1234567", "_source": {"parameter": ["Time", "Location"]}},
             {} # empty source
             ]}}
         response = self.api_client.post(
-            '/api/collections/',
-            {'collection_payload': collection_payload},
-            format='json',
+            "/api/collections/",
+            {"collection_payload": collection_payload},
+            format="json",
         )
 
         self.assertEqual(201, response.status_code)
-        self.assertIn(b'id', response.content)
-        self.assertIn(b'collection_payload', response.content)
+        self.assertIn(b"id", response.content)
+        self.assertIn(b"collection_payload", response.content)
         self.assertEqual(1, len(Collection.objects.all()))
-        self.assertEqual(2, len(Collection.objects.last().collection_payload['hits']['hits']))
+        self.assertEqual(2, len(Collection.objects.last().collection_payload["hits"]["hits"]))
 
     # test data case with local data request
     def test_get_json_and_post(self):
@@ -112,38 +112,38 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
 
         # get data locally
         with open(os.path.join(
-            './test_data',
-            '_search.json'), 'r') as data_file:
+            "./test_data",
+            "_search.json"), "r") as data_file:
             json_data = json.load(data_file)
 
         # post to collections
         response = self.api_client.post(
-            '/api/collections/',
-            {'collection_payload': json_data},
-            format='json'
+            "/api/collections/",
+            {"collection_payload": json_data},
+            format="json"
         )
         self.assertEqual(201, response.status_code)
 
         # get from collection
         # compare entry json used in post with the retrieved one from collection (nothing changed)
-        response = self.api_client.get('/api/collections/', headers=headers)
+        response = self.api_client.get("/api/collections/", headers=headers)
         self.assertEqual(200, response.status_code)
-        json_data_get = response.json()[0]['collection_payload']
+        json_data_get = response.json()[0]["collection_payload"]
         self.assertEqual(json_data_get, json_data)
 
     # get anonymous user
     def test_post_anonymous(self):
         self.assertEqual(0, len(Collection.objects.all()))
         collection_payload = {}
-        collection_payload['hits'] = {'hits': []}
-        collection_payload['hits']['hits'].append({'_id': '1234567', '_source': {'data': [3, 2, 1]}})
+        collection_payload["hits"] = {"hits": []}
+        collection_payload["hits"]["hits"].append({"_id": "1234567", "_source": {"data": [3, 2, 1]}})
         response = self.api_client.post(
-            '/api/collections/',
-            {'collection_payload': collection_payload},
-            format='json',
+            "/api/collections/",
+            {"collection_payload": collection_payload},
+            format="json",
         )
 
         self.assertEqual(201, response.status_code)
         # check for AnonymousUser
-        self.assertTrue(Collection.objects.all().values_list('collection_user').exists())
-        self.assertTrue(Collection.objects.filter(collection_user='AnonymousUser').exists())
+        self.assertTrue(Collection.objects.all().values_list("collection_user").exists())
+        self.assertTrue(Collection.objects.filter(collection_user="AnonymousUser").exists())

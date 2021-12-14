@@ -22,9 +22,9 @@ class CollectionSerializerTest(TestCase):
     # must fail without payload
     def test_empty_collection(self):
         serializer = CollectionSerializer(data={
-            'collection_user': "0123456",
-            'collection_name': "my collection",
-            'collection_payload': None,
+            "collection_user": "0123456",
+            "collection_name": "my collection",
+            "collection_payload": None,
         })
         valid = serializer.is_valid()
         self.assertFalse(valid)
@@ -32,10 +32,10 @@ class CollectionSerializerTest(TestCase):
     # must succeed for minimal required fields (e.g. based on pansimple sample)
     def test_contains_expected_attribute(self):
         input_data = {}
-        input_data['hits'] = {'hits': []}
-        input_data['hits']['hits'].append({'_id': '1234567', '_source': {'data': [3, 2, 1]}})
+        input_data["hits"] = {"hits": []}
+        input_data["hits"]["hits"].append({"_id": "1234567", "_source": {"data": [3, 2, 1]}})
         input_data = {
-            'collection_payload': input_data
+            "collection_payload": input_data
         }
         serializer = CollectionSerializer(data=input_data)
         valid = serializer.is_valid()
