@@ -22,8 +22,8 @@ Deployment using docker provides easier isolation and transferability.
 After installing the requirements, clone this source, then build and run the stack with docker-compose:
                             
 ```
-git clone https://gitlab.gwdg.de/gfbio/gfbio_collection.git
-cd collection.gfbio.org
+git clone https://gitlab.gwdg.de/gfbio/gfbio_collections.git
+cd gfbio_collections
 docker-compose -f production.yml build
 docker-compose -f production.yml up
 ``` 
@@ -38,14 +38,15 @@ Test the service by sending a JSON payload to the database, as follows:
 curl --header "Content-Type: application/json" --request GET https://c103-139.cloud.gwdg.de/api/collections/
 
 # POST collection
-curl --header "Content-Type: application/json" --request POST --data '{"collection_identifier": "00N", "collection_payload": { "anykey": "anyvalue","anykey2": {"anyvalue": "orsubdict"}}}' https://c103-139.cloud.gwdg.de/api/collections/ 
+curl --header "Content-Type: application/json" --request POST --data '{"collection_owner": "00N", "collection_payload": { "anykey": "anyvalue","anykey2": {"anyvalue": "orsubdict"}}}' https://c103-139.cloud.gwdg.de/api/collections/ 
 ````
 - Use the 
-[browsable API](https://c103-139.cloud.gwdg.de/api)
+[browsable API](https://c103-114.cloud.gwdg.de/api)
 
-- Use the [API documentation](https://c103-139.cloud.gwdg.de/swagger)
+- Use the [API documentation](https://c103-114.cloud.gwdg.de/swagger)
 
 
 ## Contribute
 
-Create a [new issue](https://gitlab.gwdg.de/gfbio/nfdi_collection/-/issues/new?issue%5Bassignee_id%5D=&issue%5Bmilestone_id%5D=)
+Create a [new issue](https://gitlab.gwdg.de/gfbio_collections/-/issues/new?issue%5Bassignee_id%5D=&issue%5Bmilestone_id%5D=)
+

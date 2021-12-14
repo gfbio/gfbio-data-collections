@@ -6,8 +6,8 @@ from pathlib import Path
 import environ
 
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
-# gfbio_collection/
-APPS_DIR = ROOT_DIR / "gfbio_collection"
+# gfbio_collections/
+APPS_DIR = ROOT_DIR / "gfbio_collections"
 env = environ.Env()
 
 READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
@@ -78,9 +78,9 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    "gfbio_collection.users",
+    "gfbio_collections.users",
     # Your stuff: custom apps go here
-    "gfbio_collection.collection.apps.CollectionConfig",
+    "gfbio_collections.collection.apps.CollectionConfig",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -88,7 +88,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 # MIGRATIONS
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#migration-modules
-MIGRATION_MODULES = {"sites": "gfbio_collection.contrib.sites.migrations"}
+MIGRATION_MODULES = {"sites": "gfbio_collections.contrib.sites.migrations"}
 
 # AUTHENTICATION
 # ------------------------------------------------------------------------------
@@ -116,9 +116,7 @@ PASSWORD_HASHERS = [
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-password-validators
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
-    },
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
@@ -226,6 +224,12 @@ EMAIL_BACKEND = env(
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-timeout
 EMAIL_TIMEOUT = 5
 
+
+HOST_URL_ROOT = env(
+    "HOST_URL_ROOT",
+    default="https://collection.rdc.gfbio.dev/"
+)
+
 # ADMIN
 # ------------------------------------------------------------------------------
 # Django Admin URL.
@@ -292,9 +296,9 @@ ACCOUNT_EMAIL_REQUIRED = True
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_ADAPTER = "gfbio_collection.users.adapters.AccountAdapter"
+ACCOUNT_ADAPTER = "gfbio_collections.users.adapters.AccountAdapter"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-SOCIALACCOUNT_ADAPTER = "gfbio_collection.users.adapters.SocialAccountAdapter"
+SOCIALACCOUNT_ADAPTER = "gfbio_collections.users.adapters.SocialAccountAdapter"
 
 # django-rest-framework
 # -------------------------------------------------------------------------------

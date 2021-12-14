@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../gfbio_collection/.idea/gfbio_collection.iml" filepath="$PROJECT_DIR$/../gfbio_collection/.idea/gfbio_collection.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/collections.gfbio.org.iml" filepath="$PROJECT_DIR$/.idea/collections.gfbio.org.iml" />
     </modules>
   </component>
 </project>

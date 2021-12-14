@@ -1,8 +1,8 @@
 from django.conf import settings
 from rest_framework.routers import DefaultRouter, SimpleRouter
 
-from gfbio_collection.users.api.views import UserViewSet
-from gfbio_collection.collection.api.views import CollectionViewSet
+from gfbio_collections.users.api.views import UserViewSet
+from gfbio_collections.collection.api.views import CollectionViewSet
 
 if settings.DEBUG:
     router = DefaultRouter()

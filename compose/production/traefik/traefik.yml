@@ -30,8 +30,17 @@ certificatesResolvers:
 
 http:
   routers:
+    web-router:
+      rule: "Host(`c103-114.cloud.gwdg.de`) || Host(`collection.rdc.gfbio.dev`)"
+      entryPoints:
+        - web
+      middlewares:
+        - redirect
+        - csrf
+      service: django
+
     web-secure-router:
-      rule: "Host(`gfbio.org`) || Host(`www.gfbio.org`)"
+      rule: "Host(`c103-114.cloud.gwdg.de`)  || Host(`collection.rdc.gfbio.dev`)"
       entryPoints:
         - web-secure
       middlewares:
@@ -42,7 +51,7 @@ http:
         certResolver: letsencrypt
 
     flower-secure-router:
-      rule: "Host(`gfbio.org`)"
+      rule: "Host(`c103-114.cloud.gwdg.de`)  || Host(`collection.rdc.gfbio.dev`)"
       entryPoints:
         - flower
       service: flower
