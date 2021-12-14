@@ -5,14 +5,14 @@ from gfbio_collection.utils.schema_validator import CollectionValidator
 
 class CollectionSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='collection:collection-detail')
-    collection_user = serializers.ReadOnlyField(source='user.username')
+    collection_owner = serializers.ReadOnlyField(source='collection_owner.username')
     # owner = serializers.HyperlinkedRelatedField(view_name='collection:user-detail', lookup_field='username', many=False, read_only=True)
 
     class Meta:
         model = Collection
         fields = ['url',
                   'collection_name',
-                  'collection_user',
+                  'collection_owner',
                   'collection_payload',
                   #'owner'
                   ]

@@ -5,7 +5,7 @@
   "description": "A simple collection",
   "type": "object",
   "properties": {
-    "collection_user": {
+    "collection_owner": {
       "description": "The unique identifier of the collection",
       "type": "string",
       "minLength": 6

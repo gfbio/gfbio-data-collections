@@ -1,5 +1,5 @@
 from gfbio_collection.collection.models import Collection
-from .serializers import CollectionSerializer
+from gfbio_collection.collection.api.serializers import CollectionSerializer
 from gfbio_collection.collection.permissions import IsOwnerOrReadOnly
 
 from rest_framework import permissions
@@ -20,7 +20,7 @@ class RootView(APIView):
     def get(self, request, format=None):
         return Response(
             {
-             # 'users': reverse('collection:user-list', request=request, format=format),
+             'users': reverse('collection:user-list', request=request, format=format),
              'collection': reverse('collection:collection-list', request=request, format=format)
              }
         )
@@ -40,7 +40,7 @@ class CollectionList(ListModelMixin, CreateModelMixin, GenericAPIView):
         return self.create(request, *args, **kwargs)
 
     def perform_create(self, serializer):
-        serializer.save(collection_user=self.request.user)
+        serializer.save(collection_owner=self.request.user)
 
 collection_view = CollectionList.as_view()
 
@@ -84,4 +84,4 @@ class CollectionViewSet(viewsets.ModelViewSet):
         return [permission() for permission in permission_classes]
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+        serializer.save(collection_owner=self.request.user)

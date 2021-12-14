@@ -145,5 +145,5 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
 
         self.assertEqual(201, response.status_code)
         # check for AnonymousUser
-        self.assertTrue(Collection.objects.all().values_list("collection_user").exists())
-        self.assertTrue(Collection.objects.filter(collection_user="AnonymousUser").exists())
+        self.assertTrue(Collection.objects.all().values_list("collection_owner").exists())
+        self.assertTrue(Collection.objects.filter(collection_owner="AnonymousUser").exists())
