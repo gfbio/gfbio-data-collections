@@ -4,11 +4,10 @@ from rest_framework import serializers
 User = get_user_model()
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    collections = serializers.HyperlinkedRelatedField(many=True, view_name='collection:collection-detail', read_only=True)
 
     class Meta:
         model = User
-        fields = ["username", "name", "url", "collections"]
+        fields = ["username", "name", "url"] #, "collection"
 
         extra_kwargs = {
             "url": {"view_name": "collection:user-detail", "lookup_field": "username"},
