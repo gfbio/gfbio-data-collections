@@ -1,15 +1,14 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from gfbio_collection.collection.models import Collection
 
 User = get_user_model()
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    #collections_list = serializers.PrimaryKeyRelatedField(many=True, queryset=Collection.objects.all())
+    collections = serializers.HyperlinkedRelatedField(many=True, view_name='collection:collection-detail', read_only=True)
 
     class Meta:
         model = User
-        fields = ["username", "name", "url"] #, "collections_list"]
+        fields = ["username", "name", "url", "collections"]
 
         extra_kwargs = {
             "url": {"view_name": "collection:user-detail", "lookup_field": "username"},
