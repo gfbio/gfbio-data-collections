@@ -5,9 +5,8 @@ from rest_framework.mixins import ListModelMixin, RetrieveModelMixin, UpdateMode
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
-from rest_framework import permissions
 
-from .serializers import UserSerializer
+from gfbio_collection.users.api.serializers import UserSerializer
 
 User = get_user_model()
 

@@ -11,8 +11,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from rest_framework import viewsets
-
 
 class RootView(APIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -30,7 +28,6 @@ root_view = RootView.as_view()
 class CollectionList(ListModelMixin, CreateModelMixin, GenericAPIView):
     queryset = Collection.objects.all()
     serializer_class = CollectionSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     permission_classes = [permissions.AllowAny]
 
     def get(self, request, *args, **kwargs):
@@ -42,6 +39,7 @@ class CollectionList(ListModelMixin, CreateModelMixin, GenericAPIView):
     def perform_create(self, serializer, **kwargs):
         kwargs['collection_owner'] = self.request.user
         collection = serializer.save(**kwargs)
+        # print(repr(serializer))
         pass
 
 collection_view = CollectionList.as_view()
@@ -50,7 +48,8 @@ class CollectionDetail(RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, 
     queryset = Collection.objects.all()
     serializer_class = CollectionSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly,
-                          IsOwnerOrReadOnly]
+                          IsOwnerOrReadOnly
+                          ]
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
@@ -62,28 +61,3 @@ class CollectionDetail(RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, 
         return self.destroy(request, *args, **kwargs)
 
 collection_detail_view = CollectionDetail.as_view()
-
-# rewriting as viewset
-
-class CollectionViewSet(viewsets.ModelViewSet):
-    """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions.
-
-    """
-    queryset = Collection.objects.all()
-    serializer_class = CollectionSerializer
-
-    def get_permissions(self):
-        """
-        Instantiates and returns the list of permissions that this view requires.
-        """
-        if self.action == 'list':
-            permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-        else:
-            permission_classes = [permissions.IsAuthenticatedOrReadOnly,
-                          IsOwnerOrReadOnly]
-        return [permission() for permission in permission_classes]
-
-    def perform_create(self, serializer):
-        serializer.save(collection_owner=self.request.user)
