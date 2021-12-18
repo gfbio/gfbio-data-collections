@@ -224,6 +224,12 @@ EMAIL_BACKEND = env(
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-timeout
 EMAIL_TIMEOUT = 5
 
+
+HOST_URL_ROOT = env(
+    "HOST_URL_ROOT",
+    default="https://collection.rdc.gfbio.dev/"
+)
+
 # ADMIN
 # ------------------------------------------------------------------------------
 # Django Admin URL.
