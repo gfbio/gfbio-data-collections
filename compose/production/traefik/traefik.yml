@@ -31,7 +31,7 @@ certificatesResolvers:
 http:
   routers:
     web-router:
-      rule: "Host(`Host(`141.5.103.114`) || Host(`c103-114.cloud.gwdg.de`)  || collections.rdc.gfbio.dev`)"
+      rule: "Host(`c103-114.cloud.gwdg.de`) || Host(`collection.rdc.gfbio.dev`)"
       entryPoints:
         - web
       middlewares:
@@ -40,7 +40,7 @@ http:
       service: django
 
     web-secure-router:
-      rule: "Host(`Host(`141.5.103.114`) || Host(`c103-114.cloud.gwdg.de`)  || collections.rdc.gfbio.dev`)"
+      rule: "Host(`c103-114.cloud.gwdg.de`)  || collection.rdc.gfbio.dev`)"
       entryPoints:
         - web-secure
       middlewares:
@@ -51,7 +51,7 @@ http:
         certResolver: letsencrypt
 
     flower-secure-router:
-      rule: "Host(`Host(`141.5.103.114`) || Host(`c103-114.cloud.gwdg.de`)  || collections.rdc.gfbio.dev`)"
+      rule: "Host(`c103-114.cloud.gwdg.de`)  || collection.rdc.gfbio.dev`)"
       entryPoints:
         - flower
       service: flower

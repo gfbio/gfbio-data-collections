@@ -61,19 +61,25 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
 
     # 404 not found
     def test_get(self):
-        # "collection" without s requires an {id}
+        """
+        it does not make a difference if credentials are given
+        """
         response = self.client.get("/api/collection/")
         self.assertEqual(404, response.status_code)
 
-    # no text or bad format causes deserialization failure
     def test_get_json(self):
+        """
+        assert valid deserialization, as with with "assert(response.json())",
+        where no text or bad format leads to deserialization failure
+        """
         response = self.client.get("/api/collections/")
-        # following replaces deserialization with "assert(response.json())":
         self.assertEqual(response.json(), list())
 
     # not 401 unauthorized
     def test_get_with_wrong_credentials(self):
-        # it does not make a difference if credentials are given
+        """
+        it does not make a difference if credentials are given
+        """
         self.api_client.credentials(
             HTTP_AUTHORIZATION="Basic " + base64.b64encode(
                 b"user:invalidpassword").decode("utf-8")
@@ -83,6 +89,9 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
 
     # 201 created
     def test_simple_post(self):
+        """
+        it does not make a difference if credentials are given
+        """
         self.assertEqual(0, len(Collection.objects.all()))
         collection_payload = {"hits": {"hits": [
             {"_id": "1234567", "_source": {"parameter": ["Time", "Location"]}},
@@ -147,3 +156,9 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
         # check for AnonymousUser
         self.assertTrue(Collection.objects.all().values_list("collection_owner").exists())
         self.assertTrue(Collection.objects.filter(collection_owner="AnonymousUser").exists())
+
+    # get anonymous user
+    def test_post_get_multiple(self):
+        self.test_post_anonymous()
+        self.setUpTestData()
+        self.assertEqual(2, len(Collection.objects.all()))
