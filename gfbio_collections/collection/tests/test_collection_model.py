@@ -25,7 +25,6 @@ class TestCollectionViewBase(TestCase):
     """
     TestCollectionViewBase instantiate a user and credentials into api_client
     """
-
     @classmethod
     def setUpTestData(cls):
         # fresh user
@@ -37,32 +36,39 @@ class TestCollectionViewBase(TestCase):
 
         cls.api_client = client
 
+    @classmethod
+    def setUpTestData(cls, username="new_user", email="new@user.de", password="Pass12345#", is_user=True, is_site=False):
+        # fresh user
+        user = User.objects.create_user(
+            username=username, email=email, password=password, )
+        user.is_user = is_user
+        user.is_site = is_site
+        user.save()
+
+        client = APIClient()
+        cls.api_client = client
+
 
 class TestCollectionViewGetRequests(TestCollectionViewBase):
     """
-    The simple self.client is used for tests without credentials
-    Alternatively use setUpTestData for testing with credentials
-
+    Set of testing functions written for development
     """
 
-    @classmethod
-    def setUpTestData(cls):
-        super().setUpTestData()
+    maxDiff = None
 
-        user = User.objects.get(username="new_user")
-        user.is_user = True
-        user.is_site = False
-        user.save()
 
     # 200 successful HTTP request
     def test_get(self):
+        """
+        The simple self.client is used for tests without credentials
+        """
         response = self.client.get("/api/collections/")
         self.assertEqual(200, response.status_code)
 
     # 404 not found
     def test_get(self):
         """
-        it does not make a difference if credentials are given
+        collections must be used in plural
         """
         response = self.client.get("/api/collection/")
         self.assertEqual(404, response.status_code)
@@ -92,7 +98,7 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
         """
         it does not make a difference if credentials are given
         """
-        self.assertEqual(0, len(Collection.objects.all()))
+        # self.assertEqual(0, len(Collection.objects.all()))
         collection_payload = {"hits": {"hits": [
             {"_id": "1234567", "_source": {"parameter": ["Time", "Location"]}},
             {} # empty source
@@ -106,15 +112,19 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
         self.assertEqual(201, response.status_code)
         self.assertIn(b"id", response.content)
         self.assertIn(b"collection_payload", response.content)
-        self.assertEqual(1, len(Collection.objects.all()))
+        # self.assertEqual(1, len(Collection.objects.all()))
         self.assertEqual(2, len(Collection.objects.last().collection_payload["hits"]["hits"]))
 
     # test data case with local data request
     def test_get_json_and_post(self):
+        """
+        Alternatively use setUpTestData for testing with credentials
+        In addition POST, i.e. json validation also requires api_client
+        """
         headers = requests.structures.CaseInsensitiveDict()
         headers["Accept"] = "application/json"
 
-        # # get data remotely
+        # # # get data remotely
         # url = "http://ws.pangaea.de/es/portals/pansimple/_search?pretty="
         # response = requests.get(url, headers=headers)
         # json_data = response.json()
@@ -133,7 +143,6 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
         )
         self.assertEqual(201, response.status_code)
 
-        # get from collection
         # compare entry json used in post with the retrieved one from collection (nothing changed)
         response = self.api_client.get("/api/collections/", headers=headers)
         self.assertEqual(200, response.status_code)
@@ -141,8 +150,8 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
         self.assertEqual(json_data_get, json_data)
 
     # get anonymous user
-    def test_post_anonymous(self):
-        self.assertEqual(0, len(Collection.objects.all()))
+    def test_collection_owner(self):
+        #self.assertEqual(0, len(Collection.objects.all()))
         collection_payload = {}
         collection_payload["hits"] = {"hits": []}
         collection_payload["hits"]["hits"].append({"_id": "1234567", "_source": {"data": [3, 2, 1]}})
@@ -158,7 +167,65 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
         self.assertTrue(Collection.objects.filter(collection_owner="AnonymousUser").exists())
 
     # get anonymous user
-    def test_post_get_multiple(self):
-        self.test_post_anonymous()
-        self.setUpTestData()
-        self.assertEqual(2, len(Collection.objects.all()))
+    def test_post_get_multiple_users(self):
+        # anonymous
+        self.test_simple_post()
+
+        # login existing user
+        self.api_client.login(username='new_user', password='Pass12345#')
+        collection_payload = {}
+        collection_payload["hits"] = {"hits": []}
+        collection_payload["hits"]["hits"].append({"_id": "1234567", "_source": {"data": [3, 2, 1]}})
+        response = self.api_client.post(
+            "/api/collections/",
+            {"collection_payload": collection_payload},
+            format="json",
+        )
+        self.assertEqual(201, response.status_code)
+        self.api_client.logout()
+        self.assertTrue(Collection.objects.filter(collection_owner="new_user").exists())
+
+        # create new user and force authenticate
+        super().setUpTestData(username="new_user_2")
+
+        user = User.objects.get(username='new_user_2')
+        self.api_client.force_authenticate(user=user)
+        response = self.api_client.post(
+            "/api/collections/",
+            {"collection_payload": collection_payload},
+            format="json",
+        )
+        self.assertEqual(201, response.status_code)
+        self.api_client.force_authenticate(user=None)
+
+        # fixme: not posting with credentials but as anonymous
+        super().setUpTestData(username="new_user_3")
+
+        # set credentials
+        self.api_client.credentials(
+            HTTP_AUTHORIZATION="Basic " + base64.b64encode(
+                b"new_user_3:Pass12345#").decode("utf-8")
+        )
+        credentials = base64.b64encode(b"new_user_3:Pass12345#").decode("utf-8")
+        self.api_client.credentials(HTTP_AUTHORIZATION='Basic ' + credentials)
+
+        response = self.api_client.post(
+            "/api/collections/",
+            {"collection_payload": collection_payload},
+            format="json",
+        )
+        self.assertEqual(201, response.status_code)
+        self.api_client.credentials()
+
+        # for testing
+        Collection.objects.all()
+        Collection.objects.all().values_list("collection_owner")
+
+        #todo: sessionauthentication
+
+        #todo: tokenauthentication
+        # token = Token.objects.get(user__username='new_user_2')
+        # self.api_client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+
+        # self.assertTrue(Collection.objects.filter(collection_owner="new_user").exists())

@@ -11,6 +11,9 @@
     "hits": {
       "type": "object",
       "properties": {
+        "required": [
+          "hits"
+        ],
         "total": {
           "type": "number"
         },
