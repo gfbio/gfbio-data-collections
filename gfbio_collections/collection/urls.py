@@ -1,6 +1,6 @@
-from gfbio_collections.users.api.views import users_list_view, users_detail_view
+from gfbio_collectionss.users.api.views import users_list_view, users_detail_view
 
-from gfbio_collections.collection.api.views import (
+from gfbio_collectionss.collection.api.views import (
     root_view,
     collection_view,
     collection_detail_view,

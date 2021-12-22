@@ -1,7 +1,7 @@
 import pytest
 
-from gfbio_collections.users.models import User
-from gfbio_collections.users.tests.factories import UserFactory
+from gfbio_collectionss.users.models import User
+from gfbio_collectionss.users.tests.factories import UserFactory
 
 
 @pytest.fixture(autouse=True)

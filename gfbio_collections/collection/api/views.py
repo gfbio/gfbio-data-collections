@@ -1,6 +1,6 @@
-from gfbio_collections.collection.models import Collection
-from gfbio_collections.collection.api.serializers import CollectionSerializer
-from gfbio_collections.collection.permissions import IsOwnerOrReadOnly
+from gfbio_collectionss.collection.models import Collection
+from gfbio_collectionss.collection.api.serializers import CollectionSerializer
+from gfbio_collectionss.collection.permissions import IsOwnerOrReadOnly
 
 from rest_framework import permissions
 

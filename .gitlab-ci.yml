@@ -3,9 +3,9 @@ stages:
   - test
 
 variables:
-  POSTGRES_USER: 'gfbio_collection'
+  POSTGRES_USER: 'gfbio_collections'
   POSTGRES_PASSWORD: ''
-  POSTGRES_DB: 'test_gfbio_collection'
+  POSTGRES_DB: 'test_gfbio_collections'
   POSTGRES_HOST_AUTH_METHOD: trust
   CELERY_BROKER_URL: 'redis://redis:6379/0'
 

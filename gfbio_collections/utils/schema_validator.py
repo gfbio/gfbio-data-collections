@@ -7,7 +7,7 @@ from django.forms import ValidationError
 from jsonschema.validators import Draft4Validator, Draft202012Validator
 from jsonschema import validate, ValidationError, SchemaError
 
-from gfbio_collections.collection.configuration.settings import (
+from gfbio_collectionss.collection.configuration.settings import (
     STATIC_COLLECTION_REQUIREMENTS_LOCATION,
     )
 

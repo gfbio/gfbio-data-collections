@@ -1,8 +1,8 @@
 import pytest
 from django.test import RequestFactory
 
-from gfbio_collections.users.api.views import UserViewSet
-from gfbio_collections.users.models import User
+from gfbio_collectionss.users.api.views import UserViewSet
+from gfbio_collectionss.users.models import User
 
 pytestmark = pytest.mark.django_db
 

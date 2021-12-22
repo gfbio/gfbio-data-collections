@@ -1,7 +1,7 @@
 
 from django.test import TestCase
 
-from gfbio_collections.collection.api.serializers import CollectionSerializer
+from gfbio_collectionss.collection.api.serializers import CollectionSerializer
 
 from django.core.management.commands.test import Command as BaseCommand
 
