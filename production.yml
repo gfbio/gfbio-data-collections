@@ -51,7 +51,6 @@ services:
       context: .
       dockerfile: ./compose/production/traefik/Dockerfile
     image: gfbio_collections_production_traefik
-
     depends_on:
       - django
     volumes:

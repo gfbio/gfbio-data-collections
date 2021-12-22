@@ -7,7 +7,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = User
-        fields = ["username", "name", "url"] #, "collection"
+        fields = ["username", "name", "url"]
 
         extra_kwargs = {
             "url": {"view_name": "collection:user-detail", "lookup_field": "username"},
