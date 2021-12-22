@@ -70,7 +70,7 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
         """
         collections must be used in plural
         """
-        response = self.client.get("/api/collection/")
+        response = self.client.get("/api/collectionss/")
         self.assertEqual(404, response.status_code)
 
     def test_get_json(self):
@@ -93,16 +93,47 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
         response = self.api_client.get("/api/collections/")
         self.assertNotEqual(401, response.status_code)
 
+        # post
+        collection_payload = {"hits": {"hits": [{"_id": "1234567", "_source": {"parameter": ["Time", "Location"]}}]}}
+        response = self.api_client.post(
+            "/api/collections/",
+            {"collection_payload": collection_payload},
+            format="json",
+        )
+
+        self.assertEqual(201, response.status_code)
+
+        #fixme; patch
+        # moved permanently?!
+        response = self.api_client.get("/api/collections/" + str(Collection.objects.last().id))
+        self.assertNotEqual(301, response.status_code)
+
+        # response = self.api_client.put(
+        #     "/api/collections/" + str(Collection.objects.last().id),
+        #     {"collection_payload": collection_payload},
+        #     format="json",
+        # )
+        # self.assertEqual(403, response.status_code)
+
     # 201 created
     def test_simple_post(self):
         """
         it does not make a difference if credentials are given
         """
         # self.assertEqual(0, len(Collection.objects.all()))
-        collection_payload = {"hits": {"hits": [
-            {"_id": "1234567", "_source": {"parameter": ["Time", "Location"]}},
-            {} # empty source
-            ]}}
+
+        # simple data
+        # collection_payload = {"hits": {"hits": [
+        #     {"_id": "1234567", "_source": {"parameter": ["Time", "Location"]}},
+        #     {} # empty source
+        #     ]}}
+
+        # simple data
+        collection_payload = {}
+        collection_payload["hits"] = {"hits": []}
+        collection_payload["hits"]["hits"].append({"_id": "1234567", "_source": {"data": [3, 2, 1]}})
+        collection_payload["hits"]["hits"].append({})
+
         response = self.api_client.post(
             "/api/collections/",
             {"collection_payload": collection_payload},
@@ -152,9 +183,8 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
     # get anonymous user
     def test_collection_owner(self):
         #self.assertEqual(0, len(Collection.objects.all()))
-        collection_payload = {}
-        collection_payload["hits"] = {"hits": []}
-        collection_payload["hits"]["hits"].append({"_id": "1234567", "_source": {"data": [3, 2, 1]}})
+        collection_payload = {"hits": {"hits": [{"_id": "1234567", "_source": {"parameter": ["Time", "Location"]}}]}}
+
         response = self.api_client.post(
             "/api/collections/",
             {"collection_payload": collection_payload},
@@ -173,9 +203,7 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
 
         # login existing user
         self.api_client.login(username='new_user', password='Pass12345#')
-        collection_payload = {}
-        collection_payload["hits"] = {"hits": []}
-        collection_payload["hits"]["hits"].append({"_id": "1234567", "_source": {"data": [3, 2, 1]}})
+        collection_payload = {"hits": {"hits": [{"_id": "1234567", "_source": {"parameter": ["Time", "Location"]}}]}}
         response = self.api_client.post(
             "/api/collections/",
             {"collection_payload": collection_payload},
