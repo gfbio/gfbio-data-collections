@@ -9,8 +9,8 @@ from django.test import TestCase
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIRequestFactory, APIClient
 
-from gfbio_collectionss.users.models import User
-from gfbio_collectionss.collection.models import Collection
+from gfbio_collections.users.models import User
+from gfbio_collections.collection.models import Collection
 
 from django.core.management.commands.test import Command as BaseCommand
 

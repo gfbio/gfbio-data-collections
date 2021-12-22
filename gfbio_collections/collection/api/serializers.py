@@ -1,6 +1,6 @@
-from gfbio_collectionss.collection.models import Collection
+from gfbio_collections.collection.models import Collection
 from rest_framework import serializers
-from gfbio_collectionss.utils.schema_validator import CollectionValidator
+from gfbio_collections.utils.schema_validator import CollectionValidator
 
 class CollectionSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='collection:collection-detail')

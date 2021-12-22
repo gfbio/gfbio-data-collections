@@ -6,7 +6,7 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from gfbio_collectionss.users.api.serializers import UserSerializer
+from gfbio_collections.users.api.serializers import UserSerializer
 
 User = get_user_model()
 

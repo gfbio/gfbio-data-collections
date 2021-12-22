@@ -16,10 +16,10 @@ urlpatterns = [
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
     # User management
-    path("users/", include("gfbio_collectionss.users.urls", namespace="users")),
+    path("users/", include("gfbio_collections.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
-    path("api/", include("gfbio_collectionss.collection.urls")),
+    path("api/", include("gfbio_collections.collection.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # API URLS
@@ -33,7 +33,7 @@ urlpatterns += [
 # for HTML documentation (swagger)
 
 schema_url_patterns = [
-    path('api/', include('gfbio_collectionss.collection.urls')),
+    path('api/', include('gfbio_collections.collection.urls')),
 ]
 
 from rest_framework import permissions
