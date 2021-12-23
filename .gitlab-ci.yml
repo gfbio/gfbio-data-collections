@@ -12,17 +12,17 @@ variables:
   POSTGRES_HOST_AUTH_METHOD: trust
   CELERY_BROKER_URL: 'redis://redis:6379/0'
 
-flake8:
-  stage: lint
-  image: python:3.9-alpine
-  before_script:
-    - whoami
-    - pip install flake8
-    - PATH=$PATH:/home/gitlab-runner/.local/bin
-  script:
-    - flake8
-  tags:
-    - collections
+#flake8:
+#  stage: lint
+#  image: python:3.9-alpine
+#  before_script:
+#    - whoami
+#    - pip install flake8
+#    - PATH=$PATH:/home/gitlab-runner/.local/bin
+#  script:
+#    - flake8
+#  tags:
+#    - collections
 
 pytest:
   stage: unit_tests
