@@ -24,12 +24,6 @@ variables:
 #  tags:
 #    - collections
 
-rules:
-  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    when: always
-  - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
-    when: manual
-
 pytest:
   stage: unit_tests
   image: docker/compose:latest # :1.29.2
@@ -47,6 +41,11 @@ pytest:
     - docker-compose -f local.yml run django pytest
   tags:
     - collections
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: always
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+      when: manual
 
 #before_script:
 #  - PATH=$PATH:/home/gitlab-runner/.local/bin
