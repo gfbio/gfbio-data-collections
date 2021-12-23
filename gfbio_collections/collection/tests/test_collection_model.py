@@ -189,11 +189,11 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
         response = requests.get(url, headers=headers)
         json_data = response.json()
 
-        # get data locally
-        with open(os.path.join(
-            "./test_data",
-            "_search.json"), "r") as data_file:
-            json_data = json.load(data_file)
+        # # get data locally
+        # with open(os.path.join(
+        #     "./test_data",
+        #     "_search.json"), "r") as data_file:
+        #     json_data = json.load(data_file)
 
         # post to collections
         response = self.api_client.post(
