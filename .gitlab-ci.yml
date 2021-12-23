@@ -31,7 +31,6 @@ pytest:
 #    - docker:dind
   before_script:
     - PATH=$PATH:/home/gitlab-runner/.local/bin
-    - rm -rf /home/gitlab-runner/builds/*
     - docker info
     #- rsync -a /home/gitlab-runner/.envs .
     - docker-compose -f local.yml build
