@@ -1,7 +1,3 @@
-stages:
-  - lint
-  - test
-
 variables:
   POSTGRES_USER: 'gfbio_collections'
   POSTGRES_PASSWORD: ''
@@ -9,26 +5,40 @@ variables:
   POSTGRES_HOST_AUTH_METHOD: trust
   CELERY_BROKER_URL: 'redis://redis:6379/0'
 
-flake8:
-  stage: lint
-  image: python:3.9-alpine
-  before_script:
-    - pip install -q flake8
+include:
+  - project: gfbio/cicd
+    file:
+      - '.create_merge_request.yml'
+      - '.web-test.yml'
+      - '.tag_release.yml'
+
+stages:
+  - unit_tests
+  - create_merge_request
+  - web_test_check # there is not need to overwrite anything in this stage
+  - tag_release_check
+
+create_merge_request:
+  tags:
+    - collections-dev
+
+tag_release_check:
+  tags:
+    - collections-dev
+
+tag_release:
   script:
-    - flake8
-
-#pytest:
-#  stage: test
-#  image: docker/compose:latest
-#  tags:
-#    - docker
-#  services:
-#    - docker:dind
-#  before_script:
-#    - docker-compose -f local.yml build
-#    # Ensure celerybeat does not crash due to non-existent tables
-#    - docker-compose -f local.yml run --rm django python manage.py migrate
-#    - docker-compose -f local.yml up -d
-#  script:
-#    - docker-compose -f local.yml run django pytest
-
+    - rsync -a /home/gitlab-runner/.envs .
+    - docker-compose -f production.yml down
+    - docker-compose -f production.yml build
+    - docker-compose -f production.yml up -d postgres
+    - docker-compose -f production.yml run --rm postgres backup
+    - docker-compose -f production.yml run --rm django python manage.py migrate
+    - docker-compose -f production.yml run --rm django python manage.py collectstatic
+    - docker-compose -f production.yml down
+    - docker-compose -f production.yml up -d
+  environment:
+    name: production
+    url: https://collections.rdc.gfbio.dev
+  tags:
+    - collections-dev
