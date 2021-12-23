@@ -24,6 +24,12 @@ variables:
 #  tags:
 #    - collections
 
+rules:
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    when: always
+  - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+    when: manual
+
 pytest:
   stage: unit_tests
   image: docker/compose:latest # :1.29.2
