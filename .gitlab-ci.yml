@@ -5,6 +5,9 @@ variables:
   POSTGRES_HOST_AUTH_METHOD: trust
   CELERY_BROKER_URL: 'redis://redis:6379/0'
 
+before_script:
+  - PATH=$PATH:/home/gitlab-runner/.local/bin
+
 include:
   - project: gfbio/cicd
     file:
@@ -13,10 +16,19 @@ include:
       - '.tag_release.yml'
 
 stages:
+  - lint
   - unit_tests
   - create_merge_request
   - web_test_check # there is not need to overwrite anything in this stage
   - tag_release_check
+
+flake8:
+  stage: lint
+  image: python:3.9-alpine
+  before_script:
+    - pip install -q flake8
+  script:
+    - flake8
 
 create_merge_request:
   tags:
