@@ -1,20 +1,3 @@
-variables:
-  POSTGRES_USER: 'gfbio_collections'
-  POSTGRES_PASSWORD: ''
-  POSTGRES_DB: 'test_gfbio_collections'
-  POSTGRES_HOST_AUTH_METHOD: trust
-  CELERY_BROKER_URL: 'redis://redis:6379/0'
-
-before_script:
-  - PATH=$PATH:/home/gitlab-runner/.local/bin
-
-include:
-  - project: gfbio/cicd
-    file:
-      - '.create_merge_request.yml'
-      - '.web-test.yml'
-      - '.tag_release.yml'
-
 stages:
   - lint
   - unit_tests
@@ -22,35 +5,75 @@ stages:
   - web_test_check # there is not need to overwrite anything in this stage
   - tag_release_check
 
+variables:
+  POSTGRES_USER: 'gfbio_collections'
+  POSTGRES_PASSWORD: ''
+  POSTGRES_DB: 'test_gfbio_collections'
+  POSTGRES_HOST_AUTH_METHOD: trust
+  CELERY_BROKER_URL: 'redis://redis:6379/0'
+
 flake8:
   stage: lint
   image: python:3.9-alpine
   before_script:
-    - pip install -q flake8
+    - whoami
+    - pip install flake8
+    - PATH=$PATH:/home/gitlab-runner/.local/bin
   script:
     - flake8
-
-create_merge_request:
   tags:
-    - collections-dev
+    - collections
 
-tag_release_check:
-  tags:
-    - collections-dev
-
-tag_release:
+pytest:
+  stage: unit_tests
+  image: docker/compose:latest # :1.29.2
+#  services:
+#    - docker:dind
+  before_script:
+    - PATH=$PATH:/home/gitlab-runner/.local/bin
+    - docker info
+    #- rsync -a /home/gitlab-runner/.envs .
+    - docker-compose -f local.yml build
+    # Ensure celerybeat does not crash due to non-existent tables
+    - docker-compose -f local.yml run --rm django python manage.py migrate
+    - docker-compose -f local.yml up -d
   script:
-    - rsync -a /home/gitlab-runner/.envs .
-    - docker-compose -f production.yml down
-    - docker-compose -f production.yml build
-    - docker-compose -f production.yml up -d postgres
-    - docker-compose -f production.yml run --rm postgres backup
-    - docker-compose -f production.yml run --rm django python manage.py migrate
-    - docker-compose -f production.yml run --rm django python manage.py collectstatic
-    - docker-compose -f production.yml down
-    - docker-compose -f production.yml up -d
-  environment:
-    name: production
-    url: https://collections.rdc.gfbio.dev
+    - docker-compose -f local.yml run django pytest
   tags:
-    - collections-dev
+    - collections
+
+#before_script:
+#  - PATH=$PATH:/home/gitlab-runner/.local/bin
+#
+#include:
+#  - project: gfbio/cicd
+#    file:
+#      - '.create_merge_request.yml'
+#      - '.web-test.yml'
+#      - '.tag_release.yml'
+#
+#
+#create_merge_request:
+#  tags:
+#    - collections-dev
+#
+#tag_release_check:
+#  tags:
+#    - collections-dev
+#
+#tag_release:
+#  script:
+#    - rsync -a /home/gitlab-runner/.envs .
+#    - docker-compose -f production.yml down
+#    - docker-compose -f production.yml build
+#    - docker-compose -f production.yml up -d postgres
+#    - docker-compose -f production.yml run --rm postgres backup
+#    - docker-compose -f production.yml run --rm django python manage.py migrate
+#    - docker-compose -f production.yml run --rm django python manage.py collectstatic
+#    - docker-compose -f production.yml down
+#    - docker-compose -f production.yml up -d
+#  environment:
+#    name: production
+#    url: https://collections.rdc.gfbio.dev
+#  tags:
+#    - collections-dev
