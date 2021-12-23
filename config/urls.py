@@ -9,23 +9,23 @@ from rest_framework.documentation import include_docs_urls
 from rest_framework.schemas import get_schema_view
 
 urlpatterns = [
-    path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
-    path(
-        "about/", TemplateView.as_view(template_name="pages/about.html"), name="about"
-    ),
-    # Django Admin, use {% url 'admin:index' %}
-    path(settings.ADMIN_URL, admin.site.urls),
-    # User management
-    path("users/", include("gfbio_collections.users.urls", namespace="users")),
-    path("accounts/", include("allauth.urls")),
-    # Your stuff: custom urls includes go here
-    path("api/", include("gfbio_collections.collection.urls")),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+                  path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
+                  path(
+                      "about/", TemplateView.as_view(template_name="pages/about.html"), name="about"
+                  ),
+                  # Django Admin, use {% url 'admin:index' %}
+                  path(settings.ADMIN_URL, admin.site.urls),
+                  # User management
+                  path("users/", include("gfbio_collections.users.urls", namespace="users")),
+                  path("accounts/", include("allauth.urls")),
+                  # Your stuff: custom urls includes go here
+                  path("api/", include("gfbio_collections.collection.urls")),
+              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # API URLS
 urlpatterns += [
     # API base url
-    #path("api/", include("config.api_router")),
+    # path("api/", include("config.api_router")),
     # DRF auth token
     path("auth-token/", obtain_auth_token),
 ]
@@ -59,7 +59,7 @@ urlpatterns += [
     #   * Provide `extra_context` with view name of `SchemaView`.
     path('swagger/', TemplateView.as_view(
         template_name='swagger-ui.html',
-        extra_context={'schema_url':'openapi-schema'},
+        extra_context={'schema_url': 'openapi-schema'},
     ), name='swagger-ui'),
 ]
 
