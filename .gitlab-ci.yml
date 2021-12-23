@@ -1,5 +1,5 @@
 stages:
-  - lint
+#  - lint
   - unit_tests
   - create_merge_request
   - web_test_check # there is not need to overwrite anything in this stage
