@@ -20,7 +20,7 @@ urlpatterns = [
                   path("users/", include("gfbio_collections.users.urls", namespace="users")),
                   path("accounts/", include("allauth.urls")),
                   # Your stuff: custom urls includes go here
-                  path("api/", include("gfbio_collections.collection.urls")),
+                  path("api/", include("gfbio_collections.collection.urls", namespace="api")),
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # API URLS

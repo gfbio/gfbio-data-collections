@@ -7,8 +7,9 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from gfbio_collections.users.api.serializers import UserSerializer
+from gfbio_collections.users.models import User
 
-User = get_user_model()
+# User = get_user_model()
 
 
 class UserViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericViewSet):
@@ -28,14 +29,28 @@ class UserViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericV
         serializer = UserSerializer(request.user, context={"request": request})
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 
-class UserList(ListAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+# class UserList(ListAPIView):
+#     queryset = User.objects.all()
+#     serializer_class = UserSerializer
+#
+# class UserDetail(RetrieveAPIView):
+#     queryset = User.objects.all()
+#     serializer_class = UserSerializer
+#     lookup_field = "username"
 
-class UserDetail(RetrieveAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    lookup_field = "username"
+# users_list_view = UserList.as_view()
+# users_detail_view = UserDetail.as_view()
 
-users_list_view = UserList.as_view()
-users_detail_view = UserDetail.as_view()
+users_list_view = UserViewSet.as_view({
+    'get': 'list'
+})
+users_detail_view = UserViewSet.as_view({
+    'get': 'retrieve'
+})
+
+#fixme: how to retrieve the current user
+# all views are associated with the app_name =collections in urls.py
+
+users_me_view = UserViewSet.as_view({'get': 'retrieve'}
+                                    # ,**{'name' : 'collection_owner'}
+                                    )
