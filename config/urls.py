@@ -8,7 +8,10 @@ from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework.documentation import include_docs_urls
 from rest_framework.schemas import get_schema_view
 from rest_framework import permissions
-
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 urlpatterns = [
                   path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
                   path(
@@ -31,6 +34,10 @@ urlpatterns += [
     path("auth-token/", obtain_auth_token),
 ]
 
+urlpatterns += [
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+]
 # for HTML documentation (swagger)
 
 schema_url_patterns = [
