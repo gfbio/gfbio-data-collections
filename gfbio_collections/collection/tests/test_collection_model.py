@@ -42,8 +42,10 @@ class TestCollectionViewBase(TestCase):
 
         client = APIClient()
 
-        refresh = RefreshToken.for_user(user)
-        client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
+        # fixme: how to use access and refresh?
+        # def api_client as in [https://newbedev.com/django-rest-framework-jwt-unit-test
+        # refresh = RefreshToken.for_user(user)
+        # client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
 
         cls.api_client = client
 
