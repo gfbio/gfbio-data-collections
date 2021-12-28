@@ -4,7 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin, UpdateModelMixin
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
-from rest_framework.viewsets import GenericViewSet
+from rest_framework.viewsets import GenericViewSet, ViewSet, ModelViewSet
 
 from gfbio_collections.users.api.serializers import UserSerializer
 from gfbio_collections.users.models import User
@@ -48,8 +48,9 @@ users_detail_view = UserViewSet.as_view({
     'get': 'retrieve'
 })
 
-#fixme: how to retrieve the current user
-# all views are associated with the app_name =collections in urls.py
+#fixme: how to retrieve the current user?
+# how to correctly associate views with the app_name? (e.g. collections in urls.py)
+# how are these related to the association in api_router? (e.g. app_name = "api")
 
 users_me_view = UserViewSet.as_view({'get': 'retrieve'}
                                     # ,**{'name' : 'collection_owner'}
