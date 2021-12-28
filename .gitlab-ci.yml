@@ -32,6 +32,7 @@ pytest:
   before_script:
     - PATH=$PATH:/home/gitlab-runner/.local/bin
 #    - sudo rm -rf /home/gitlab-runner/builds/*
+    - whoami
     - docker info
     #- rsync -a /home/gitlab-runner/.envs .
     - docker-compose -f local.yml build
