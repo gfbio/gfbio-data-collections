@@ -3,11 +3,16 @@ import json
 import base64
 import responses
 import requests
+import pytest
 
 from django.test import TestCase
 
 from rest_framework.authtoken.models import Token
+from rest_framework_simplejwt.tokens import RefreshToken
+
 from rest_framework.test import APIRequestFactory, APIClient
+from rest_framework import status
+from django.urls import reverse
 
 from gfbio_collections.users.models import User
 from gfbio_collections.collection.models import Collection
@@ -26,7 +31,7 @@ class TestCollectionViewBase(TestCase):
     TestCollectionViewBase instantiate a user and credentials into api_client
     """
     @classmethod
-    def setUpTestData(cls, username="new_user", email="new@user.de", password="pass123", is_user=True, is_site=False):
+    def setUpTestData(cls, username="new_user", email="new@user.de", password="pass123"):
 
         try:
             user = User.objects.get(username=username)
@@ -36,6 +41,10 @@ class TestCollectionViewBase(TestCase):
         user.save()
 
         client = APIClient()
+
+        refresh = RefreshToken.for_user(user)
+        client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
+
         cls.api_client = client
 
 class TestCollectionViewGetRequests(TestCollectionViewBase):
@@ -261,3 +270,57 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
         # Collection.objects.all().values_list("collection_owner")
         self.assertTrue(Collection.objects.filter(collection_owner="new_user").exists())
         self.assertTrue(Collection.objects.filter(collection_owner="new_user_2").exists())
+
+    # test jwt
+    def test_jwt(self):
+
+        # response = self.api_client.post(
+        #     "/api/token/",
+        #     {"username": "new_user", "password": "pass123"},
+        #     format="json",
+        # )
+        # self.assertIn(b"access", response.content)
+        # self.assertIn(b"refresh", response.content)
+
+        url = reverse('token_obtain_pair')
+        test_user = User.objects.create_user(username='user', email='user@foo.com', password='pass')
+        self.assertEqual(test_user.is_active, 1, 'Active User')
+        test_user.is_active = False
+        test_user.save()
+
+        response = self.client.post(url, {'username': 'user', 'email': 'user@foo.com', 'password': 'pass'}, format='json')
+        self.assertEqual(401, response.status_code)
+
+        test_user.is_active = True
+        test_user.save()
+
+        response = self.client.post(url, {'username': 'user', 'email': 'user@foo.com', 'password': 'pass'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue('access' in response.data)
+        token_access = response.data['access']
+        # print(token_access)
+
+        # fixme: how to use access and refresh?
+        #  what is the verification url?
+        #
+        verification_url = reverse('token_refresh')
+        token_refresh = response.data['refresh']
+        response = self.client.post(verification_url, {'refresh': token_refresh}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        response = self.client.post(verification_url, {'refresh': 'abc'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        # # todo: implement access to current user
+        # self.client.credentials(HTTP_AUTHORIZATION='JWT {0}'.format(token_access))
+        # response = self.client.get(reverse('user-me'), data={'format': 'json'})
+        # self.assertEqual(response.status_code, status.HTTP_200_OK, response.content)
+        #
+        # # todo: implement access to a private view (e.g. list users)
+        # jwt_client= self.api_client
+        # jwt_client.credentials(HTTP_AUTHORIZATION='JWT ' + 'abc')
+        # response = jwt_client.get('/api/users/', data={'format': 'json'})
+        # self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        # jwt_client.credentials(HTTP_AUTHORIZATION='JWT ' + token_access)
+        # response = jwt_client.get('/api/users/', data={'format': 'json'})
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)

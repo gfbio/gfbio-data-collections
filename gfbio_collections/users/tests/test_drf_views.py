@@ -15,7 +15,8 @@ class TestUserViewSet:
 
         view.request = request
 
-        assert user in view.get_queryset()
+        # assert user in view.get_queryset()
+        assert user in view.queryset
 
     def test_me(self, user: User, rf: RequestFactory):
         view = UserViewSet()

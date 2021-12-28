@@ -18,6 +18,6 @@ urlpatterns = [
     path('collections/<int:pk>/', view=collection_detail_view, name='collection-detail'),
     path('users/', view=users_list_view, name="users-list"),
     path('users/<str:username>/', view=users_detail_view, name="user-detail"),
-    # path('users/me/', view=users_me_view, name='user-me')
+    path('users/me/', view=users_me_view, name='user-me')
 ]
 

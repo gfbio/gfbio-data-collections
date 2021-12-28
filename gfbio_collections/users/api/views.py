@@ -51,6 +51,7 @@ users_detail_view = UserViewSet.as_view({
 #fixme: how to retrieve the current user?
 # how to correctly associate views with the app_name? (e.g. collections in urls.py)
 # how are these related to the association in api_router? (e.g. app_name = "api")
+# ref. https://www.django-rest-framework.org/api-guide/viewsets/
 
 users_me_view = UserViewSet.as_view({'get': 'retrieve'}
                                     # ,**{'name' : 'collection_owner'}
