@@ -13,3 +13,4 @@ REDIS_URL=redis://redis:6379/0
 CELERY_FLOWER_USER=GMtEsdghDHsjvEsKUfQMCfbzflIFqaxb
 CELERY_FLOWER_PASSWORD=M05Q4nB10E0bXypY6VtVzKuYL5EXlsKA7C7GhhlfaLjXxHkyh3Voz7fTJMDz95sI
 
+HEALTHCHECK --interval=5m --timeout=3s CMD pg_isready || exit 1
