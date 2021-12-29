@@ -18,8 +18,8 @@ class RootView(APIView):
     def get(self, request, format=None):
         return Response(
             {
-             'users': reverse('collection:users-list', request=request, format=format),
-             'collection': reverse('collection:collections-list', request=request, format=format)
+             'users': reverse('collection:user-list', request=request, format=format),
+             'collection': reverse('collection:collection-list', request=request, format=format)
              }
         )
 

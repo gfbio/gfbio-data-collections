@@ -8,7 +8,7 @@ if settings.DEBUG:
 else:
     router = SimpleRouter()
 
-# router.register(r'users', UserViewSet, basename='api')
-# # #fixme: how to "register the viewset with a router" and get the urlconf automatically?
+# router.register(r'users', UserViewSet, basename='user')
+# # # #fixme: how to "register the viewset with a router" and get the urlconf automatically?
 # app_name = "api"
 # urlpatterns = router.urls
