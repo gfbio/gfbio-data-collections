@@ -12,6 +12,6 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ["username", "name", "url"]
 
         extra_kwargs = {
-            "url": {"view_name": "collection:user-detail", "lookup_field": "username"},
-            # "collection": {"view_name": "collection:collection-detail", "many":True, "read_only":True}
+            "url": {"view_name": "collection:users-detail", "lookup_field": "username"},
+            # "collection": {"view_name": "collection:collections-detail", "many":True, "read_only":True}
         }

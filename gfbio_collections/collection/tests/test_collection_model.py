@@ -19,7 +19,6 @@ from gfbio_collections.collection.models import Collection
 
 from django.core.management.commands.test import Command as BaseCommand
 
-
 # wrap django"s built-in test command to always delete the database if it exists [ref](# https://adamj.eu/tech/2020/01/13/make-django-tests-always-rebuild-db/)
 class Command(BaseCommand):
     def handle(self, *test_labels, **options):
@@ -30,22 +29,24 @@ class TestCollectionViewBase(TestCase):
     """
     TestCollectionViewBase instantiate a user and credentials into api_client
     """
+
     @classmethod
-    def setUpTestData(cls, username="new_user", email="new@user.de", password="pass123"):
+    def setUpTestData(cls, user=None, username="new_user", email="new@user.de", password="pass123"):
+
+        client = APIClient()
 
         try:
             user = User.objects.get(username=username)
         except:
             user = User.objects.create_user(
                 username=username, email=email, password=password)
-        user.save()
 
-        client = APIClient()
-
-        # fixme: how to use access and refresh?
-        # def api_client as in [https://newbedev.com/django-rest-framework-jwt-unit-test
+        # # fixme: how to use token access and refresh?
+        # # def api_client as in [https://newbedev.com/django-rest-framework-jwt-unit-test
         # refresh = RefreshToken.for_user(user)
         # client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
+
+        user.save()
 
         cls.api_client = client
 
@@ -189,8 +190,7 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
     # test data case with local data request
     def test_get_json_and_post(self):
         """
-        Alternatively use setUpTestData for testing with credentials
-        In addition POST, i.e. json validation also requires api_client
+        the method POST, i.e. json validation also requires api_client
         """
         headers = requests.structures.CaseInsensitiveDict()
         headers["Accept"] = "application/json"
@@ -223,7 +223,7 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
 
     # get anonymous user
     def test_collection_owner(self):
-        #self.assertEqual(0, len(Collection.objects.all()))
+        # self.assertEqual(0, len(Collection.objects.all()))
         collection_payload = {"hits": {"hits": [{"_id": "1234567", "_source": {"parameter": ["Time", "Location"]}}]}}
 
         response = self.api_client.post(
@@ -275,7 +275,6 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
 
     # test jwt
     def test_jwt(self):
-
         # response = self.api_client.post(
         #     "/api/token/",
         #     {"username": "new_user", "password": "pass123"},
@@ -290,13 +289,15 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
         test_user.is_active = False
         test_user.save()
 
-        response = self.client.post(url, {'username': 'user', 'email': 'user@foo.com', 'password': 'pass'}, format='json')
+        response = self.client.post(url, {'username': 'user', 'email': 'user@foo.com', 'password': 'pass'},
+                                    format='json')
         self.assertEqual(401, response.status_code)
 
         test_user.is_active = True
         test_user.save()
 
-        response = self.client.post(url, {'username': 'user', 'email': 'user@foo.com', 'password': 'pass'}, format='json')
+        response = self.client.post(url, {'username': 'user', 'email': 'user@foo.com', 'password': 'pass'},
+                                    format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue('access' in response.data)
         token_access = response.data['access']
@@ -319,10 +320,14 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
         # self.assertEqual(response.status_code, status.HTTP_200_OK, response.content)
         #
         # # todo: implement access to a private view (e.g. list users)
-        # jwt_client= self.api_client
-        # jwt_client.credentials(HTTP_AUTHORIZATION='JWT ' + 'abc')
-        # response = jwt_client.get('/api/users/', data={'format': 'json'})
-        # self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        # jwt_client.credentials(HTTP_AUTHORIZATION='JWT ' + token_access)
-        # response = jwt_client.get('/api/users/', data={'format': 'json'})
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        url = reverse('api:users-list')
+        self.api_client.credentials(HTTP_AUTHORIZATION='JWT ' + 'abc')
+        response = self.api_client.get(url, data={'format': 'json'})
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        # fixme: only working after login
+        # self.setUpTestData(user=test_user)
+        # self.api_client.credentials(HTTP_AUTHORIZATION='JWT ' + token_access)
+        self.api_client.force_authenticate(user=test_user)
+        response = self.api_client.get(url, data={'format': 'json'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.api_client.force_authenticate(user=None)
