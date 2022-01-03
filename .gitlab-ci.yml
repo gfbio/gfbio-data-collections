@@ -8,7 +8,7 @@ variables:
 test:
   stage: test
   script:
-    - rm -r .envs && cp -r /home/gitlab-runner/.gfbio_envs/ .envs
+#    - rm -r .envs && cp -r /home/gitlab-runner/.gfbio_envs/ .envs
 #    - docker-compose -f local.yml build
     - echo ${CI_COMMIT_REF_NAME}
 #    - CURRENT_UID=$(id -u):$(id -g) docker stack deploy -c cicd/local.yml ${CI_COMMIT_REF_NAME}-tests
