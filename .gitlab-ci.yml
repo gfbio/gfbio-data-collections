@@ -1,8 +1,8 @@
 
-include:
-  - project: gfbio/cicd
-    file:
-      - '.create_merge_request.yml'
+#include:
+#  - project: gfbio/cicd
+#    file:
+#      - '.create_merge_request.yml'
 
 variables:
   POSTGRES_USER: 'gfbio_collections'
