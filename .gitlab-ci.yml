@@ -12,10 +12,27 @@ variables:
 
 stages:
   - create_merge_request
-#  - unit_tests
+  - unit_tests
 #  - web_test_check # there is not need to overwrite anything in this stage
 #  - tag_release_check
 
 create_merge_request:
   tags:
-    - dev-denbi
+    - collections
+
+run_unit_tests:
+  stage: unit_tests
+  script:
+    - rm -r .envs && cp -r /home/gitlab-runner/.gfbio_envs/ .envs
+    - docker-compose -f local.yml build
+    - CURRENT_UID=$(id -u):$(id -g) docker stack deploy -c cicd/local.yml ${CI_COMMIT_REF_NAME}-tests
+    - while [[ $(docker ps -a | grep ${CI_COMMIT_REF_NAME}-tests_django | grep Exited | wc -l) == 0 ]]; do sleep 1; done
+    - docker logs $(docker ps -a | grep -oP "$CI_COMMIT_REF_NAME"-tests_django.+\s?)
+    - if [[ $(docker logs $(docker ps -a | grep -oP "$CI_COMMIT_REF_NAME"-tests_django.+\s?) --tail 2 2>&1 | grep FAILED | wc -l) == 1 ]]; then docker stack rm ${CI_COMMIT_REF_NAME}-tests && exit 1; fi
+    - docker stack rm ${CI_COMMIT_REF_NAME}-tests
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+  rules:
+    - if: '$CI_COMMIT_BRANCH =~ /^\d+-/'
+  tags:
+    - collections
