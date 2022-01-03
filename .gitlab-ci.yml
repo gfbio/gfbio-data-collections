@@ -11,7 +11,7 @@ variables:
   POSTGRES_HOST_AUTH_METHOD: trust
   CELERY_BROKER_URL: 'redis://redis:6379/0'
 
-stages:
+#stages:
 #  - create_merge_request
 #  - web_test_check # there is not need to overwrite anything in this stage
 #  - tag_release_check
