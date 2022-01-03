@@ -8,6 +8,7 @@ The collection service:
 
 - runs at the GWDG [server](https://c103-114.cloud.gwdg.de/api)
 - does not require administrator approval for posting or signing up. 
+- uses JWT for token authentication
 - receives a POST request and validate a JSON file based on "_pysample.xml"
 - runs a PostgreSQL (v.13.5) to respond with the entry ID at each POST request.
 - includes unit test stage for user and collection models and serializers
