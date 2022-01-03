@@ -8,7 +8,7 @@ variables:
   POSTGRES_DB: 'test_gfbio_collections'
   POSTGRES_HOST_AUTH_METHOD: trust
   CELERY_BROKER_URL: 'redis://redis:6379/0'
-pre_clone_script = "sudo chown -R gitlab-runner:gitlab-runner ."
+
 pytest:
   stage: unit_tests
   before_script:
