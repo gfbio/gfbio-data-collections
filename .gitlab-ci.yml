@@ -1,8 +1,12 @@
 build:
   script: echo
   stage: build
+  tags:
+    - collections
 
 test:
   script: echo
   stage: test
   needs: [build]
+  tags:
+    - collections
