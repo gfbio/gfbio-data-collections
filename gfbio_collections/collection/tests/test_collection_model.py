@@ -19,11 +19,13 @@ from gfbio_collections.collection.models import Collection
 
 from django.core.management.commands.test import Command as BaseCommand
 
+
 # wrap django"s built-in test command to always delete the database if it exists [ref](# https://adamj.eu/tech/2020/01/13/make-django-tests-always-rebuild-db/)
 class Command(BaseCommand):
     def handle(self, *test_labels, **options):
         options["interactive"] = False
         return super().handle(*test_labels, **options)
+
 
 class TestCollectionViewBase(TestCase):
     """
@@ -31,7 +33,7 @@ class TestCollectionViewBase(TestCase):
     """
 
     @classmethod
-    def setUpTestData(cls, user=None, username="new_user", email="new@user.de", password="pass123"):
+    def setUpTestData(cls, username="new_user", email="new@user.de", password="pass123"):
 
         client = APIClient()
 
@@ -41,6 +43,14 @@ class TestCollectionViewBase(TestCase):
             user = User.objects.create_user(
                 username=username, email=email, password=password)
 
+        # fixme: find better way to store test user data
+        #  should user data be within APIClient, cuttenrly automatic passord is generated
+        # cls.data = {
+        #     'username': user.username,
+        #     'email': user.email,
+        #     'password': user.password
+        # }
+
         # # fixme: how to use token access and refresh?
         # # def api_client as in [https://newbedev.com/django-rest-framework-jwt-unit-test
         # refresh = RefreshToken.for_user(user)
@@ -49,6 +59,7 @@ class TestCollectionViewBase(TestCase):
         user.save()
 
         cls.api_client = client
+
 
 class TestCollectionViewGetRequests(TestCollectionViewBase):
     """
@@ -274,60 +285,51 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
         self.assertTrue(Collection.objects.filter(collection_owner="new_user_2").exists())
 
     # test jwt
-    def test_jwt(self):
-        # response = self.api_client.post(
-        #     "/api/token/",
-        #     {"username": "new_user", "password": "pass123"},
-        #     format="json",
-        # )
-        # self.assertIn(b"access", response.content)
-        # self.assertIn(b"refresh", response.content)
+    def test_jwt_token_authentication(self):
+        '''
+        tests token authentication using Simple JWT
+        https://github.com/jazzband/djangorestframework-simplejwt
+        '''
 
-        url = reverse('token_obtain_pair')
-        test_user = User.objects.create_user(username='user', email='user@foo.com', password='pass')
+        # creates user
+        test_user = User.objects.create_user(username='user@foo.com', password='pass')
         self.assertEqual(test_user.is_active, 1, 'Active User')
+
+        # obtain token for active user, needs explicit credentials
+        url = reverse('jwt_obtain_token')
         test_user.is_active = False
         test_user.save()
-
-        response = self.client.post(url, {'username': 'user', 'email': 'user@foo.com', 'password': 'pass'},
+        response = self.client.post(url, {'username': 'user@foo.com', 'password': 'pass'},
                                     format='json')
         self.assertEqual(401, response.status_code)
-
         test_user.is_active = True
         test_user.save()
-
-        response = self.client.post(url, {'username': 'user', 'email': 'user@foo.com', 'password': 'pass'},
+        response = self.client.post(url, {'username': 'user@foo.com', 'password': 'pass'},
                                     format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # get token
         self.assertTrue('access' in response.data)
-        token_access = response.data['access']
-        # print(token_access)
+        jwt_token = response.data['access']
 
-        # fixme: how to use access and refresh?
-        #  what is the verification url?
-        #
-        verification_url = reverse('token_refresh')
-        token_refresh = response.data['refresh']
-        response = self.client.post(verification_url, {'refresh': token_refresh}, format='json')
+        # verify token
+        verification_url = reverse('jwt_token_verify')
+        response = self.api_client.post(verification_url, {'token': jwt_token}, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        response = self.client.post(verification_url, {'refresh': 'abc'}, format='json')
+        response = self.api_client.post(verification_url, {'token': 'abc'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        # access to a private view (e.g. users list)
+        url = reverse('api:users-list')
+        self.api_client.credentials(HTTP_AUTHORIZATION='Bearer ' + 'abc')
+        response = self.api_client.get(url, data={'format': 'json'})
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.api_client.credentials(HTTP_AUTHORIZATION='Bearer ' + jwt_token)
+        response = self.api_client.get(url, data={'format': 'json'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.api_client.force_authenticate(user=None)
 
         # # todo: implement access to current user
         # self.client.credentials(HTTP_AUTHORIZATION='JWT {0}'.format(token_access))
         # response = self.client.get(reverse('user-me'), data={'format': 'json'})
         # self.assertEqual(response.status_code, status.HTTP_200_OK, response.content)
-        #
-        # # todo: implement access to a private view (e.g. list users)
-        url = reverse('api:users-list')
-        self.api_client.credentials(HTTP_AUTHORIZATION='JWT ' + 'abc')
-        response = self.api_client.get(url, data={'format': 'json'})
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        # fixme: only working after login
-        # self.setUpTestData(user=test_user)
-        # self.api_client.credentials(HTTP_AUTHORIZATION='JWT ' + token_access)
-        self.api_client.force_authenticate(user=test_user)
-        response = self.api_client.get(url, data={'format': 'json'})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.api_client.force_authenticate(user=None)
