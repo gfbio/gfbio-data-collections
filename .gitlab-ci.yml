@@ -20,7 +20,7 @@ create_merge_request:
   tags:
     - collections
 
-run_unit_tests:
+unit_tests:
   stage: unit_tests
   script:
     - rm -r .envs && cp -r /home/gitlab-runner/.gfbio_envs/ .envs
