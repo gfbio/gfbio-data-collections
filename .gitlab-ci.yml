@@ -11,14 +11,14 @@ variables:
   CELERY_BROKER_URL: 'redis://redis:6379/0'
 
 stages:
-#  - create_merge_request
+  - create_merge_request
   - unit_tests
 #  - web_test_check # there is not need to overwrite anything in this stage
 #  - tag_release_check
 
-#create_merge_request:
-#  tags:
-#    - collections
+create_merge_request:
+  tags:
+    - collections
 
 before_script:
   - python --version  # For debugging
