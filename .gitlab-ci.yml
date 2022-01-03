@@ -12,15 +12,17 @@ test:
   stage: test
   script:
     - rm -r .envs && cp -r /home/gitlab-runner/.gfbio_envs/ .envs
-    - docker-compose -f local.yml build
-    - CURRENT_UID=$(id -u):$(id -g) docker stack deploy -c cicd/local.yml ${CI_COMMIT_REF_NAME}-tests
-    - while [[ $(docker ps -a | grep ${CI_COMMIT_REF_NAME}-tests_django | grep Exited | wc -l) == 0 ]]; do sleep 1; done
-    - docker logs $(docker ps -a | grep -oP "$CI_COMMIT_REF_NAME"-tests_django.+\s?)
-    - if [[ $(docker logs $(docker ps -a | grep -oP "$CI_COMMIT_REF_NAME"-tests_django.+\s?) --tail 2 2>&1 | grep FAILED | wc -l) == 1 ]]; then docker stack rm ${CI_COMMIT_REF_NAME}-tests && exit 1; fi
-    - docker stack rm ${CI_COMMIT_REF_NAME}-tests
+#    - docker-compose -f local.yml build
+    - echo ${CI_COMMIT_REF_NAME}
+#    - CURRENT_UID=$(id -u):$(id -g) docker stack deploy -c cicd/local.yml ${CI_COMMIT_REF_NAME}-tests
+    - echo $CURRENT_UID
+#    - while [[ $(docker ps -a | grep ${CI_COMMIT_REF_NAME}-tests_django | grep Exited | wc -l) == 0 ]]; do sleep 1; done
+#    - docker logs $(docker ps -a | grep -oP "$CI_COMMIT_REF_NAME"-tests_django.+\s?)
+#    - if [[ $(docker logs $(docker ps -a | grep -oP "$CI_COMMIT_REF_NAME"-tests_django.+\s?) --tail 2 2>&1 | grep FAILED | wc -l) == 1 ]]; then docker stack rm ${CI_COMMIT_REF_NAME}-tests && exit 1; fi
+#    - docker stack rm ${CI_COMMIT_REF_NAME}-tests
   environment:
     name: review/$CI_COMMIT_REF_NAME
-  rules:
-    - if: '$CI_COMMIT_BRANCH =~ /^\d+-/'
+#  rules:
+#    - if: '$CI_COMMIT_BRANCH =~ /^\d+-/'
   tags:
     - collections
