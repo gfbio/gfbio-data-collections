@@ -24,6 +24,7 @@ before_script:
   - python --version  # For debugging
 
 unit_tests:
+  stage: unit_tests
   script:
     - rm -r .envs && cp -r /home/gitlab-runner/.gfbio_envs/ .envs
     - docker-compose -f local.yml build
