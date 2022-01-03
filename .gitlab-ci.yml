@@ -1,3 +1,4 @@
+
 stages:
   - unit_tests
 
@@ -10,10 +11,7 @@ variables:
 
 pytest:
   stage: unit_tests
-#  image: docker/compose:latest # :1.29.2
   before_script:
-    - PATH=$PATH:/home/gitlab-runner/.local/bin
-    - docker info
     - docker-compose -f local.yml build
     - docker-compose -f local.yml run --rm django python manage.py migrate
     - docker-compose -f local.yml up -d
@@ -21,3 +19,8 @@ pytest:
     - docker-compose -f local.yml run django pytest
   tags:
     - collections
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: always
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+      when: manual
