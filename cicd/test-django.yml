@@ -1,0 +1,63 @@
+version: '3.7'
+
+services:
+  django: &django
+    build:
+      context: .
+      dockerfile: ../compose/local/django/Dockerfile
+    image: gfbio_collections_local_django
+    depends_on:
+      - postgres
+    user: ${CURRENT_UID}
+    deploy:
+      restart_policy:
+        condition: none
+        max_attempts: 0
+    volumes:
+      - ..:/app
+    env_file:
+      - ../.envs/.local/.django
+      - ../.envs/.local/.postgres
+# [command or entrypoint](https://stackoverflow.com/questions/33992867/how-do-you-perform-django-database-migrations-when-using-docker-compose)
+    command: >
+      /bin/sh -c "python /app/manage.py collectstatic --noinput
+      && python /app/manage.py migrate
+      && python /app/manage.py test"
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ../compose/production/postgres/Dockerfile
+    image: gfbio_collections_production_postgres
+    env_file:
+      - ../.envs/.local/.postgres
+
+  redis:
+    image: redis:5.0
+
+  celeryworker:
+    <<: *django
+    image: gfbio_collections_local_celeryworker
+    depends_on:
+      - redis
+      - postgres
+
+    ports: []
+    command: /start-celeryworker
+
+  celerybeat:
+    <<: *django
+    image: gfbio_collections_local_celerybeat
+    depends_on:
+      - redis
+      - postgres
+
+    ports: []
+    command: /start-celerybeat
+
+  flower:
+    <<: *django
+    image: gfbio_collections_local_flower
+    ports:
+      - "5555:5555"
+    command: /start-flower
