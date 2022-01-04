@@ -333,4 +333,3 @@ class TestCollectionViewGetRequests(TestCollectionViewBase):
         # self.client.credentials(HTTP_AUTHORIZATION='JWT {0}'.format(token_access))
         # response = self.client.get(reverse('user-me'), data={'format': 'json'})
         # self.assertEqual(response.status_code, status.HTTP_200_OK, response.content)
-        #

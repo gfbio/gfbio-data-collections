@@ -2,6 +2,21 @@
 Collection Service
 ====================
 
+# Current development status
+
+The collection service currently fulfils following requirements:
+
+- runs at the GWDG [server](https://c103-114.cloud.gwdg.de/api)
+- uses JWT for token authentication
+- does not require administrator approval for posting or signing up. 
+- receives a POST request and validate the payload as JSON entry  
+- includes swagger documentation of initial api
+
+
+ 
+- includes unit test stage for user and collection models and serializers
+- runs a PostgreSQL (v.13.5) to respond with the entry ID at each POST request.
+
 # Collection service for Data Identifiers
 
 This project aims to collect Data IDs of different sources and provide the Data IDs for researcher applications and services.
