@@ -43,8 +43,7 @@ class CollectionList(ListModelMixin, CreateModelMixin, GenericAPIView):
         pass
 
     def get_queryset(self, *args, **kwargs):
-        username = self.kwargs['username']
-        username = username if username else self.request.query_params.get('username')
+        username = self.kwargs['username'] if 'username' in self.kwargs else self.request.query_params.get('username')
         queryset = Collection.objects.all().filter(collection_owner__iexact=username)
         if not queryset:
             queryset = Collection.objects.all()
