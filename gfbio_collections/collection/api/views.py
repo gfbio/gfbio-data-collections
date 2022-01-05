@@ -42,23 +42,10 @@ class CollectionList(ListModelMixin, CreateModelMixin, GenericAPIView):
         serializer.save(collection_owner=self.request.user)
         pass
 
-    # def get_queryset(self):
-    #     """
-    #     Return a list of collections for the current authenticated user
-    #     """
-    #     user = self.request.user
-    #     return Collection.objects.filter(collection_owner=user)
-
     def get_queryset(self, *args, **kwargs):
-        # # username = self.kwargs['username']
-        # if isinstance(self.request.user.username, str):
-        #     return self.queryset.filter(collection_owner=self.request.user)
-        # else:
-        #     return Collection.objects.all()
-
-        queryset = Collection.objects.all()
-        username = self.request.query_params.get('username')
-        queryset = queryset.filter(collection_owner__iexact=username)
+        username = self.kwargs['username']
+        username = username if username else self.request.query_params.get('username')
+        queryset = Collection.objects.all().filter(collection_owner__iexact=username)
         if not queryset:
             queryset = Collection.objects.all()
         return queryset
@@ -82,13 +69,3 @@ class CollectionDetail(RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, 
         return self.destroy(request, *args, **kwargs)
 
 collection_detail_view = CollectionDetail.as_view()
-
-#
-# class CollectionsOwnerView(RetrieveModelMixin, GenericAPIView):
-#     serializer_class = CollectionSerializer
-#     permission_classes = [permissions.AllowAny]
-#
-#     def list(self):
-#         user = self.request.user
-#         queryset = Collection.objects.filter(collection_owner=user) # .values('model_fields')
-#         return queryset

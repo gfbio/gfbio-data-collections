@@ -9,12 +9,13 @@ class UserSerializer(serializers.ModelSerializer):
     # collections = serializers.HyperlinkedRelatedField(many=True, view_name='collections-detail', read_only=True)
     #collections = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     # collections = serializers.PrimaryKeyRelatedField(many=True, read_only=True) #todo: queryset=Collection.objects.filter(pk=User.id))
+    # url = serializers.HyperlinkedIdentityField(view_name='collection:collections-list')
 
     class Meta:
         model = User
         fields = ["username", "name", "url"] #, "collections"]
 
         extra_kwargs = {
-            "url": {"view_name": "collection:users-detail", "lookup_field": "username"},
+            "url": {"view_name": "collection:collections-list", "lookup_field": "username"},
             # "collection": {"view_name": "collection:collections-detail", "many":True, "read_only":True}
         }
