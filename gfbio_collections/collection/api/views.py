@@ -11,6 +11,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 class RootView(APIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -37,10 +39,29 @@ class CollectionList(ListModelMixin, CreateModelMixin, GenericAPIView):
         return self.create(request, *args, **kwargs)
 
     def perform_create(self, serializer, **kwargs):
-        kwargs['collection_owner'] = self.request.user
-        collection = serializer.save(**kwargs)
-        # print(repr(serializer))
+        serializer.save(collection_owner=self.request.user)
         pass
+
+    # def get_queryset(self):
+    #     """
+    #     Return a list of collections for the current authenticated user
+    #     """
+    #     user = self.request.user
+    #     return Collection.objects.filter(collection_owner=user)
+
+    def get_queryset(self, *args, **kwargs):
+        # # username = self.kwargs['username']
+        # if isinstance(self.request.user.username, str):
+        #     return self.queryset.filter(collection_owner=self.request.user)
+        # else:
+        #     return Collection.objects.all()
+
+        queryset = Collection.objects.all()
+        username = self.request.query_params.get('username')
+        queryset = queryset.filter(collection_owner__iexact=username)
+        if not queryset:
+            queryset = Collection.objects.all()
+        return queryset
 
 collection_view = CollectionList.as_view()
 
@@ -61,3 +82,13 @@ class CollectionDetail(RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, 
         return self.destroy(request, *args, **kwargs)
 
 collection_detail_view = CollectionDetail.as_view()
+
+#
+# class CollectionsOwnerView(RetrieveModelMixin, GenericAPIView):
+#     serializer_class = CollectionSerializer
+#     permission_classes = [permissions.AllowAny]
+#
+#     def list(self):
+#         user = self.request.user
+#         queryset = Collection.objects.filter(collection_owner=user) # .values('model_fields')
+#         return queryset
