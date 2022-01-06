@@ -14,6 +14,9 @@ from rest_framework.reverse import reverse
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
+from rest_framework import generics
+from rest_framework import filters
+
 class RootView(APIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
@@ -68,3 +71,13 @@ class CollectionDetail(RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, 
         return self.destroy(request, *args, **kwargs)
 
 collection_detail_view = CollectionDetail.as_view()
+
+
+class CollectionSearch(generics.ListAPIView):
+    queryset = Collection.objects.all()
+    serializer_class = CollectionSerializer
+    permission_classes = [permissions.AllowAny]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['^collection_name']
+
+collection_search_view = CollectionSearch.as_view()

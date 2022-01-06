@@ -15,6 +15,7 @@ from rest_framework_simplejwt.views import (
 )
 urlpatterns = [
                   path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
+                  # path("",include("gfbio_collections.frontend.urls", namespace="frontend")),
                   path(
                       "about/", TemplateView.as_view(template_name="pages/about.html"), name="about"
                   ),

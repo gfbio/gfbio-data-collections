@@ -20,16 +20,16 @@ run_unit_tests:
   script:
     - rm -r .envs && cp -r /home/gitlab-runner/.gfbio_envs/ .envs
     - docker-compose -f local.yml build
-    # stacks 'cicd/test-django.yml' docker for unit test, excluding port bindings not needed/ not available for tests (e.g. "7000:7000" and "8025:8025")
-    - CURRENT_UID=$(id -u):$(id -g) docker stack deploy -c cicd/test-django.yml ${CI_COMMIT_REF_NAME}-tests
+    # stacks 'test-service.yml' docker for unit test, excluding port bindings not needed/ not available for tests (e.g. "7000:7000" and "8025:8025")
+    - CURRENT_UID=$(id -u):$(id -g) docker stack deploy -c test-service.yml ${CI_COMMIT_REF_NAME}-tests
 #    # following line should replace the line above (check neeed for CURRENT_ID in local.yml)
-#    - docker-compose -f cicd/test-django.yml --project-name ${CI_COMMIT_REF_NAME} up -d
+#    - docker-compose -f cicd/test-service.yml --project-name ${CI_COMMIT_REF_NAME} up -d
     - while [[ $(docker ps -a | grep ${CI_COMMIT_REF_NAME}-tests_django | grep Exited | wc -l) == 0 ]]; do sleep 1; done
     - docker logs $(docker ps -a | grep -oP "$CI_COMMIT_REF_NAME"-tests_django.+\s?)
     - if [[ $(docker logs $(docker ps -a | grep -oP "$CI_COMMIT_REF_NAME"-tests_django.+\s?) --tail 2 2>&1 | grep FAILED | wc -l) == 1 ]]; then docker stack rm ${CI_COMMIT_REF_NAME}-tests && exit 1; fi
     - docker stack rm ${CI_COMMIT_REF_NAME}-tests
 #    # following line probably same effect as the script above
-#    - docker-compose -f cicd/test-django.yml run --rm django
+#    - docker-compose -f cicd/test-service.yml run --rm django
 
   environment:
     name: review/$CI_COMMIT_REF_NAME

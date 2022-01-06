@@ -1,1 +1,12 @@
 {% extends "base.html" %}
+
+{% block title %}{{ "Collection Service" }}{% endblock %}
+
+{% block content %}
+<h1>Collections</h1>
+<ul>
+    {% for collection in collections %}
+    <li>{{ collection.id }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}
