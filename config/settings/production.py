@@ -120,7 +120,13 @@ EMAIL_SUBJECT_PREFIX = env(
     "DJANGO_EMAIL_SUBJECT_PREFIX",
     default="[Collection Service]",
 )
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'email.gwdg.de'
+EMAIL_HOST_USER = 'bsilva'
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = 587
 
+++$GF8i0$++
 # ADMIN
 # ------------------------------------------------------------------------------
 # Django Admin URL regex.
@@ -144,11 +150,8 @@ ANYMAIL = {
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
 # https://anymail.readthedocs.io/en/stable/installation/#anymail-settings-reference
 # https://anymail.readthedocs.io/en/stable/esps
-# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_BACKEND = env(
-    "DJANGO_EMAIL_BACKEND",
-    default="django.core.mail.backends.smtp.EmailBackend"
-)
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
 
 # LOGGING
 # ------------------------------------------------------------------------------
