@@ -49,12 +49,12 @@
                 <a class="nav-link" href="{% url 'home' %}">Home <span class="visually-hidden">(current)</span></a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'about' %}">About</a>
+                <a class="nav-link" href="{% url 'collection:collections-list' %}">API</a>
               </li>
               {% if request.user.is_authenticated %}
                 <li class="nav-item">
                   {# URL provided by django-allauth/account/urls.py #}
-                  <a class="nav-link" href="{% url 'users:detail' request.user.username  %}">{% translate "My Profile" %}</a>
+                  <a class="nav-link" href="{% url 'users:detail' request.user.username  %}">{% translate user.username %}</a>
                 </li>
                 <li class="nav-item">
                   {# URL provided by django-allauth/account/urls.py #}
