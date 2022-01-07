@@ -7,9 +7,8 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ViewSet, ModelViewSet
 
 from gfbio_collections.users.api.serializers import UserSerializer
-from gfbio_collections.users.models import User
 
-# User = get_user_model()
+User = get_user_model()
 
 
 class UserViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericViewSet):

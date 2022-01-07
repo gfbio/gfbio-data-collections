@@ -3,8 +3,8 @@ version: '3.7'
 services:
   django: &django
     build:
-      context: .
-      dockerfile: ../compose/local/django/Dockerfile
+      context: cicd
+      dockerfile: compose/local/django/Dockerfile
     image: gfbio_collections_local_django
     depends_on:
       - postgres
@@ -16,8 +16,8 @@ services:
     volumes:
       - ..:/app
     env_file:
-      - ../.envs/.local/.django
-      - ../.envs/.local/.postgres
+      - .envs/.local/.django
+      - .envs/.local/.postgres
 # [command or entrypoint](https://stackoverflow.com/questions/33992867/how-do-you-perform-django-database-migrations-when-using-docker-compose)
     command: >
       /bin/sh -c "python /app/manage.py collectstatic --noinput
@@ -26,11 +26,11 @@ services:
 
   postgres:
     build:
-      context: .
-      dockerfile: ../compose/production/postgres/Dockerfile
+      context: cicd
+      dockerfile: compose/production/postgres/Dockerfile
     image: gfbio_collections_production_postgres
     env_file:
-      - ../.envs/.local/.postgres
+      - .envs/.local/.postgres
 
   redis:
     image: redis:5.0

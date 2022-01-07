@@ -11,11 +11,13 @@ The collection service currently fulfils following requirements:
 - does not require administrator approval for posting or signing up. 
 - receives a POST request and validate the payload as JSON entry  
 - includes swagger documentation of initial api
-
-
+- collection owner is identified by username (including write permission)
+- initial API documentation using Swagger UI
+- 
  
 - includes unit test stage for user and collection models and serializers
 - runs a PostgreSQL (v.13.5) to respond with the entry ID at each POST request.
+
 
 # Collection service for Data Identifiers
 
