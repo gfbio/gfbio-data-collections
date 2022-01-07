@@ -7,6 +7,9 @@ from rest_framework import permissions
 from rest_framework.mixins import ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin
 from rest_framework.generics import GenericAPIView
 
+from django.views import generic
+
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
@@ -81,3 +84,10 @@ class CollectionSearch(generics.ListAPIView):
     search_fields = ['^collection_name']
 
 collection_search_view = CollectionSearch.as_view()
+
+class CollectionListView(generic.ListView):
+    """List of collections """
+    model = Collection
+    paginate_by = 10
+    context_object_name = 'collection_list'   # name for the list as a template variable
+    template_name = '../../templates/pages/collection_list.html'

@@ -122,11 +122,10 @@ EMAIL_SUBJECT_PREFIX = env(
 )
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'email.gwdg.de'
-EMAIL_HOST_USER = 'bsilva'
+EMAIL_HOST_USER = r'gwdg\brenner.silva01'
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = 587
 
-++$GF8i0$++
 # ADMIN
 # ------------------------------------------------------------------------------
 # Django Admin URL regex.
