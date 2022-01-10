@@ -55,7 +55,7 @@ class CollectionList(ListModelMixin, CreateModelMixin, GenericAPIView):
             queryset = Collection.objects.all()
         return queryset
 
-collection_view = CollectionList.as_view()
+collection_list_view = CollectionList.as_view()
 
 class CollectionDetail(RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, GenericAPIView):
     queryset = Collection.objects.all()
