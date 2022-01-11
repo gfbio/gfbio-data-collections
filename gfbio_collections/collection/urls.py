@@ -24,7 +24,7 @@ urlpatterns = [
     path('users/', view=users_list_view, name="users-list"),
     path('users/<str:username>/', view=users_detail_view, name="users-detail"),
     path('users/me/', view=users_me_view, name='user-me'),
-    # path('collection_list/', views.CollectionListView.as_view(), name='collection'),
+    path('collection_list/', views.CollectionListView.as_view(), name='collection'),
 
 ]
 

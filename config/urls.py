@@ -25,7 +25,10 @@ urlpatterns = [
                   path("users/", include("gfbio_collections.users.urls", namespace="users")),
                   # API
                   path("collection/", include("gfbio_collections.collection.urls", namespace="collection")),
-              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+              ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 # # API URLS
 # urlpatterns += [
