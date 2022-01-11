@@ -2,6 +2,10 @@
 Collection Service
 ====================
 
+This application aims to collect Data identifiers of different sources and provide the Data IDs for researcher applications and services.
+The Data IDs can be categorized by type, schema, and owner, as depicted by the
+[architecture](https://drive.google.com/file/d/1vhseWbXVzK9OCsqd00fmZaQ2CEmMfCbi/view?usp=sharing). 
+
 # Current development status
 
 The collection service is a web application at initial development 
@@ -16,27 +20,17 @@ and currently fulfils following requirements:
 - validate the payload as JSON that contains the *_id* and *hits* attributes of [pansimple](http://ws.pangaea.de/es/portals/pansimple/_search?pretty)  
 
 ## non-functional
+- uses Django web and REST frameworks.
 - create the merge request and run the test stage using CI/CD pipeline templates
 - run unit tests for user and collection models and serializers
 - build API documentation using Swagger UI
 - runs a PostgreSQL (v.13.5) to respond with the entry ID at each POST request.
 
-
-# Collection service for Data Identifiers
-
-This project aims to collect Data identifiers of different sources and provide the Data IDs for researcher applications and services.
-The Data IDs can be categorized by type, schema, and owner, as depicted by the
-[architecture](https://drive.google.com/file/d/1vhseWbXVzK9OCsqd00fmZaQ2CEmMfCbi/view?usp=sharing). 
-
-Current implementation is a software stack based on Django web and REST frameworks.
-
-## Requirements 
+## Deployment 
 
 Be sure you have following software installed and running:
 * [python 3.8+](https://www.python.org/downloads/)
 * docker and [docker compose](https://docs.docker.com/compose/install/)
-
-## Deployment
 
 Deployment using docker provides easier isolation and transferability.
 After installing the requirements, clone this source, then build and run the stack with docker-compose:
