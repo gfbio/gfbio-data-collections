@@ -2,14 +2,25 @@
 Collection Service
 ====================
 
-This application aims to collect Data identifiers of different sources and provide the Data IDs for researcher applications and services.
-The Data IDs can be categorized by type, schema, and owner, as depicted by the
+This application aims to collect Data identifiers (DataID) of different sources and provide 
+the DataID for researcher applications and services.
+The DataID can be categorized by type, schema, and owner, as depicted by the
 [architecture](https://drive.google.com/file/d/1vhseWbXVzK9OCsqd00fmZaQ2CEmMfCbi/view?usp=sharing). 
+
+# Intended use case
+
+The collection service is intended to serve as a connection between the GFBio Search and GFBio Visualize,
+by storing collection of data identifiers.
+
+# Intended users
+
+Users of data in biodiversity research
+Currently no login authentication is needed, as described in the current status bellow.  
 
 # Current development status
 
-The collection service is a web application at initial development 
-and currently fulfils following requirements:
+The collection service is a web application at initial development stage. 
+A minimal setup based currently fulfils following requirements:
 
 ## functional
 - deploy at the [development server](https://collections.rdc.gfbio.dev)
