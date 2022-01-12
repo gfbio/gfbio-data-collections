@@ -121,12 +121,12 @@ EMAIL_SUBJECT_PREFIX = env(
     default="[Collection Service]",
 )
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'email.gwdg.de'
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = r'gwdg\brenner.silva01'
-EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'email.gwdg.de'
+# EMAIL_USE_TLS = False
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = r'gwdg\brenner.silva01'
+# EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default="********")
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
