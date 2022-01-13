@@ -1,8 +1,0 @@
-# PostgreSQL
-# ------------------------------------------------------------------------------
-POSTGRES_HOST=postgres
-POSTGRES_PORT=5432
-POSTGRES_DB=gfbio_collections
-POSTGRES_USER=DjxWRGKdYHdMpcHpydhXCxuSDjiZisYu
-POSTGRES_PASSWORD=LH1E8ugsHPGZQFAdAexnHHEEvaDVv66fwwySL73Eq5Wdzbvy5XIGWNTNStY38yW6
-EMAIL_HOST_PASSWORD='jhpxfkcqgzslvohj'
