@@ -2,41 +2,41 @@
 Collection Service
 ====================
 
-This application aims to collect Data identifiers (DataID) of different sources and provide 
-the DataID for researcher applications and services.
-The DataID can be categorized by type, schema, and owner, as depicted by the
-[architecture](https://drive.google.com/file/d/1vhseWbXVzK9OCsqd00fmZaQ2CEmMfCbi/view?usp=sharing). 
+The collection service aims to collect Data IDentifiers of different sources and to provide collections of data identifiers for data-driven web  applications and services in the research context. The data identifiers can be categorized by type, schema, and owner, as depicted by the [architecture](https://drive.google.com/file/d/1vhseWbXVzK9OCsqd00fmZaQ2CEmMfCbi/view?usp=sharing).
 
 # Intended use case
 
-The collection service is intended to serve as a connection between the GFBio Search and GFBio Visualize,
-by storing collection of data identifiers.
+The collection service is intended to serve as a connection between two services, starting with the [GFBio Search](https://www.gfbio.org/search) and [GFBio Visualize](https://www.gfbio.org/visualize), where data identifiers are stored by the search user to later visualization at the second web-service. A service of collection of data identifiers that can be easilyextended to other data-driven web applications.
 
-# Intended users
+# Intended users and scope
 
-Users of data in biodiversity research
-Currently no login authentication is needed, as described in the current status bellow.  
-
+The intended users are data scientists and graduate students within the community of biodiversity and environmental research. The GFBio DaSS Team develops the collection service within the scope of the National Research Data Infrastructure (NFDI) - [NFDI4Biodiversity](https://www.nfdi4biodiversity.org).
+ 
 # Current development status
 
-The collection service is a web application at initial development stage. 
-A minimal setup based currently fulfils following requirements:
+The collection service is a web application at initial development stage
+and starts with a minimal set of features:
 
-## functional
+## functional features:
 - deploy at the [development server](https://collections.rdc.gfbio.dev)
+- stores JSON files that contain collections of data identifiers
 - do not require administrator approval for posting or retrieval
 - allow authorized users to edit collections and list all users
-- use JSON Web Token (JWT) for authentication
-- identify the collection owner by username (including write permission)
-- validate the payload as JSON that contains the *_id* and *hits* attributes of [pansimple](http://ws.pangaea.de/es/portals/pansimple/_search?pretty)  
+- use [JSON Web Token](https://jwt.io/) for authentication
+- identify each the collection by the owner's username
+- validate the payload as JSON file
+- currently, the JSON payload must contain the *_id* and *hits* attributes of [pansimple](http://ws.pangaea.de/es/portals/pansimple/_search?pretty)  
 
-## non-functional
-- uses Django web and REST frameworks.
-- create the merge request and run the test stage using CI/CD pipeline templates
-- run unit tests for user and collection models and serializers
+## non-functional features:
+- uses [Django Web](https://github.com/django/django) and [REST](https://github.com/encode/django-rest-framework/tree/master) frameworks.
+- uses docker-compose to run multiple background applications:
+  - traefik with LetsEncrypt for website certification,
+  - redis and celery for handling asynchronous tasks,
+  - PostgreSQL (v.13.5) database for storing user and data identifiers.
+- uses CI/CD for automatic merge and test pipelines
+- include unit tests for CRUD operations
 - build API documentation using Swagger UI
-- runs a PostgreSQL (v.13.5) to respond with the entry ID at each POST request.
-
+- uses bootstrap front-end framework
 ## Deployment 
 
 Be sure you have following software installed and running:
