@@ -111,7 +111,7 @@ TEMPLATES[-1]["OPTIONS"]["loaders"] = [  # type: ignore[index] # noqa F405
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#default-from-email
 DEFAULT_FROM_EMAIL = env(
-    "DJANGO_DEFAULT_FROM_EMAIL", default="Collection Service <noreply@gfbio.org>"
+    "DJANGO_DEFAULT_FROM_EMAIL", default="Collection Service <bsilva@gfbio.org>"
 )
 # https://docs.djangoproject.com/en/dev/ref/settings/#server-email
 SERVER_EMAIL = env("DJANGO_SERVER_EMAIL", default=DEFAULT_FROM_EMAIL)
@@ -121,11 +121,11 @@ EMAIL_SUBJECT_PREFIX = env(
     default="[Collection Service]",
 )
 
-# EMAIL_HOST = 'email.gwdg.de'
-# EMAIL_HOST_USER = r'gwdg\brenner.silva01'
+EMAIL_HOST = 'email.gwdg.de'
+EMAIL_HOST_USER = r'gwdg\brenner.silva01'
 
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'emspektrum@gmail.com'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_HOST_USER = 'emspektrum@gmail.com'
 
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = 587
