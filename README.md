@@ -21,7 +21,7 @@ and starts with a minimal set of features:
 - deploy at the [development server](https://collections.rdc.gfbio.dev)
 - stores JSON files that contain collections of data identifiers
 - do not require administrator approval for posting or retrieval
-- allow authorized users to edit collections and list all users
+- allow authorized users to edit collections and list all users and all API operations
 - use [JSON Web Token](https://jwt.io/) for authentication
 - identify each the collection by the owner's username
 - validate the payload as JSON file
