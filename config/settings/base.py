@@ -27,7 +27,7 @@ TIME_ZONE = "Europe/Berlin"
 # https://docs.djangoproject.com/en/dev/ref/settings/#language-code
 LANGUAGE_CODE = "en-us"
 # https://docs.djangoproject.com/en/dev/ref/settings/#site-id
-SITE_ID = 1
+SITE_ID = env.int("DJANGO_SITE_ID", default=1)
 # https://docs.djangoproject.com/en/dev/ref/settings/#use-i18n
 USE_I18N = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#use-l10n
@@ -295,7 +295,7 @@ ACCOUNT_AUTHENTICATION_METHOD = "username"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_REQUIRED = True
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_EMAIL_VERIFICATION = "optional"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_ADAPTER = "gfbio_collections.users.adapters.AccountAdapter"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html

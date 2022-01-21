@@ -2,36 +2,46 @@
 Collection Service
 ====================
 
+The collection service aims to collect Data IDentifiers of different sources and to provide collections of data identifiers for data-driven web  applications and services in the research context. The data identifiers can be categorized by type, schema, and owner, as depicted by the [architecture](https://drive.google.com/file/d/1vhseWbXVzK9OCsqd00fmZaQ2CEmMfCbi/view?usp=sharing).
+
+# Intended use case
+
+The collection service is intended to serve as a connection between two services, starting with the [GFBio Search](https://www.gfbio.org/search) and [GFBio Visualize](https://www.gfbio.org/visualize), where data identifiers are stored by the search user to later visualization at the second web-service. A service of collection of data identifiers that can be easilyextended to other data-driven web applications.
+
+# Intended users and scope
+
+The intended users are data scientists and graduate students within the community of biodiversity and environmental research. The GFBio DaSS Team develops the collection service within the scope of the National Research Data Infrastructure (NFDI) - [NFDI4Biodiversity](https://www.nfdi4biodiversity.org).
+ 
 # Current development status
 
-The collection service currently fulfils following requirements:
+The collection service is a web application at initial development stage
+and starts with a minimal set of features:
 
-- runs at the GWDG [server](https://c103-114.cloud.gwdg.de/api)
-- uses JWT for token authentication
-- does not require administrator approval for posting or signing up. 
-- receives a POST request and validate the payload as JSON entry  
-- includes swagger documentation of initial api
+## functional features:
+- deploy at the [development server](https://collections.rdc.gfbio.dev)
+- stores JSON files that contain collections of data identifiers
+- do not require administrator approval for posting or retrieval
+- allow authorized users to edit collections and list all users and all API operations
+- use [JSON Web Token](https://jwt.io/) for authentication
+- identify each the collection by the owner's username
+- validate the payload as JSON file
+- currently, the JSON payload must contain the *_id* and *hits* attributes of [pansimple](http://ws.pangaea.de/es/portals/pansimple/_search?pretty)  
 
-
- 
-- includes unit test stage for user and collection models and serializers
-- runs a PostgreSQL (v.13.5) to respond with the entry ID at each POST request.
-
-# Collection service for Data Identifiers
-
-This project aims to collect Data IDs of different sources and provide the Data IDs for researcher applications and services.
-The Data IDs can be categorized by type, schema, and owner, as depicted by the
-[architecture](https://drive.google.com/file/d/1vhseWbXVzK9OCsqd00fmZaQ2CEmMfCbi/view?usp=sharing). 
-
-Current implementation is a software stack based on Django web and REST frameworks.
-
-## Requirements 
+## non-functional features:
+- uses [Django Web](https://github.com/django/django) and [REST](https://github.com/encode/django-rest-framework/tree/master) frameworks.
+- uses docker-compose to run multiple background applications:
+  - traefik with LetsEncrypt for website certification,
+  - redis and celery for handling asynchronous tasks,
+  - PostgreSQL (v.13.5) database for storing user and data identifiers.
+- uses CI/CD for automatic merge and test pipelines
+- include unit tests for CRUD operations
+- build API documentation using Swagger UI
+- uses bootstrap front-end framework
+## Deployment 
 
 Be sure you have following software installed and running:
 * [python 3.8+](https://www.python.org/downloads/)
 * docker and [docker compose](https://docs.docker.com/compose/install/)
-
-## Deployment
 
 Deployment using docker provides easier isolation and transferability.
 After installing the requirements, clone this source, then build and run the stack with docker-compose:
@@ -53,12 +63,14 @@ Test the service by sending a JSON payload to the database, as follows:
 curl --header "Content-Type: application/json" --request GET https://c103-139.cloud.gwdg.de/api/collections/
 
 # POST collection
-curl --header "Content-Type: application/json" --request POST --data '{"collection_owner": "00N", "collection_payload": { "anykey": "anyvalue","anykey2": {"anyvalue": "orsubdict"}}}' https://c103-139.cloud.gwdg.de/api/collections/ 
+curl --header "Content-Type: application/json" --request POST --data 
+'{"hits": {"hits": [{"_id": "1234567", "_source": {"data": [3, 2, 1]}}]}}' 
+https://collections.rdc.gfbio.dev/collection/collections/
 ````
 - Use the 
-[browsable API](https://c103-114.cloud.gwdg.de/api)
+[browsable API](https://collections.rdc.gfbio.dev/collection/)
 
-- Use the [API documentation](https://c103-114.cloud.gwdg.de/swagger)
+- Use the [API documentation](https://collections.rdc.gfbio.dev/collection/api)
 
 ## Access via token
 
@@ -69,14 +81,14 @@ curl  \
   -X POST \
   -H "Content-Type: application/json" \
   -d '{"username": "gfbio", "password": "biodiversity"}' \
-  http://localhost:8000/api/token/ | grep -oP "\"access\":(.*?)\}"
+  https://collections.rdc.gfbio.dev/api/token/ | grep -oP "\"access\":(.*?)\}"
 ````
 Then use the token to access the list of users:
 
 ````
 curl \
   -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjQwNzc5ODM5LCJpYXQiOjE2NDA3Nzk1MzksImp0aSI6IjE0ODkzNzFiN2JjODQzZjg5ZTQ2YjU1YTQyZjk1NTJkIiwidXNlcl9pZCI6Mn0.lTabwrxPvTXvqDkvkI-psM1FsMfPS3jaVWNEk1dppx0" \
-  http://localhost:8000/api/users/
+  https://collections.rdc.gfbio.dev/collection/api/users/
 ````
 
 ## Contribute

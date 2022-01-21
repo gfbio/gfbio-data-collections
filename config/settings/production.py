@@ -111,7 +111,7 @@ TEMPLATES[-1]["OPTIONS"]["loaders"] = [  # type: ignore[index] # noqa F405
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#default-from-email
 DEFAULT_FROM_EMAIL = env(
-    "DJANGO_DEFAULT_FROM_EMAIL", default="Collection Service <noreply@gfbio.org>"
+    "DJANGO_DEFAULT_FROM_EMAIL", default="Collection Service <bsilva@gfbio.org>"
 )
 # https://docs.djangoproject.com/en/dev/ref/settings/#server-email
 SERVER_EMAIL = env("DJANGO_SERVER_EMAIL", default=DEFAULT_FROM_EMAIL)
@@ -121,10 +121,17 @@ EMAIL_SUBJECT_PREFIX = env(
     default="[Collection Service]",
 )
 
-# ADMIN
-# ------------------------------------------------------------------------------
-# Django Admin URL regex.
-ADMIN_URL = env("DJANGO_ADMIN_URL")
+EMAIL_HOST = 'email.gwdg.de'
+EMAIL_HOST_USER = r'gwdg\brenner.silva01'
+
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_HOST_USER = 'emspektrum@gmail.com'
+
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 # Anymail
 # ------------------------------------------------------------------------------
@@ -133,13 +140,22 @@ INSTALLED_APPS += ["anymail"]  # noqa F405
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
 # https://anymail.readthedocs.io/en/stable/installation/#anymail-settings-reference
 # https://anymail.readthedocs.io/en/stable/esps/mailgun/
-EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
-ANYMAIL = {
-    "MAILGUN_API_KEY": env("MAILGUN_API_KEY"),
-    "MAILGUN_SENDER_DOMAIN": env("MAILGUN_DOMAIN"),
-    "MAILGUN_API_URL": env("MAILGUN_API_URL", default="https://api.mailgun.net/v3"),
-}
+# EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
+ANYMAIL = {}
+# ANYMAIL = {
+    # "MAILGUN_API_KEY": env("MAILGUN_API_KEY"),
+    # "MAILGUN_SENDER_DOMAIN": env("MAILGUN_DOMAIN"),
+    # "MAILGUN_API_URL": env("MAILGUN_API_URL", default="https://api.mailgun.net/v3"),
+# }
 
+# https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
+# https://anymail.readthedocs.io/en/stable/installation/#anymail-settings-reference
+# https://anymail.readthedocs.io/en/stable/esps
+
+# ADMIN
+# ------------------------------------------------------------------------------
+# Django Admin URL regex.
+ADMIN_URL = env("DJANGO_ADMIN_URL")
 
 # LOGGING
 # ------------------------------------------------------------------------------
