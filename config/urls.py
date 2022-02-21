@@ -39,15 +39,21 @@ urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 # ]
 
 urlpatterns += [
-    path('api/token/', TokenObtainPairView.as_view(), name='jwt_obtain_token'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='jwt_token_refresh'),
-    path('api/token/verify/', TokenVerifyView.as_view(), name='jwt_token_verify'),
+    path('token/', TokenObtainPairView.as_view(), name='jwt_obtain_token'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='jwt_token_refresh'),
+    path('token/verify/', TokenVerifyView.as_view(), name='jwt_token_verify'),
 ]
 
 # for HTML documentation (swagger)
 schema_url_patterns = [
     path('collection/', include('gfbio_collections.collection.urls')),
 ]
+
+# schema_url_patterns += [
+#     path('token/', TokenObtainPairView.as_view(), name='jwt_obtain_token'),
+#     path('token/refresh/', TokenRefreshView.as_view(), name='jwt_token_refresh'),
+#     path('token/verify/', TokenVerifyView.as_view(), name='jwt_token_verify'),
+# ]
 
 urlpatterns += [
     # ...
