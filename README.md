@@ -67,10 +67,8 @@ curl --header "Content-Type: application/json" --request POST --data
 '{"hits": {"hits": [{"_id": "1234567", "_source": {"data": [3, 2, 1]}}]}}' 
 https://collections.rdc.gfbio.dev/collection/collections/
 ````
-- Use the 
-[browsable API](https://collections.rdc.gfbio.dev/collection/)
 
-- Use the [API documentation](https://collections.rdc.gfbio.dev/collection/api)
+- Use the _Swagger_ [API documentation](https://collections.rdc.gfbio.dev/api)
 
 ## Access via token
 
