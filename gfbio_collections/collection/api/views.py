@@ -27,7 +27,7 @@ class RootView(APIView):
         return Response(
             {
              'users': reverse('collection:users-list', request=request, format=format),
-             'collection': reverse('collection:collections-list', request=request, format=format)
+             'collection': reverse('collection:collection-list', request=request, format=format)
              }
         )
 

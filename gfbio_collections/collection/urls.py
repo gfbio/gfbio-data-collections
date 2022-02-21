@@ -17,10 +17,10 @@ app_name = "collection"
 
 urlpatterns = [
     path('', view=root_view, name='root'),
-    path('search/', view=collection_search_view, name='collections-search'),
-    path('collections/', view=collection_list_view, name='collections-list'),
-    path('collections/<str:username>/', view=collection_list_view, name='collections-list'),
-    path('collections/<int:pk>/', view=collection_detail_view, name='collections-detail'),
+    path('search/', view=collection_search_view, name='collection-search'),
+    path('collection/', view=collection_list_view, name='collection-list'),
+    path('collection/<str:username>/', view=collection_list_view, name='collection-list'),
+    path('collection/<int:pk>/', view=collection_detail_view, name='collection-detail'),
     path('users/', view=users_list_view, name="users-list"),
     path('users/<str:username>/', view=users_detail_view, name="users-detail"),
     path('users/me/', view=users_me_view, name='user-me'),
