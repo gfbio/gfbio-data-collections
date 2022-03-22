@@ -216,6 +216,7 @@ sentry_sdk.init(
     integrations=integrations,
     environment=env("SENTRY_ENVIRONMENT", default="production"),
     traces_sample_rate=env.float("SENTRY_TRACES_SAMPLE_RATE", default=0.0),
+    send_default_pii=env.bool("SEND_DEFAULT_PII", default=True),
 )
 
 # Your stuff...

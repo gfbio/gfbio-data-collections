@@ -47,8 +47,8 @@ Deployment using docker provides easier isolation and transferability.
 After installing the requirements, clone this source, then build and run the stack with docker-compose:
                             
 ```
-git clone https://gitlab.gwdg.de/gfbio/gfbio_collections.git
-cd gfbio_collections
+git clone git@gitlab.gwdg.de:gfbio/collections.gfbio.org.git
+cd collections.gfbio.org
 docker-compose -f production.yml build
 docker-compose -f production.yml up
 ``` 
