@@ -22,6 +22,7 @@ certificatesResolvers:
   letsencrypt:
     # https://docs.traefik.io/master/https/acme/#lets-encrypt
     acme:
+      certificatesDuration: 336 # 4320
       email: "bsilva@gfbio.org"
       storage: /etc/traefik/acme/acme.json
       # https://docs.traefik.io/master/https/acme/#httpchallenge
@@ -69,7 +70,7 @@ http:
       # https://docs.traefik.io/master/middlewares/headers/#hostsproxyheaders
       # https://docs.djangoproject.com/en/dev/ref/csrf/#ajax
       headers:
-        hostsProxyHeaders: [ "X-CSRFToken" ]
+        hostsProxyHeaders: ["X-CSRFToken"]
 
   services:
     django:
