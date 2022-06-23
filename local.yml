@@ -1,0 +1,86 @@
+version: '3'
+
+volumes:
+  collection_service_local_postgres_data: {}
+  collection_service_local_postgres_data_backups: {}
+
+services:
+  django: &django
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    image: collection_service_local_django
+    container_name: collection_service_local_django
+    platform: linux/x86_64
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - .:/app:z
+    env_file:
+      - ./.envs/.local/.django
+      - ./.envs/.local/.postgres
+    ports:
+      - "8000:8000"
+    command: /start
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: collection_service_production_postgres
+    container_name: collection_service_local_postgres
+    volumes:
+      - collection_service_local_postgres_data:/var/lib/postgresql/data:Z
+      - collection_service_local_postgres_data_backups:/backups:z
+    env_file:
+      - ./.envs/.local/.postgres
+
+  docs:
+    image: collection_service_local_docs
+    container_name: collection_service_local_docs
+    platform: linux/x86_64
+    build:
+      context: .
+      dockerfile: ./compose/local/docs/Dockerfile
+    env_file:
+      - ./.envs/.local/.django
+    volumes:
+      - ./docs:/docs:z
+      - ./config:/app/config:z
+      - ./collection_service:/app/collection_service:z
+    ports:
+      - "9000:9000"
+    command: /start-docs
+
+  redis:
+    image: redis:6
+    container_name: collection_service_local_redis
+
+  celeryworker:
+    <<: *django
+    image: collection_service_local_celeryworker
+    container_name: collection_service_local_celeryworker
+    depends_on:
+      - redis
+      - postgres
+    ports: []
+    command: /start-celeryworker
+
+  celerybeat:
+    <<: *django
+    image: collection_service_local_celerybeat
+    container_name: collection_service_local_celerybeat
+    depends_on:
+      - redis
+      - postgres
+    ports: []
+    command: /start-celerybeat
+
+  flower:
+    <<: *django
+    image: collection_service_local_flower
+    container_name: collection_service_local_flower
+    ports:
+      - "5555:5555"
+    command: /start-flower
