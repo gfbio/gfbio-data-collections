@@ -34,6 +34,7 @@ pytest:
   services:
     - docker:dind
   before_script:
+    - ls -la /.envs
     - docker-compose -f local.yml build
     # Ensure celerybeat does not crash due to non-existent tables
     - docker-compose -f local.yml run --rm django python manage.py migrate
