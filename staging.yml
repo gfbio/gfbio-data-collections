@@ -16,9 +16,11 @@ services:
       - postgres
       - redis
     env_file:
-      - /.envs/.production/.django
-      - /.envs/.production/.postgres
+      - ./.envs/.production/.django
+      - ./.envs/.production/.postgres
     command: /start
+    ports:
+      - "80:5000"
 
   postgres:
     build:
@@ -29,36 +31,46 @@ services:
       - production_postgres_data:/var/lib/postgresql/data:Z
       - production_postgres_data_backups:/backups:z
     env_file:
-      - /.envs/.production/.postgres
-
-  traefik:
-    build:
-      context: .
-      dockerfile: ./compose/production/traefik/Dockerfile
-    image: collection_service_production_traefik
-    depends_on:
-      - django
-    volumes:
-      - production_traefik:/etc/traefik/acme:z
-    ports:
-      - "0.0.0.0:80:80"
-      - "0.0.0.0:443:443"
-      - "0.0.0.0:5555:5555"
+      - ./.envs/.production/.postgres
 
   redis:
     image: redis:6
 
   celeryworker:
-    <<: *django
+    build:
+      context: .
+      dockerfile: ./compose/production/django/Dockerfile
     image: collection_service_production_celeryworker
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - ./.envs/.production/.django
+      - ./.envs/.production/.postgres
     command: /start-celeryworker
 
   celerybeat:
-    <<: *django
+    build:
+      context: .
+      dockerfile: ./compose/production/django/Dockerfile
     image: collection_service_production_celerybeat
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - ./.envs/.production/.django
+      - ./.envs/.production/.postgres
     command: /start-celerybeat
 
   flower:
-    <<: *django
+    build:
+      context: .
+      dockerfile: ./compose/production/django/Dockerfile
     image: collection_service_production_flower
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - ./.envs/.production/.django
+      - ./.envs/.production/.postgres
     command: /start-flower
