@@ -10,7 +10,7 @@ from .base import env
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 SECRET_KEY = env(
     "DJANGO_SECRET_KEY",
-    default="xEKvPeunMYBhDruJs8u4aCkwznXO9VMZxfEEp3kpsbeDA230oaxtqKes6N1rsAdg",
+    default="MbTD1fUPncx3ZQZlyvXHulVdTHCfYOY1E5RqVI2rJ9TpwNH94Qdsn4lM2hJ8yWzM",
 )
 # https://docs.djangoproject.com/en/dev/ref/settings/#test-runner
 TEST_RUNNER = "django.test.runner.DiscoverRunner"
@@ -19,18 +19,6 @@ TEST_RUNNER = "django.test.runner.DiscoverRunner"
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#password-hashers
 PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
-
-# TEMPLATES
-# ------------------------------------------------------------------------------
-TEMPLATES[-1]["OPTIONS"]["loaders"] = [  # type: ignore[index] # noqa F405
-    (
-        "django.template.loaders.cached.Loader",
-        [
-            "django.template.loaders.filesystem.Loader",
-            "django.template.loaders.app_directories.Loader",
-        ],
-    )
-]
 
 # EMAIL
 # ------------------------------------------------------------------------------

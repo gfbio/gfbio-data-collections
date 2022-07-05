@@ -2,8 +2,6 @@
 # ------------------------------------------------------------------------------
 POSTGRES_HOST=postgres
 POSTGRES_PORT=5432
-POSTGRES_DB=gfbio_collections
-POSTGRES_USER=DjxWRGKdYHdMpcHpydhXCxuSDjiZisYu
-POSTGRES_PASSWORD=BGeo39knb7h4dthY1m4NlNRE7csKAjFdEOnZblqd8tQ8Q7hrCVOg8ZBHMkjOyLoU
-EMAIL_HOST_PASSWORD='jhpxfkcqgzslvohj'
-EMAIL_HOST_PASSWORD='++$GF8i0$++'
+POSTGRES_DB=collection_service
+POSTGRES_USER=rBTcMJAUphtfPFfgvxNkJkRnjvGfQEJc
+POSTGRES_PASSWORD=7on86nZsdd7psX44WpfqKXuPJ3qVmh5tSCuiXeG8G03pPhv6i0HdJrL826boalJK

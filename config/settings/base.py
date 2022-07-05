@@ -6,8 +6,8 @@ from pathlib import Path
 import environ
 
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
-# gfbio_collections/
-APPS_DIR = ROOT_DIR / "gfbio_collections"
+# collection_service/
+APPS_DIR = ROOT_DIR / "collection_service"
 env = environ.Env()
 
 READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
@@ -23,11 +23,11 @@ DEBUG = env.bool("DJANGO_DEBUG", False)
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # though not all of them may be available with every OS.
 # In Windows, this must be set to your system time zone.
-TIME_ZONE = "Europe/Berlin"
+TIME_ZONE = "UTC"
 # https://docs.djangoproject.com/en/dev/ref/settings/#language-code
 LANGUAGE_CODE = "en-us"
 # https://docs.djangoproject.com/en/dev/ref/settings/#site-id
-SITE_ID = env.int("DJANGO_SITE_ID", default=1)
+SITE_ID = 1
 # https://docs.djangoproject.com/en/dev/ref/settings/#use-i18n
 USE_I18N = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#use-l10n
@@ -75,13 +75,12 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "corsheaders",
-    'rest_framework_simplejwt',
+    "drf_spectacular",
 ]
 
 LOCAL_APPS = [
-    "gfbio_collections.users",
+    "collection_service.users",
     # Your stuff: custom apps go here
-    "gfbio_collections.collection.apps.CollectionConfig",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -89,7 +88,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 # MIGRATIONS
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#migration-modules
-MIGRATION_MODULES = {"sites": "gfbio_collections.contrib.sites.migrations"}
+MIGRATION_MODULES = {"sites": "collection_service.contrib.sites.migrations"}
 
 # AUTHENTICATION
 # ------------------------------------------------------------------------------
@@ -117,7 +116,9 @@ PASSWORD_HASHERS = [
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-password-validators
 AUTH_PASSWORD_VALIDATORS = [
-    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
+    },
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
@@ -168,15 +169,11 @@ TEMPLATES = [
     {
         # https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-TEMPLATES-BACKEND
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        # https://docs.djangoproject.com/en/dev/ref/settings/#template-dirs
+        # https://docs.djangoproject.com/en/dev/ref/settings/#dirs
         "DIRS": [str(APPS_DIR / "templates")],
+        # https://docs.djangoproject.com/en/dev/ref/settings/#app-dirs
+        "APP_DIRS": True,
         "OPTIONS": {
-            # https://docs.djangoproject.com/en/dev/ref/settings/#template-loaders
-            # https://docs.djangoproject.com/en/dev/ref/templates/api/#loader-types
-            "loaders": [
-                "django.template.loaders.filesystem.Loader",
-                "django.template.loaders.app_directories.Loader",
-            ],
             # https://docs.djangoproject.com/en/dev/ref/settings/#template-context-processors
             "context_processors": [
                 "django.template.context_processors.debug",
@@ -187,6 +184,7 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
+                "collection_service.users.context_processors.allauth_settings",
             ],
         },
     }
@@ -225,18 +223,12 @@ EMAIL_BACKEND = env(
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-timeout
 EMAIL_TIMEOUT = 5
 
-
-HOST_URL_ROOT = env(
-    "HOST_URL_ROOT",
-    default="https://collection.rdc.gfbio.dev/"
-)
-
 # ADMIN
 # ------------------------------------------------------------------------------
 # Django Admin URL.
 ADMIN_URL = "admin/"
 # https://docs.djangoproject.com/en/dev/ref/settings/#admins
-ADMINS = [("""Brenner Silva""", "bsilva@gfbio.org")]
+ADMINS = [("""Linus Franz""", "lfranz@gfbio.org")]
 # https://docs.djangoproject.com/en/dev/ref/settings/#managers
 MANAGERS = ADMINS
 
@@ -267,25 +259,25 @@ LOGGING = {
 # Celery
 # ------------------------------------------------------------------------------
 if USE_TZ:
-    # http://docs.celeryproject.org/en/latest/userguide/configuration.html#std:setting-timezone
+    # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-timezone
     CELERY_TIMEZONE = TIME_ZONE
-# http://docs.celeryproject.org/en/latest/userguide/configuration.html#std:setting-broker_url
+# https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-broker_url
 CELERY_BROKER_URL = env("CELERY_BROKER_URL")
-# http://docs.celeryproject.org/en/latest/userguide/configuration.html#std:setting-result_backend
+# https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-result_backend
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL
-# http://docs.celeryproject.org/en/latest/userguide/configuration.html#std:setting-accept_content
+# https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-accept_content
 CELERY_ACCEPT_CONTENT = ["json"]
-# http://docs.celeryproject.org/en/latest/userguide/configuration.html#std:setting-task_serializer
+# https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-task_serializer
 CELERY_TASK_SERIALIZER = "json"
-# http://docs.celeryproject.org/en/latest/userguide/configuration.html#std:setting-result_serializer
+# https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-result_serializer
 CELERY_RESULT_SERIALIZER = "json"
-# http://docs.celeryproject.org/en/latest/userguide/configuration.html#task-time-limit
+# https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-time-limit
 # TODO: set to whatever value is adequate in your circumstances
 CELERY_TASK_TIME_LIMIT = 5 * 60
-# http://docs.celeryproject.org/en/latest/userguide/configuration.html#task-soft-time-limit
+# https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-soft-time-limit
 # TODO: set to whatever value is adequate in your circumstances
 CELERY_TASK_SOFT_TIME_LIMIT = 60
-# http://docs.celeryproject.org/en/latest/userguide/configuration.html#beat-scheduler
+# https://docs.celeryq.dev/en/stable/userguide/configuration.html#beat-scheduler
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 # django-allauth
 # ------------------------------------------------------------------------------
@@ -295,11 +287,15 @@ ACCOUNT_AUTHENTICATION_METHOD = "username"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_REQUIRED = True
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_EMAIL_VERIFICATION = "optional"
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_ADAPTER = "gfbio_collections.users.adapters.AccountAdapter"
+ACCOUNT_ADAPTER = "collection_service.users.adapters.AccountAdapter"
+# https://django-allauth.readthedocs.io/en/latest/forms.html
+ACCOUNT_FORMS = {"signup": "collection_service.users.forms.UserSignupForm"}
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-SOCIALACCOUNT_ADAPTER = "gfbio_collections.users.adapters.SocialAccountAdapter"
+SOCIALACCOUNT_ADAPTER = "collection_service.users.adapters.SocialAccountAdapter"
+# https://django-allauth.readthedocs.io/en/latest/forms.html
+SOCIALACCOUNT_FORMS = {"signup": "collection_service.users.forms.UserSocialSignupForm"}
 
 # django-rest-framework
 # -------------------------------------------------------------------------------
@@ -308,12 +304,25 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.TokenAuthentication",
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
 CORS_URLS_REGEX = r"^/api/.*$"
+
+# By Default swagger ui is available only to admin user(s). You can change permission classes to change that
+# See more configuration options at https://drf-spectacular.readthedocs.io/en/latest/settings.html#settings
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Collection Service API",
+    "DESCRIPTION": "Documentation of API endpoints of Collection Service",
+    "VERSION": "1.0.0",
+    "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
+    "SERVERS": [
+        {"url": "http://127.0.0.1:8000", "description": "Local Development server"},
+        {"url": "https://collections.rdc.gfbio.dev ", "description": "Production server"},
+    ],
+}
 # Your stuff...
 # ------------------------------------------------------------------------------

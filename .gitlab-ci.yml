@@ -1,43 +1,66 @@
-
 include:
   - project: gfbio/cicd
     file:
-      - '.create_merge_request.yml'
-
-variables:
-  POSTGRES_USER: 'gfbio_collections'
-  POSTGRES_PASSWORD: ''
-  POSTGRES_DB: 'test_gfbio_collections'
-  POSTGRES_HOST_AUTH_METHOD: trust
-  CELERY_BROKER_URL: 'redis://redis:6379/0'
+      - '.create_merge_request_v2.yml'
 
 stages:
-  - unit_tests
   - create_merge_request
+  - lint
+  - test
+  - update_stage
 
-run_unit_tests:
-  stage: unit_tests
-  script:
-    - rm -r .envs && cp -r /home/gitlab-runner/.gfbio_envs/ .envs
-    - docker-compose -f local.yml build
-    # stacks 'test-service.yml' docker for unit test, excluding port bindings not needed/ not available for tests (e.g. "7000:7000" and "8025:8025")
-    - CURRENT_UID=$(id -u):$(id -g) docker stack deploy -c test-service.yml ${CI_COMMIT_REF_NAME}-tests
-#    # following line should replace the line above (check neeed for CURRENT_ID in local.yml)
-#    - docker-compose -f cicd/test-service.yml --project-name ${CI_COMMIT_REF_NAME} up -d
-    - while [[ $(docker ps -a | grep ${CI_COMMIT_REF_NAME}-tests_django | grep Exited | wc -l) == 0 ]]; do sleep 1; done
-    - docker logs $(docker ps -a | grep -oP "$CI_COMMIT_REF_NAME"-tests_django.+\s?)
-    - if [[ $(docker logs $(docker ps -a | grep -oP "$CI_COMMIT_REF_NAME"-tests_django.+\s?) --tail 2 2>&1 | grep FAILED | wc -l) == 1 ]]; then docker stack rm ${CI_COMMIT_REF_NAME}-tests && exit 1; fi
-    - docker stack rm ${CI_COMMIT_REF_NAME}-tests
-#    # following line probably same effect as the script above
-#    - docker-compose -f cicd/test-service.yml run --rm django
-
-  environment:
-    name: review/$CI_COMMIT_REF_NAME
-  rules:
-    - if: '$CI_COMMIT_BRANCH =~ /^\d+-/'
-  tags:
-    - dev-denbi
+variables:
+  POSTGRES_USER: 'collection_service'
+  POSTGRES_PASSWORD: ''
+  POSTGRES_DB: 'test_collection_service'
+  POSTGRES_HOST_AUTH_METHOD: trust
+  CELERY_BROKER_URL: 'redis://redis:6379/0'
+  DOCKER_TLS_CERTDIR: ''
 
 create_merge_request:
   tags:
-    - dev-denbi
+    - development-denbi
+
+flake8:
+  stage: lint
+  image: python:3.9-alpine
+  before_script:
+    - pip install -q flake8
+  script:
+    - flake8
+  tags:
+    - col-svc
+
+pytest:
+  stage: test
+  image: docker/compose:1.29.2
+  tags:
+    - col-svc
+  services:
+    - docker:dind
+  before_script:
+    - docker-compose -f local.yml build
+    # Ensure celerybeat does not crash due to non-existent tables
+    - docker-compose -f local.yml run --rm django python manage.py migrate
+    - docker-compose -f local.yml up -d
+  script:
+    - docker-compose -f local.yml run django pytest
+
+update_staging:
+  stage: update_stage
+  tags:
+    - col-svc-shell
+  script:
+    - rm -r .envs && cp -r /home/gitlab-runner/.envs/ .envs
+    - sed -i "s/VERSION =.*/VERSION ='$(git describe --tags | egrep -o '[0-9]+\.[0-9]+\.[0-9]+')'/g" config/settings/base.py
+    - docker-compose -f staging.yml build
+    - docker-compose -f staging.yml up -d postgres
+    - docker-compose -f staging.yml run --rm postgres backup
+    - docker-compose -f staging.yml run --rm django python manage.py migrate
+    - docker-compose -f staging.yml down
+    - docker-compose -f staging.yml up -d
+  environment:
+    name: staging
+    url: https://collections.gfbio.dev/
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'

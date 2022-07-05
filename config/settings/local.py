@@ -8,7 +8,7 @@ DEBUG = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 SECRET_KEY = env(
     "DJANGO_SECRET_KEY",
-    default="YUmFYsbG0TfQyZb5t4Jy6NpkjwRMLF7R50s4DcmPmxGcKD7Rt7HGFUT7Kxlh3c7n",
+    default="qDh6teYNwjVkvg1OgqH8M1rOlgLIPO0K8Wq6TRMuy4jPNFh5ldKt6kJYOn3WdJob",
 )
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1"]
@@ -25,40 +25,10 @@ CACHES = {
 
 # EMAIL
 # ------------------------------------------------------------------------------
-# # https://docs.djangoproject.com/en/dev/ref/settings/#email-host
-# EMAIL_HOST = env("EMAIL_HOST", default="mailhog")
-#
-# # https://docs.djangoproject.com/en/dev/ref/settings/#email-port
-# EMAIL_PORT = 1025
-
-# ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#default-from-email
-DEFAULT_FROM_EMAIL = env(
-    "DJANGO_DEFAULT_FROM_EMAIL", default="Collection Service <bsilva@gfbio.org>"
+# https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
+EMAIL_BACKEND = env(
+    "DJANGO_EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend"
 )
-# https://docs.djangoproject.com/en/dev/ref/settings/#server-email
-SERVER_EMAIL = env("DJANGO_SERVER_EMAIL", default=DEFAULT_FROM_EMAIL)
-# https://docs.djangoproject.com/en/dev/ref/settings/#email-subject-prefix
-EMAIL_SUBJECT_PREFIX = env(
-    "DJANGO_EMAIL_SUBJECT_PREFIX",
-    default="[Collection Service]",
-)
-
-EMAIL_HOST = 'email.gwdg.de'
-EMAIL_HOST_USER = r'gwdg\brenner.silva01'
-
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_HOST_USER = 'emspektrum@gmail.com'
-
-EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-# INSTALLED_APPS += ["anymail"]  # noqa F405
-# ANYMAIL = {}
 
 # WhiteNoise
 # ------------------------------------------------------------------------------
@@ -92,7 +62,7 @@ INSTALLED_APPS += ["django_extensions"]  # noqa F405
 # Celery
 # ------------------------------------------------------------------------------
 
-# http://docs.celeryproject.org/en/latest/userguide/configuration.html#task-eager-propagates
+# https://docs.celeryq.dev/en/stable/userguide/configuration.html#task-eager-propagates
 CELERY_TASK_EAGER_PROPAGATES = True
 # Your stuff...
 # ------------------------------------------------------------------------------

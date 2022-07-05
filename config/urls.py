@@ -4,80 +4,34 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views import defaults as default_views
 from django.views.generic import TemplateView
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
-from rest_framework.documentation import include_docs_urls
-from rest_framework.schemas import get_schema_view
-from rest_framework import permissions
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-    TokenVerifyView
-)
 
 urlpatterns = [
-                  ## Frontend
-                  path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
-                  # path("",include("gfbio_collections.frontend.urls", namespace="frontend")),
-                  path("about/", TemplateView.as_view(template_name="pages/about.html"), name="about"),
-                  ## Django Admin, use {% url 'admin:index' %} and user management
-                  path(settings.ADMIN_URL, admin.site.urls),
-                  path("accounts/", include("allauth.urls")),
-                  path("users/", include("gfbio_collections.users.urls", namespace="users")),
-                  # API
-                  path("collection/", include("gfbio_collections.collection.urls", namespace="collection")),
-              ]
+    path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
+    path(
+        "about/", TemplateView.as_view(template_name="pages/about.html"), name="about"
+    ),
+    # Django Admin, use {% url 'admin:index' %}
+    path(settings.ADMIN_URL, admin.site.urls),
+    # User management
+    path("users/", include("collection_service.users.urls", namespace="users")),
+    path("accounts/", include("allauth.urls")),
+    # Your stuff: custom urls includes go here
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
-# # API URLS
-# urlpatterns += [
-#     # API base url
-#     # path("api/", include("config.api_router")),
-#     # DRF auth token
-#     path("auth-token/", obtain_auth_token),
-# ]
-
+# API URLS
 urlpatterns += [
-    path('token/', TokenObtainPairView.as_view(), name='jwt_obtain_token'),
-    path('token/refresh/', TokenRefreshView.as_view(), name='jwt_token_refresh'),
-    path('token/verify/', TokenVerifyView.as_view(), name='jwt_token_verify'),
-]
-
-# for HTML documentation (swagger)
-schema_url_patterns = [
-    path('collection/', include('gfbio_collections.collection.urls')),
-]
-
-# schema_url_patterns += [
-#     path('token/', TokenObtainPairView.as_view(), name='jwt_obtain_token'),
-#     path('token/refresh/', TokenRefreshView.as_view(), name='jwt_token_refresh'),
-#     path('token/verify/', TokenVerifyView.as_view(), name='jwt_token_verify'),
-# ]
-
-urlpatterns += [
-    # ...
-    # Use the `get_schema_view()` helper to add a `SchemaView` to project URLs.
-    #   * `title` and `description` parameters are passed to `SchemaGenerator`.
-    #   * Provide view name for use with `reverse()`.
-    path('openapi', get_schema_view(
-        title="Collection Service",
-        description="Service for collection of Data Identifiers",
-        version="0.0.1",
-        patterns=schema_url_patterns,
-        permission_classes=[permissions.AllowAny]
-    ), name='openapi-schema'),
-    # ...
-]
-
-urlpatterns += [
-    # ...
-    # Route TemplateView to serve Swagger UI template.
-    #   * Provide `extra_context` with view name of `SchemaView`.
-    path('api/', TemplateView.as_view(
-        template_name='swagger-ui.html',
-        extra_context={'schema_url': 'openapi-schema'},
-    ), name='swagger-ui'),
+    # API base url
+    path("api/", include("config.api_router")),
+    # DRF auth token
+    path("auth-token/", obtain_auth_token),
+    path("api/schema/", SpectacularAPIView.as_view(), name="api-schema"),
+    path(
+        "api/docs/",
+        SpectacularSwaggerView.as_view(url_name="api-schema"),
+        name="api-docs",
+    ),
 ]
 
 if settings.DEBUG:

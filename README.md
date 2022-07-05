@@ -1,95 +1,74 @@
+# Collection Service
 
 Collection Service
-====================
 
-The collection service aims to collect Data IDentifiers of different sources and to provide collections of data identifiers for data-driven web  applications and services in the research context. The data identifiers can be categorized by type, schema, and owner, as depicted by the [architecture](https://drive.google.com/file/d/1vhseWbXVzK9OCsqd00fmZaQ2CEmMfCbi/view?usp=sharing).
+[![Built with Cookiecutter Django](https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg?logo=cookiecutter)](https://github.com/cookiecutter/cookiecutter-django/)
+[![Black code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 
-# Intended use case
+License: MIT
 
-The collection service is intended to serve as a connection between two services, starting with the [GFBio Search](https://www.gfbio.org/search) and [GFBio Visualize](https://www.gfbio.org/visualize), where data identifiers are stored by the search user to later visualization at the second web-service. A service of collection of data identifiers that can be easilyextended to other data-driven web applications.
+## Settings
 
-# Intended users and scope
+Moved to [settings](http://cookiecutter-django.readthedocs.io/en/latest/settings.html).
 
-The intended users are data scientists and graduate students within the community of biodiversity and environmental research. The GFBio DaSS Team develops the collection service within the scope of the National Research Data Infrastructure (NFDI) - [NFDI4Biodiversity](https://www.nfdi4biodiversity.org).
- 
-# Current development status
+## Basic Commands
 
-The collection service is a web application at initial development stage
-and starts with a minimal set of features:
+### Setting Up Your Users
 
-## functional features:
-- deploy at the [development server](https://collections.rdc.gfbio.dev)
-- stores JSON files that contain collections of data identifiers
-- do not require administrator approval for posting or retrieval
-- allow authorized users to edit collections and list all users and all API operations
-- use [JSON Web Token](https://jwt.io/) for authentication
-- identify each the collection by the owner's username
-- validate the payload as JSON file
-- currently, the JSON payload must contain the *_id* and *hits* attributes of [pansimple](http://ws.pangaea.de/es/portals/pansimple/_search?pretty)  
+-   To create a **normal user account**, just go to Sign Up and fill out the form. Once you submit it, you'll see a "Verify Your E-mail Address" page. Go to your console to see a simulated email verification message. Copy the link into your browser. Now the user's email should be verified and ready to go.
 
-## non-functional features:
-- uses [Django Web](https://github.com/django/django) and [REST](https://github.com/encode/django-rest-framework/tree/master) frameworks.
-- uses docker-compose to run multiple background applications:
-  - traefik with LetsEncrypt for website certification,
-  - redis and celery for handling asynchronous tasks,
-  - PostgreSQL (v.13.5) database for storing user and data identifiers.
-- uses CI/CD for automatic merge and test pipelines
-- include unit tests for CRUD operations
-- build API documentation using Swagger UI
-- uses bootstrap front-end framework
-## Deployment 
+-   To create a **superuser account**, use this command:
 
-Be sure you have following software installed and running:
-* [python 3.8+](https://www.python.org/downloads/)
-* docker and [docker compose](https://docs.docker.com/compose/install/)
+        $ python manage.py createsuperuser
 
-Deployment using docker provides easier isolation and transferability.
-After installing the requirements, clone this source, then build and run the stack with docker-compose:
-                            
+For convenience, you can keep your normal user logged in on Chrome and your superuser logged in on Firefox (or similar), so that you can see how the site behaves for both kinds of users.
+
+### Type checks
+
+Running type checks with mypy:
+
+    $ mypy collection_service
+
+### Test coverage
+
+To run the tests, check your test coverage, and generate an HTML coverage report:
+
+    $ coverage run -m pytest
+    $ coverage html
+    $ open htmlcov/index.html
+
+#### Running tests with pytest
+
+    $ pytest
+
+### Live reloading and Sass CSS compilation
+
+Moved to [Live reloading and SASS compilation](https://cookiecutter-django.readthedocs.io/en/latest/developing-locally.html#sass-compilation-live-reloading).
+
+### Celery
+
+This app comes with Celery.
+
+To run a celery worker:
+
+``` bash
+cd collection_service
+celery -A config.celery_app worker -l info
 ```
-git clone git@gitlab.gwdg.de:gfbio/collections.gfbio.org.git
-cd collections.gfbio.org
-docker-compose -f production.yml build
-docker-compose -f production.yml up
-``` 
 
-## Usage
+Please note: For Celery's import magic to work, it is important *where* the celery commands are run. If you are in the same folder with *manage.py*, you should be right.
 
-Test the service by sending a JSON payload to the database, as follows:
+### Sentry
 
-- Use curl:
-````console
-# GET collections
-curl --header "Content-Type: application/json" --request GET https://c103-139.cloud.gwdg.de/api/collections/
+Sentry is an error logging aggregator service. You can sign up for a free account at <https://sentry.io/signup/?code=cookiecutter> or download and host it yourself.
+The system is set up with reasonable defaults, including 404 logging and integration with the WSGI application.
 
-# POST collection
-curl --header "Content-Type: application/json" --request POST --data 
-'{"hits": {"hits": [{"_id": "1234567", "_source": {"data": [3, 2, 1]}}]}}' 
-https://collections.rdc.gfbio.dev/collection/collections/
-````
+You must set the DSN url in production.
 
-- Use the _Swagger_ [API documentation](https://collections.rdc.gfbio.dev/api)
+## Deployment
 
-## Access via token
+The following details how to deploy this application.
 
-Get the token of an existing user with:
+### Docker
 
-````
-curl  \
-  -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"username": "gfbio", "password": "biodiversity"}' \
-  https://collections.rdc.gfbio.dev/api/token/ | grep -oP "\"access\":(.*?)\}"
-````
-Then use the token to access the list of users:
-
-````
-curl \
-  -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjQwNzc5ODM5LCJpYXQiOjE2NDA3Nzk1MzksImp0aSI6IjE0ODkzNzFiN2JjODQzZjg5ZTQ2YjU1YTQyZjk1NTJkIiwidXNlcl9pZCI6Mn0.lTabwrxPvTXvqDkvkI-psM1FsMfPS3jaVWNEk1dppx0" \
-  https://collections.rdc.gfbio.dev/collection/api/users/
-````
-
-## Contribute
-
-Create a [new issue](https://gitlab.gwdg.de/gfbio_collections/-/issues/new?issue%5Bassignee_id%5D=&issue%5Bmilestone_id%5D=)
-
+See detailed [cookiecutter-django Docker documentation](http://cookiecutter-django.readthedocs.io/en/latest/deployment-with-docker.html).

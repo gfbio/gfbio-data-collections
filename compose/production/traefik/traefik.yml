@@ -1,5 +1,5 @@
 log:
-  level: DEBUG
+  level: INFO
 
 entryPoints:
   web:
@@ -22,8 +22,7 @@ certificatesResolvers:
   letsencrypt:
     # https://docs.traefik.io/master/https/acme/#lets-encrypt
     acme:
-      certificatesDuration: 336 # 4320
-      email: "bsilva@gfbio.org"
+      email: "lfranz@gfbio.org"
       storage: /etc/traefik/acme/acme.json
       # https://docs.traefik.io/master/https/acme/#httpchallenge
       httpChallenge:
@@ -31,17 +30,8 @@ certificatesResolvers:
 
 http:
   routers:
-    web-router:
-      rule: "Host(`c103-114.cloud.gwdg.de`) || Host(`collections.rdc.gfbio.dev`)"
-      entryPoints:
-        - web
-      middlewares:
-        - redirect
-        - csrf
-      service: django
-
     web-secure-router:
-      rule: "Host(`c103-114.cloud.gwdg.de`)  || Host(`collections.rdc.gfbio.dev`)"
+      rule: "Host(`collections.rdc.gfbio.dev `)"
       entryPoints:
         - web-secure
       middlewares:
@@ -52,7 +42,7 @@ http:
         certResolver: letsencrypt
 
     flower-secure-router:
-      rule: "Host(`c103-114.cloud.gwdg.de`)  || Host(`collections.rdc.gfbio.dev`)"
+      rule: "Host(`collections.rdc.gfbio.dev `)"
       entryPoints:
         - flower
       service: flower
@@ -61,11 +51,6 @@ http:
         certResolver: letsencrypt
 
   middlewares:
-    redirect:
-      # https://docs.traefik.io/master/middlewares/redirectscheme/
-      redirectScheme:
-        scheme: https
-        permanent: true
     csrf:
       # https://docs.traefik.io/master/middlewares/headers/#hostsproxyheaders
       # https://docs.djangoproject.com/en/dev/ref/csrf/#ajax

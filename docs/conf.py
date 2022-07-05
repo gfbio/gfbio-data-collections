@@ -28,8 +28,8 @@ django.setup()
 # -- Project information -----------------------------------------------------
 
 project = "Collection Service"
-copyright = """2021, Brenner Silva"""
-author = "Brenner Silva"
+copyright = """2022, Linus Franz"""
+author = "Linus Franz"
 
 
 # -- General configuration ---------------------------------------------------

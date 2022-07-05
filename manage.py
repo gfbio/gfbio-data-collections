@@ -24,8 +24,8 @@ if __name__ == "__main__":
         raise
 
     # This allows easy placement of apps within the interior
-    # gfbio_collections directory.
+    # collection_service directory.
     current_path = Path(__file__).parent.resolve()
-    sys.path.append(str(current_path / "gfbio_collections"))
+    sys.path.append(str(current_path / "collection_service"))
 
     execute_from_command_line(sys.argv)
