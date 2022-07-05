@@ -1,7 +1,7 @@
 include:
   - project: gfbio/cicd
     file:
-      - '.create_merge_request.yml'
+      - '.create_merge_request_v2.yml'
 
 stages:
   - create_merge_request
@@ -59,3 +59,8 @@ update_staging:
     - docker-compose -f staging.yml run --rm django python manage.py migrate
     - docker-compose -f staging.yml down
     - docker-compose -f staging.yml up -d
+  environment:
+    name: staging
+    url: https://collections.gfbio.dev/
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
