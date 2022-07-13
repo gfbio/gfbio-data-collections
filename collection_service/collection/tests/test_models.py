@@ -7,8 +7,8 @@ class TestCollectionModel(TestCase):
 
     def test_valid(self):
         test_collection = Collection(
-            external_user_id=17, 
-            set=["abc", "def", "ghi"], 
+            external_user_id=17,
+            set=["abc", "def", "ghi"],
             origin="gfbio.collections.testData")
         self.assertEqual(17, test_collection.external_user_id)
         self.assertEqual("abc", test_collection.set[0])
