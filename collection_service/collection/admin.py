@@ -3,11 +3,11 @@ from collection_service.collection import models
 
 
 class CollectionAdmin(admin.ModelAdmin):
-    list_filter = ('user_id',)
-    search_fields = ['id', 'user_id']
+    list_filter = ('origin',)
+    search_fields = ['id', 'external_user_id']
     date_hierarchy = 'created'
 
-    list_display = ('id', 'user_id', 'created')
+    list_display = ('id', 'external_user_id', 'origin', 'created')
 
 
 admin.site.register(models.Collection, CollectionAdmin)
