@@ -1,6 +1,5 @@
 from django.urls import path
 from .api.views import CollectionAPIView
-from rest_framework import permissions
 
 
 app_name = "collection"

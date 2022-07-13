@@ -50,9 +50,9 @@ class TestCollectionView(TestCase):
                 "origin": "gfbio.collectionService.testData.4",
             }
         ]
-        
+
         for entry in test_data:
-            serializer = CollectionSerializer(data = entry)
+            serializer = CollectionSerializer(data=entry)
             if (serializer.is_valid()):
                 cls.generated_test_data.append(serializer.save())
 
@@ -84,5 +84,5 @@ class TestCollectionView(TestCase):
         self.assertEqual("gfbio.collectionService.testData.1", content["origin"])
 
     def test_get_invalid_collection(self):
-        response = self.api_client.get(f'/api/collections/654321-4321-4321-4321-cba987654321/')
+        response = self.api_client.get('/api/collections/654321-4321-4321-4321-cba987654321/')
         self.assertEqual(404, response.status_code)

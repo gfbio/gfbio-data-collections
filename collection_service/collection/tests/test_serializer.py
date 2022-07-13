@@ -1,6 +1,5 @@
 import pytest
 from collection_service.collection.api.serializers import CollectionSerializer
-from collection_service.collection.models import Collection
 from django.test import TestCase
 from django.utils import timezone
 
@@ -21,7 +20,7 @@ class TestCollectionSerializer(TestCase):
         self.assertEqual("17", saved.external_user_id)
         self.assertEqual("abc", saved.set[0])
         self.assertEqual("gfbio.collections.testData", saved.origin)
-        self.assertTrue((timezone.now() - saved.created).total_seconds() < 4 )
+        self.assertTrue((timezone.now() - saved.created).total_seconds() < 4)
 
     def test_serializer_works_with_anonymous_user(self):
         test_collection = {
