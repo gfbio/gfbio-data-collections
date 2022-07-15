@@ -23,7 +23,7 @@ class UserCollectionListView(mixins.ListModelMixin, GenericCollectionView):
         return self.list(request, *args, **kwargs)
 
     def get_queryset(self):
-        external_user_id_from_path=self.kwargs.get('external_user_id')
+        external_user_id_from_path = self.kwargs.get('external_user_id')
         return super().get_queryset().filter(
             external_user_id=external_user_id_from_path
         )
