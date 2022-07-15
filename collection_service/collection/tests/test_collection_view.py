@@ -53,12 +53,12 @@ class TestCollectionView(TestCase):
 
         for entry in test_data:
             serializer = CollectionSerializer(data=entry)
-            if (serializer.is_valid()):
+            if (serializer.is_valid(True)):
                 cls.generated_test_data.append(serializer.save())
 
     def test_get_collections_list_for_known_external_user_id(self):
         response = self.api_client.get('/api/collections/users/17/')
-        content = json.loads(response.content.decode('utf-8'))
+        content = json.loads(response.content)
 
         self.assertEqual(200, response.status_code)
         self.assertEqual(2, len(content))
@@ -67,7 +67,7 @@ class TestCollectionView(TestCase):
 
     def test_get_collections_list_for_unknown_external_user_id(self):
         response = self.api_client.get('/api/collections/users/8/')
-        content = json.loads(response.content.decode('utf-8'))
+        content = json.loads(response.content)
 
         self.assertEqual(200, response.status_code)
         self.assertEqual(0, len(content))
@@ -75,7 +75,7 @@ class TestCollectionView(TestCase):
     def test_get_specific_collection(self):
         test_id = str(self.generated_test_data[0].id)
         response = self.api_client.get(f'/api/collections/{test_id}/')
-        content = json.loads(response.content.decode('utf-8'))
+        content = json.loads(response.content)
 
         self.assertEqual(200, response.status_code)
         self.assertEqual(test_id, content["id"])

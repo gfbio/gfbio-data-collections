@@ -37,13 +37,11 @@ class TestCollectionSerializer(TestCase):
             "set": ["abc", "def", "ghi"],
         }
         test_serializer = CollectionSerializer(data=test_collection)
-        if(test_serializer.is_valid()):
-            self.fail("Should not be valid without origin.")
+        self.assertFalse(test_serializer.is_valid())
 
     def test_serializer_works_with_no_set(self):
         test_collection = {
             "origin": "gfbio.collections.testData"
         }
         test_serializer = CollectionSerializer(data=test_collection)
-        if(test_serializer.is_valid()):
-            self.fail("Should not be valid without a set.")
+        self.assertFalse(test_serializer.is_valid())
