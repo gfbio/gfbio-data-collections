@@ -124,7 +124,7 @@ class TestCollectionView(TestCase):
 
         self.assertEqual(400, response.status_code)
 
-    def test_post_invalid_collection_no_origin(self):
+    def test_post_invalid_collection_no_set(self):
         test_collection = {
             "origin": "gfbio.collections.testData"
         }
