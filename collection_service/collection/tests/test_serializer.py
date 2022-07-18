@@ -15,7 +15,7 @@ class TestCollectionSerializer(TestCase):
             "origin": "gfbio.collections.test_data"
         }
         test_serializer = CollectionSerializer(data=test_collection)
-        test_serializer.is_valid(True)
+        self.assertTrue(test_serializer.is_valid())
         saved = test_serializer.save()
         self.assertEqual("17", saved.external_user_id)
         self.assertEqual("abc", saved.set[0])
@@ -28,7 +28,7 @@ class TestCollectionSerializer(TestCase):
             "origin": "gfbio.collections.testData"
         }
         test_serializer = CollectionSerializer(data=test_collection)
-        test_serializer.is_valid(True)
+        self.assertTrue(test_serializer.is_valid())
         saved = test_serializer.save()
         self.assertIsNone(saved.external_user_id)
 
