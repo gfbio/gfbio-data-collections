@@ -27,3 +27,12 @@ class UserCollectionListView(mixins.ListModelMixin, GenericCollectionView):
         return super().get_queryset().filter(
             external_user_id=external_user_id_from_path
         )
+
+
+class CollectionListView(mixins.CreateModelMixin, GenericCollectionView):
+    def post(self, request, *args, **kwargs):
+        """
+        Adds the given collection to the data store.
+        Set and origin are mandatory.
+        """
+        return self.create(request, *args, **kwargs)
