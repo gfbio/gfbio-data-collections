@@ -56,8 +56,8 @@ class TestCollectionView(TestCase):
 
         for entry in test_data:
             serializer = CollectionSerializer(data=entry)
-            serializer.is_valid(True)
-            cls.generated_test_data.append(serializer.save())
+            if serializer.is_valid():
+                cls.generated_test_data.append(serializer.save())
 
     def test_get_collections_list_for_known_external_user_id(self):
         response = self.api_client.get('/api/collections/users/17/')
