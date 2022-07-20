@@ -1,4 +1,3 @@
-from celery import uuid
 from rest_framework import generics, mixins
 from collection_service.collection.api.serializers import CollectionSerializer
 from collection_service.collection.models import Collection
@@ -15,10 +14,10 @@ class CollectionDetailView(mixins.RetrieveModelMixin, GenericCollectionView):
     @extend_schema(
         parameters=[
             OpenApiParameter(
-                name='id', 
-                description='Id of the collection to retrieve.', 
-                required=True, 
-                location = "path",
+                name='id',
+                description='Id of the collection to retrieve.',
+                required=True,
+                location="path",
                 examples=[
                     OpenApiExample(
                         'Sample id',
@@ -46,10 +45,10 @@ class UserCollectionListView(mixins.ListModelMixin, GenericCollectionView):
     @extend_schema(
         parameters=[
             OpenApiParameter(
-                name='external_user_id', 
-                description='Exteral id of the user whos data are requested', 
-                required=True, 
-                location = "path",
+                name='external_user_id',
+                description='Exteral id of the user whos data are requested',
+                required=True,
+                location="path",
                 examples=[
                     OpenApiExample(
                         'Sample id',
@@ -62,7 +61,7 @@ class UserCollectionListView(mixins.ListModelMixin, GenericCollectionView):
         responses={
             200: OpenApiResponse(
                 response=CollectionSerializer(many=True),
-                description='All collections that are stored for the user. If the external user id is unknown, the resulting set is empty.'
+                description="All collections that are stored for the user. For unknown external user ids, it's empty."
             )
         }
     )
@@ -88,23 +87,7 @@ class CollectionListView(mixins.CreateModelMixin, GenericCollectionView):
                 description='The newly generated object, with its generated fields id and created set.',
             ),
             400: OpenApiResponse(
-                description='Bad request',
-                examples=[
-                    OpenApiExample('Set is missing',
-                        value={
-                            "set": [
-                                "This field may not be null."
-                            ]
-                        }
-                    ),
-                    OpenApiExample('Origin is missing',
-                        value={
-                            "origin": [
-                                "This field is required."
-                            ]
-                        }
-                    )
-                ]
+                description='Bad request'
             )
         }
     )

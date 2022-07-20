@@ -337,4 +337,5 @@ def whitelist_api_endpoints_preprocessing_hook(endpoints):
             visibleEndpoints.append((path, path_regex, method, callback))
     return visibleEndpoints
 
+
 whitelist_api_endpoints_preprocessing_hook_func = whitelist_api_endpoints_preprocessing_hook

@@ -5,16 +5,16 @@ from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
 
 
 @extend_schema_serializer(
-    examples = [
-         OpenApiExample(
+    examples=[
+        OpenApiExample(
             'Positive response',
             value={
                 "id": "00c0ffee-c0ff-c0ff-c0ff-c0ffeec0ffee",
                 "origin": "gfbio.collection.testData",
                 "set": [
                     {
-                        "id":"44233",
-                        "name":"Nice sciency data"
+                        "id": "44233",
+                        "name": "Nice sciency data"
                     }
                 ],
                 "created": "2022-04-07T13:15:17.19",
@@ -29,8 +29,8 @@ from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
                 "origin": "gfbio.collection.testData",
                 "set": [
                     {
-                        "id":"44233",
-                        "name":"Nice sciency data"
+                        "id": "44233",
+                        "name": "Nice sciency data"
                     }
                 ],
                 "external_user_id": "XY-4999233348"
