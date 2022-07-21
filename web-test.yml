@@ -1,0 +1,76 @@
+version: '3'
+
+volumes:
+  production_postgres_data: {}
+  production_postgres_data_backups: {}
+  production_traefik: {}
+
+services:
+  django: &django
+    build:
+      context: .
+      dockerfile: ./compose/production/django/Dockerfile
+    image: collection_service_production_django
+    platform: linux/x86_64
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - ./.envs/.production/.django
+      - ./.envs/.production/.postgres
+    command: /start
+    ports:
+      - "80:5000"
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: collection_service_production_postgres
+    volumes:
+      - production_postgres_data:/var/lib/postgresql/data:Z
+      - production_postgres_data_backups:/backups:z
+    env_file:
+      - ./.envs/.production/.postgres
+
+  redis:
+    image: redis:6
+
+  celeryworker:
+    build:
+      context: .
+      dockerfile: ./compose/production/django/Dockerfile
+    image: collection_service_production_celeryworker
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - ./.envs/.production/.django
+      - ./.envs/.production/.postgres
+    command: /start-celeryworker
+
+  celerybeat:
+    build:
+      context: .
+      dockerfile: ./compose/production/django/Dockerfile
+    image: collection_service_production_celerybeat
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - ./.envs/.production/.django
+      - ./.envs/.production/.postgres
+    command: /start-celerybeat
+
+  flower:
+    build:
+      context: .
+      dockerfile: ./compose/production/django/Dockerfile
+    image: collection_service_production_flower
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - ./.envs/.production/.django
+      - ./.envs/.production/.postgres
+    command: /start-flower
