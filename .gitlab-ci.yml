@@ -2,14 +2,19 @@ include:
   - project: gfbio/cicd
     file:
       - '.create_merge_request_v2.yml'
+      - '.web-test.yml'
+
 
 stages:
   - create_merge_request
   - lint
   - test
   - update_stage
-  - web_test_stop
+  - web_test_check
   - web_test_update
+  - web_test_update_env_url
+  - web_test_stop
+
 
 variables:
   POSTGRES_USER: 'collection_service'
@@ -48,77 +53,40 @@ pytest:
   script:
     - docker-compose -f local.yml run django pytest
 
+# add your commands under "your custom commands" section
+# example: 123-foo-bar with project name ammod will create stack named 123-ammod
+# in this example you can also see how to get ISSUE_ID from branch
+# PROJECT_NAME - should be specified, default is project-id
+# COMPOSE_FILE - should be specified, default is production.yml
+web_test_update:
+  variables:
+    PROJECT_NAME: "collection"
+    COMPOSE_FILE: "web-test.yml"
+  script:
+    # get issue id and test name
+    - ISSUE_ID=$(awk -F- '{print $1}' <<< ${CI_COMMIT_REF_NAME})
+    - TEST_NAME=$ISSUE_ID-$PROJECT_NAME
+    # your custom commands
+    - rm -rf .envs && cp -r /home/gitlab-runner/.collection_envs ./.envs/
+    - sed -i s/BRANCH/${TEST_NAME}/g $COMPOSE_FILE
+    - sed -i s/BRANCH/${TEST_NAME}/g ./.envs/.production/.django
+    - sed -i "s/VERSION =.*/VERSION ='$(git describe --tags | egrep -o '[0-9]+\.[0-9]+\.[0-9]+')'/g" config/settings/base.py
+    - docker-compose -f $COMPOSE_FILE build
+    # run docker stack
+    - docker stack rm $TEST_NAME || true
+    - while [[ $(docker ps | grep $TEST_NAME | wc -l) > 0 ]]; do sleep 1; done
+    - docker stack deploy -c $COMPOSE_FILE $TEST_NAME
 
+# will set correct url for environmnet so you can 'view environment' in gitlab
+web_test_update_env_url:
+  variables:
+    PROJECT_NAME: "collection"
+
+# will stop running environmnet
 web_test_stop:
   variables:
     MAIN_BRANCH_NAME: "master"
-    PROJECT_NAME: "collection_service"  
-  before_script:
-    # Install curl
-    - apt-get update -qqq && apt-get install -qqqy curl
-    # Get required script
-    - curl -s -o web_test_stop.py --header "PRIVATE-TOKEN:${PRIVATE_TOKEN}" "https://gitlab.gwdg.de/api/v4/projects/18403/repository/files/scripts%2Fweb_test_stop.py/raw?ref=main"
-    # Set permissions
-    - chmod +x web_test_stop.py
-  script:
-    # extract issue-id from commit message
-    - ISSUE_ID=$(awk '{print $3}' <<< ${CI_COMMIT_MESSAGE} | awk -F- '{print $2}' | sed s/\'//g | tr '\n' ' ' | awk '{print $1}')
-    - TEST_NAME=$ISSUE_ID-$PROJECT_NAME
-    - docker stack rm $TEST_NAME || true
-  rules:
-    - if: '$CI_COMMIT_BRANCH == $MAIN_BRANCH_NAME && $CI_COMMIT_MESSAGE =~ /.*Merge branch.*\w+-\d+.*into.*/'
-  tags:
-    - dev-denbi
-
-
-web_test_check:
-  stage: web_test_check
-  before_script:
-    # Install curl
-    - apt-get update -qqq && apt-get install -qqqy curl
-    # Get required script
-    - curl -s -o web_test_check.sh --header "PRIVATE-TOKEN:${PRIVATE_TOKEN}" "https://gitlab.gwdg.de/api/v4/projects/18403/repository/files/scripts%2Fweb_test_check_v2.sh/raw?ref=jira"
-    # Set permissions
-    - chmod +x web_test_check.sh
-  script:
-    - HOST=${CI_PROJECT_URL} CI_PROJECT_ID=${CI_PROJECT_ID} CI_COMMIT_REF_NAME=${CI_COMMIT_REF_NAME} PRIVATE_TOKEN=${PRIVATE_TOKEN} ./web_test_check_v2.sh
-  rules:
-    - if: '$CI_COMMIT_BRANCH =~ /^\w+-\d+-/'
-  artifacts:
-    reports:
-      dotenv: web_test_check.env
-  tags:
-    - dev-denbi
-
-
-web_test_update:
-  stage: web_test_update
-  needs: ["web_test_check"]
-  dependencies:
-    - web_test_check
-  variables:
-    PROJECT_NAME: $CI_PROJECT_ID
-    COMPOSE_FILE: "web-test.yml"
-    GIT_SUBMODULE_STRATEGY: normal
-  before_script:
-    - echo "IS_WEBTEST $IS_WEBTEST"
-    - if [ -n "$IS_WEBTEST" ]; then if [ "$IS_WEBTEST" == "false" ]; then echo "skipping web test update" && exit 0; fi; else echo "skipping web test update" && exit 0; fi;
-  script:
-    - ISSUE_ID=$(awk -F- '{print $2}' <<< ${CI_COMMIT_REF_NAME})
-    - TEST_NAME=$ISSUE_ID-$PROJECT_NAME
-    - docker stack rm $TEST_NAME || true
-    - while [[ $(docker ps | grep $TEST_NAME | wc -l) > 0 ]]; do sleep 1; done
-    - sed -i s/BRANCH/$CI_COMMIT_REF_NAME/g $COMPOSE_FILE
-    - sed -i "s/VERSION =.*/VERSION ='$(git describe --tags | egrep -o '[0-9]+\.[0-9]+\.[0-9]+')'/g" config/settings/base.py
-    - sed -i s/DJANGO_ALLOWED_HOSTS=.*/DJANGO_ALLOWED_HOSTS=\.collections\.gfbio\.dev/g .envs/.production/.django
-    - docker stack deploy -c $COMPOSE_FILE $TEST_NAME
-  environment:
-    name: review/$CI_COMMIT_REF_NAME
-  rules:
-    - if: '$CI_COMMIT_BRANCH =~ /^\w+-\d+-/'
-  tags:
-    - dev-denbi
-
+    PROJECT_NAME: "collection"
 
 update_staging:
   stage: update_stage
