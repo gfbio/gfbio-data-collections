@@ -8,15 +8,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
-    path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
-    path(
-        "about/", TemplateView.as_view(template_name="pages/about.html"), name="about"
-    ),
-    path(
-        "api/",
-        SpectacularSwaggerView.as_view(url_name="api-schema",),
-        name="api-docs",
-    ),
+    path("", SpectacularSwaggerView.as_view(url_name="api-schema",), name="home"),
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
     # User management
