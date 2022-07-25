@@ -71,6 +71,7 @@ web_test_update:
     - sed -i s/BRANCH/${TEST_NAME}/g $COMPOSE_FILE
     - sed -i s/BRANCH/${TEST_NAME}/g ./.envs/.production/.django
     - sed -i "s/VERSION =.*/VERSION ='$(git describe --tags | egrep -o '[0-9]+\.[0-9]+\.[0-9]+')'/g" config/settings/base.py
+    - sed -i "s/http:\/\/localhost:8000/https:\/\/${TEST_NAME}.test.gfbio.dev/g" config/settings/base.py
     - docker-compose -f $COMPOSE_FILE build
     # run docker stack
     - docker stack rm $TEST_NAME || true
@@ -95,6 +96,7 @@ update_staging:
   script:
     - rm -r .envs && cp -r /home/gitlab-runner/.envs/ .envs
     - sed -i "s/VERSION =.*/VERSION ='$(git describe --tags | egrep -o '[0-9]+\.[0-9]+\.[0-9]+')'/g" config/settings/base.py
+    - sed -i "s/http:\/\/localhost:8000/https:\/\/collections.gfbio.dev/g" config/settings/base.py
     - docker-compose -f staging.yml build
     - docker-compose -f staging.yml up -d postgres
     - docker-compose -f staging.yml run --rm postgres backup
