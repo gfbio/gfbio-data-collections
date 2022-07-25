@@ -98,7 +98,6 @@ update_staging:
     - docker-compose -f staging.yml build
     - docker-compose -f staging.yml up -d postgres
     - docker-compose -f staging.yml run --rm postgres backup
-    - docker-compose -f staging.yml run --rm django python manage.py migrate
     - docker-compose -f staging.yml down
     - docker-compose -f staging.yml up -d
   environment:
