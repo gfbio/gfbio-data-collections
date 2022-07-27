@@ -12,7 +12,12 @@ services:
     env_file:
       - ./.envs/.production/.django
       - ./.envs/.production/.postgres
-    command: /start
+    command: >
+      /bin/sh -c "python /app/manage.py collectstatic --noinput
+      && python /app/manage.py migrate
+      && python /app/manage.py loaddata /app/collection_service/fixtures/testdata.json
+      && /usr/local/bin/gunicorn config.wsgi --bind 0.0.0.0:5000 --chdir=/app"
+
     networks:
       - local
       - internalProxy
