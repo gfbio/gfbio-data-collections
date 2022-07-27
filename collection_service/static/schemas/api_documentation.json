@@ -1,0 +1,153 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+      "title": "Collection Service API",
+      "version": "1.0.0",
+      "description": "Documentation of API endpoints of Collection Service"
+    },
+    "paths": {
+      "/api/collections/": {
+        "post": {
+          "operationId": "api_collections_create",
+          "description": "Adds the given collection to the data store.\nSet and origin are mandatory.",
+          "tags": [
+            "api"
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Collection"
+                }
+              },
+              "application/x-www-form-urlencoded": {
+                "schema": {
+                  "$ref": "#/components/schemas/Collection"
+                }
+              },
+              "multipart/form-data": {
+                "schema": {
+                  "$ref": "#/components/schemas/Collection"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Collection"
+                  }
+                }
+              },
+              "description": ""
+            }
+          }
+        }
+      },
+      "/api/collections/{id}/": {
+        "get": {
+          "operationId": "api_collections_retrieve",
+          "description": "Returns the collection with the given id.",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "id",
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "required": true
+            }
+          ],
+          "tags": [
+            "api"
+          ],
+          "responses": {
+            "200": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Collection"
+                  }
+                }
+              },
+              "description": ""
+            }
+          }
+        }
+      },
+      "/api/collections/users/{external_user_id}/": {
+        "get": {
+          "operationId": "api_collections_users_list",
+          "description": "Returns a list of all collections for the given user/user-id.\nIf the user-id is not assigned to any user or there are no collections for this user, the result is empty.",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "external_user_id",
+              "schema": {
+                "type": "string"
+              },
+              "required": true
+            }
+          ],
+          "tags": [
+            "api"
+          ],
+          "responses": {
+            "200": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/Collection"
+                    }
+                  }
+                }
+              },
+              "description": ""
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "Collection": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid",
+              "readOnly": true
+            },
+            "external_user_id": {
+              "type": "string",
+              "nullable": true,
+              "maxLength": 255
+            },
+            "origin": {
+              "type": "string",
+              "maxLength": 255
+            },
+            "set": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "created": {
+              "type": "string",
+              "format": "date-time",
+              "readOnly": true
+            }
+          },
+          "required": [
+            "origin",
+            "set"
+          ]
+        }
+      }
+    }
+  }
