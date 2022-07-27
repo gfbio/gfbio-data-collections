@@ -7,7 +7,7 @@ class CollectionAdmin(admin.ModelAdmin):
     search_fields = ['id', 'external_user_id']
     date_hierarchy = 'created'
 
-    list_display = ('id', 'external_user_id', 'origin', 'created')
+    list_display = ('id', 'external_user_id', 'origin', 'created', 'modified')
 
 
 admin.site.register(models.Collection, CollectionAdmin)

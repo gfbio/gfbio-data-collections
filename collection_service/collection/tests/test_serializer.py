@@ -21,6 +21,7 @@ class TestCollectionSerializer(TestCase):
         self.assertEqual("abc", saved.set[0])
         self.assertEqual("gfbio.collections.test_data", saved.origin)
         self.assertTrue((timezone.now() - saved.created).total_seconds() < 4)
+        self.assertTrue((timezone.now() - saved.modified).total_seconds() < 4)
 
     def test_serializer_works_with_anonymous_user(self):
         test_collection = {

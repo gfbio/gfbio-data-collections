@@ -67,6 +67,8 @@ class TestCollectionView(TestCase):
         self.assertEqual(2, len(content))
         self.assertEqual(str(self.generated_test_data[0].id), content[0]["id"])
         self.assertTrue("set" in content[0])
+        self.assertTrue("created" in content[0])
+        self.assertFalse("modified" in content[0])
 
     def test_get_collections_list_for_unknown_external_user_id(self):
         response = self.api_client.get('/api/collections/users/8/')
