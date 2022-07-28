@@ -4,13 +4,14 @@ from collection_service.collection.models import Collection
 from collection_service.users.models import Service
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample, OpenApiResponse
 from django.contrib.auth.decorators import user_passes_test, permission_required
+from django.core.exceptions import PermissionDenied
 from django.utils.decorators import method_decorator
-from django.core.exceptions import ValidationError
 
 
 def user_is_service(user):
-    if not Service.objects.filter(pk=user.id).exists():
-        raise ValidationError("The given user is not a service")
+    service = Service.objects.filter(pk=user.id).first()
+    if not (service and service.origin):
+        raise PermissionDenied
     return True
 
 class GenericCollectionView(generics.GenericAPIView):

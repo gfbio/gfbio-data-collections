@@ -1,4 +1,5 @@
 import pytest
+import sys
 from django.urls import reverse
 
 from collection_service.users.models import User
@@ -38,3 +39,26 @@ class TestUserAdmin:
         url = reverse("admin:users_user_change", kwargs={"object_id": user.pk})
         response = admin_client.get(url)
         assert response.status_code == 200
+
+    def test_view_serviceadmin_post(self, admin_client):
+        url = reverse("admin:users_service_add")
+        response = admin_client.post(
+            url,
+            data={
+                "origin": "gfbio:collection_service:testData"
+            },
+        )
+        assert response.status_code == 302
+
+    def test_view_serviceadmin_post_invalid_origin(self, admin_client):
+        url = reverse("admin:users_service_add")
+        try:
+            response = admin_client.post(
+                url,
+                data={
+                    "origin": "dibi dabi du"
+                },
+            )
+            assert False
+        except:
+            assert sys.exc_info()[0].__name__ == "ValidationError"

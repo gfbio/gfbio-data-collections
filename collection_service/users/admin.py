@@ -12,7 +12,6 @@ User = get_user_model()
 
 @admin.register(User)
 class UserAdmin(auth_admin.UserAdmin):
-
     form = UserAdminChangeForm
     add_form = UserAdminCreationForm
     fieldsets = (
@@ -34,6 +33,10 @@ class UserAdmin(auth_admin.UserAdmin):
     )
     list_display = ["username", "name", "is_superuser"]
     search_fields = ["name"]
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.exclude(id__in=Service.objects.all())
 
 
 class ServiceAdmin(admin.ModelAdmin):

@@ -2,6 +2,8 @@ import re
 from collection_service.collection.models import Collection
 from django.test import TestCase
 
+from collection_service.users.models import Service
+
 
 class TestCollectionModel(TestCase):
 
@@ -9,11 +11,11 @@ class TestCollectionModel(TestCase):
         test_collection = Collection(
             external_user_id=17,
             set=["abc", "def", "ghi"],
-            origin="gfbio.collections.testData")
+            service=Service(origin="gfbio:test")
+        )
         self.assertEqual(17, test_collection.external_user_id)
         self.assertEqual("abc", test_collection.set[0])
-        self.assertEqual("gfbio.collections.testData", test_collection.origin)
-        self.assertTrue(test_collection)
+        self.assertEqual("gfbio:test", test_collection.service.origin)
         self.assertIsNone(test_collection.created)
         self.assertIsNone(test_collection.modified)
 
