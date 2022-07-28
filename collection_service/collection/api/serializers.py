@@ -18,7 +18,8 @@ from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
                     }
                 ],
                 "created": "2022-04-07T13:15:17.19",
-                "external_user_id": "XY-4999233348"
+                "external_user_id": "XY-4999233348",
+                "service": 1
             },
             request_only=False,
             response_only=True,

@@ -114,5 +114,5 @@ class CollectionListView(mixins.CreateModelMixin, GenericCollectionView):
         """
         origin_service = Service.objects.get(pk=self.request.user.id)
         request.data["service"] = origin_service.id
-        
+
         return self.create(request, *args, **kwargs)

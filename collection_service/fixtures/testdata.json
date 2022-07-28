@@ -1,10 +1,24 @@
 [
     {
+        "model": "users.User",
+        "pk": "1",
+        "fields": {
+            "username": "gfbio:collection:testData"
+        }
+    },
+    {
+        "model": "users.Service",
+        "pk": "1",
+        "fields": {
+            "origin": "gfbio:collection:testData"
+        }
+    },
+    {
         "model": "collection.Collection",
         "pk": "00c0ffee-c0ff-c0ff-c0ff-c0ffeec0ffee",
         "fields": {
             "id": "00c0ffee-c0ff-c0ff-c0ff-c0ffeec0ffee",
-            "origin": "gfbio.collection.testData",
+            "service_id": 1,
             "set": [
                 {
                     "id": "44233",
@@ -12,6 +26,7 @@
                 }
             ],
             "created": "2022-04-07T13:15:17.19+00",
+            "modified": "2022-04-07T13:15:17.21+00",
             "external_user_id": "XY-4999233348"
         }
     }
