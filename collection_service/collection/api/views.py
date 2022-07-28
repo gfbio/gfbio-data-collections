@@ -81,7 +81,7 @@ class UserCollectionListView(mixins.ListModelMixin, GenericCollectionView):
     @method_decorator(user_passes_test(test_func=user_is_service))
     def get(self, request, *args, **kwargs):
         """
-        Returns a list of all collections for the given user/user-id.
+        Returns a list of all collections for the given user/external_user-id.
         If the user-id is not assigned to any user or there are no collections for this user, the result is empty.
         """
         return self.list(request, *args, **kwargs)

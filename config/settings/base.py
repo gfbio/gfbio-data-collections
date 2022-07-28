@@ -318,11 +318,23 @@ SPECTACULAR_SETTINGS = {
     "TITLE": "Collection Service API",
     "DESCRIPTION": "Documentation of API endpoints of Collection Service",
     "VERSION": "1.0.0",
-    "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
-    "SERVERS": [
-        {"url": "http://127.0.0.1:8000", "description": "Local Development server"},
-        {"url": "https://collections.rdc.gfbio.dev ", "description": "Production server"},
-    ],
+    "SERVE_PERMISSIONS": ['rest_framework.permissions.AllowAny'],
+    'SCHEMA_PATH_PREFIX': "/api/",
+    "SCHEMA_PATH_PREFIX_TRIM": True,
+    "SERVERS": [{"url": "http://localhost:8000/api"}],
+    'PREPROCESSING_HOOKS': ["config.settings.base.whitelist_api_endpoints_preprocessing_hook_func"],
 }
 # Your stuff...
 # ------------------------------------------------------------------------------
+
+
+def whitelist_api_endpoints_preprocessing_hook(endpoints):
+    # your modifications to the list of operations that are exposed in the schema
+    visibleEndpoints = []
+    for (path, path_regex, method, callback) in endpoints:
+        if path.startswith("/api/collections/"):
+            visibleEndpoints.append((path, path_regex, method, callback))
+    return visibleEndpoints
+
+
+whitelist_api_endpoints_preprocessing_hook_func = whitelist_api_endpoints_preprocessing_hook
