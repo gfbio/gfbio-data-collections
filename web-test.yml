@@ -1,0 +1,94 @@
+version: '3'
+
+services:
+  django: &django
+    build:
+      context: .
+      dockerfile: ./compose/production/django/Dockerfile
+    image: collection_service_production_django
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - ./.envs/.production/.django
+      - ./.envs/.production/.postgres
+    command: >
+      /bin/sh -c "python /app/manage.py collectstatic --noinput
+      && python /app/manage.py migrate
+      && python /app/manage.py loaddata /app/collection_service/fixtures/testdata.json
+      && /usr/local/bin/gunicorn config.wsgi --bind 0.0.0.0:5000 --chdir=/app"
+
+    networks:
+      - local
+      - internalProxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.BRANCH-django.rule=Host(`BRANCH.test.gfbio.dev`)
+      - traefik.http.routers.BRANCH-django.entrypoints=web
+      - traefik.http.services.BRANCH-django.loadbalancer.server.port=5000
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: collection_service_production_postgres
+    env_file:
+      - ./.envs/.production/.postgres
+    networks:
+      - local
+
+  redis:
+    image: redis:6
+    networks:
+      - local
+
+  celeryworker:
+    build:
+      context: .
+      dockerfile: ./compose/production/django/Dockerfile
+    image: collection_service_production_celeryworker
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - ./.envs/.production/.django
+      - ./.envs/.production/.postgres
+    command: /start-celeryworker
+    networks:
+      - local
+
+  celerybeat:
+    build:
+      context: .
+      dockerfile: ./compose/production/django/Dockerfile
+    image: collection_service_production_celerybeat
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - ./.envs/.production/.django
+      - ./.envs/.production/.postgres
+    command: /start-celerybeat
+    networks:
+      - local
+
+  flower:
+    build:
+      context: .
+      dockerfile: ./compose/production/django/Dockerfile
+    image: collection_service_production_flower
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - ./.envs/.production/.django
+      - ./.envs/.production/.postgres
+    command: /start-flower
+    networks:
+      - local
+
+networks:
+  local:
+  internalProxy:
+    external:
+      name: internalProxy
