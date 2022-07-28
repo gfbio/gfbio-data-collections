@@ -14,6 +14,7 @@ def user_is_service(user):
         raise PermissionDenied
     return True
 
+
 class GenericCollectionView(generics.GenericAPIView):
     queryset = Collection.objects.all()
     serializer_class = CollectionSerializer

@@ -103,7 +103,7 @@ class TestCollectionView(TestCase):
     def test_get_collections_list_for_not_a_service(self):
         user = Service.objects.create(username="TestUser")
         user.user_permissions.add(Permission.objects.get(codename="view_collection"))
-            
+
         token = "Token " + Token.objects.create(user=user).key
         response = self.api_client.get('/api/collections/users/17/', HTTP_AUTHORIZATION=token)
 
@@ -121,8 +121,10 @@ class TestCollectionView(TestCase):
         self.assertEqual("gfbio:collections:read", content["origin"])
 
     def test_get_invalid_collection(self):
-        response = self.api_client.get('/api/collections/87654321-4321-4321-4321-cba987654321/',
-            HTTP_AUTHORIZATION=self.read_token)
+        response = self.api_client.get(
+            '/api/collections/87654321-4321-4321-4321-cba987654321/',
+            HTTP_AUTHORIZATION=self.read_token
+        )
         self.assertEqual(404, response.status_code)
 
     def test_get_specific_collection_not_authenticated(self):
@@ -140,8 +142,12 @@ class TestCollectionView(TestCase):
             "external_user_id": "17",
             "set": ["abc", "def", "ghi"],
         }
-        response = self.api_client.post('/api/collections/', test_collection, format="json",
-            HTTP_AUTHORIZATION=self.write_token)
+        response = self.api_client.post(
+            '/api/collections/',
+            test_collection,
+            format="json",
+            HTTP_AUTHORIZATION=self.write_token
+        )
 
         self.assertEqual(201, response.status_code)
         content = json.loads(response.content.decode('utf-8'))
@@ -150,12 +156,16 @@ class TestCollectionView(TestCase):
         self.assertEqual("gfbio:collections:write", content["origin"])
         self.assertTrue((timezone.now() - dateutil.parser.isoparse(content["created"])).total_seconds() < 10)
 
-    def test_post_valid_collection_anonymous(self):
+    def test_post_valid_collection_no_user_id(self):
         test_collection = {
             "set": ["abc", "def", "ghi"],
         }
-        response = self.api_client.post('/api/collections/', test_collection, format="json",
-            HTTP_AUTHORIZATION=self.write_token)
+        response = self.api_client.post(
+            '/api/collections/',
+            test_collection,
+            format="json",
+            HTTP_AUTHORIZATION=self.write_token
+        )
 
         self.assertEqual(201, response.status_code)
         content = json.loads(response.content.decode('utf-8'))
@@ -170,8 +180,12 @@ class TestCollectionView(TestCase):
                 "ch": "ghi"
             }
         }
-        response = self.api_client.post('/api/collections/', test_collection, format="json",
-            HTTP_AUTHORIZATION=self.write_token)
+        response = self.api_client.post(
+            '/api/collections/',
+            test_collection,
+            format="json",
+            HTTP_AUTHORIZATION=self.write_token
+        )
 
         self.assertEqual(201, response.status_code)
         content = json.loads(response.content.decode('utf-8'))
@@ -181,15 +195,23 @@ class TestCollectionView(TestCase):
         test_collection = {
             "external_user_id": "Test-User"
         }
-        response = self.api_client.post('/api/collections/', test_collection, format="json",
-            HTTP_AUTHORIZATION=self.write_token)
+        response = self.api_client.post(
+            '/api/collections/',
+            test_collection,
+            format="json",
+            HTTP_AUTHORIZATION=self.write_token
+        )
 
         self.assertEqual(400, response.status_code)
 
     def test_post_invalid_collection_empty(self):
         test_collection = {}
-        response = self.api_client.post('/api/collections/', test_collection, format="json",
-            HTTP_AUTHORIZATION=self.write_token)
+        response = self.api_client.post(
+            '/api/collections/',
+            test_collection,
+            format="json",
+            HTTP_AUTHORIZATION=self.write_token
+        )
 
         self.assertEqual(400, response.status_code)
 
@@ -199,8 +221,12 @@ class TestCollectionView(TestCase):
             "set": ["abc", "def", "ghi"],
             "id": test_guid
         }
-        response = self.api_client.post('/api/collections/', test_collection, format="json",
-            HTTP_AUTHORIZATION=self.write_token)
+        response = self.api_client.post(
+            '/api/collections/',
+            test_collection,
+            format="json",
+            HTTP_AUTHORIZATION=self.write_token
+        )
         content = json.loads(response.content)
 
         self.assertEqual(201, response.status_code)
@@ -212,8 +238,12 @@ class TestCollectionView(TestCase):
             "set": ["abc", "def", "ghi"],
             "created": test_date
         }
-        response = self.api_client.post('/api/collections/', test_collection, format="json",
-            HTTP_AUTHORIZATION=self.write_token)
+        response = self.api_client.post(
+            '/api/collections/',
+            test_collection,
+            format="json",
+            HTTP_AUTHORIZATION=self.write_token
+        )
         content = json.loads(response.content)
 
         self.assertEqual(201, response.status_code)
@@ -231,6 +261,10 @@ class TestCollectionView(TestCase):
         test_collection = {
             "set": ["abc", "def", "ghi"],
         }
-        response = self.api_client.post('/api/collections/', test_collection, format="json",
-            HTTP_AUTHORIZATION=self.read_token)
+        response = self.api_client.post(
+            '/api/collections/',
+            test_collection,
+            format="json",
+            HTTP_AUTHORIZATION=self.read_token
+        )
         self.assertEqual(403, response.status_code)

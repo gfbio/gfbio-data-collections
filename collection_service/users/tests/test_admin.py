@@ -1,7 +1,7 @@
 import pytest
 import sys
 from django.urls import reverse
-
+from rest_framework.serializers import ValidationError
 from collection_service.users.models import User
 
 pytestmark = pytest.mark.django_db
@@ -53,12 +53,12 @@ class TestUserAdmin:
     def test_view_serviceadmin_post_invalid_origin(self, admin_client):
         url = reverse("admin:users_service_add")
         try:
-            response = admin_client.post(
+            admin_client.post(
                 url,
                 data={
                     "origin": "dibi dabi du"
                 },
             )
             assert False
-        except:
+        except ValidationError:
             assert sys.exc_info()[0].__name__ == "ValidationError"

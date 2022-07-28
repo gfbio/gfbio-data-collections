@@ -64,5 +64,6 @@ class ServiceAdmin(admin.ModelAdmin):
         obj.username = obj.origin
         super().save_model(request, obj, form, change)
 
+
 svc = django_apps.get_model("users.Service", require_ready=False)
 admin.site.register(Service, ServiceAdmin)

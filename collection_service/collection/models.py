@@ -10,7 +10,6 @@ class Collection(TimeStampedModel):
     external_user_id = models.CharField(max_length=255, null=True, blank=True)
     service = models.ForeignKey(Service, on_delete=models.PROTECT)
 
-
     class Meta:
         ordering = ['created']
 

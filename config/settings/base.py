@@ -321,7 +321,7 @@ SPECTACULAR_SETTINGS = {
     "SERVE_PERMISSIONS": ['rest_framework.permissions.AllowAny'],
     'SCHEMA_PATH_PREFIX': "/api/",
     "SCHEMA_PATH_PREFIX_TRIM": True,
-    "SERVERS": [{"url": "http://localhost:8000/api"}],
+    "SERVERS": [{"url": "http://0.0.0.0:8000/api"}],
     'PREPROCESSING_HOOKS': ["config.settings.base.whitelist_api_endpoints_preprocessing_hook_func"],
 }
 # Your stuff...

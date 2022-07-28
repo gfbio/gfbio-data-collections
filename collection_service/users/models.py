@@ -6,13 +6,6 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework.serializers import ValidationError
 
 
-#class BaseUser(AbstractUser):
-#    password = None,
-#    first_name = None  # type: ignore
-#    last_name = None  # type: ignore
-    
-
-
 class User(AbstractUser):
     """
     Default custom user model for Collection Service.
@@ -43,11 +36,9 @@ class Service(User):
     origin = CharField(_("Origin"), blank=True, max_length=255, unique=True)
     first_name = None  # type: ignore
     last_name = None  # type: ignore
-    password = None # type: ignore
-    password1 = None # type: ignore
-    password2 = None # type: ignore
-    name = None # type: ignore
-    email = None # type: ignore
+    password = None  # type: ignore
+    name = None  # type: ignore
+    email = None  # type: ignore
 
     def clean(self):
         self.set_unusable_password()

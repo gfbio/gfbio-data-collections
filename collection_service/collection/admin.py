@@ -9,4 +9,5 @@ class CollectionAdmin(admin.ModelAdmin):
 
     list_display = ('id', 'external_user_id', 'service', 'created', 'modified')
 
+
 admin.site.register(models.Collection, CollectionAdmin)
