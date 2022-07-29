@@ -305,7 +305,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.TokenAuthentication",
     ),
-    "DEFAULT_PERMISSION_CLASSES": ('rest_framework.permissions.IsAuthenticated'),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated"),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
@@ -321,7 +321,7 @@ SPECTACULAR_SETTINGS = {
     "SERVE_PERMISSIONS": ['rest_framework.permissions.AllowAny'],
     'SCHEMA_PATH_PREFIX': "/api/",
     "SCHEMA_PATH_PREFIX_TRIM": True,
-    "SERVERS": [{"url": "http://0.0.0.0:8000/api"}],
+    "SERVERS": [{"url": "http://localhost:8000/api"}],
     'PREPROCESSING_HOOKS': ["config.settings.base.whitelist_api_endpoints_preprocessing_hook_func"],
 }
 # Your stuff...

@@ -42,8 +42,12 @@ class CollectionDetailView(GenericCollectionView, mixins.RetrieveModelMixin):
                 response=CollectionSerializer(many=False),
                 description='The collection with the given id.'
             ),
+            403: OpenApiResponse(
+                description='Not Permitted. The authentication token is not given, doesn''t belong to a service '
+                            'or the service it belongs to lacks the permission to view collections.'
+            ),
             404: OpenApiResponse(
-                description='Not found.'
+                description='Not found. There is no collection with this id.'
             )
         }
     )
@@ -75,6 +79,10 @@ class UserCollectionListView(mixins.ListModelMixin, GenericCollectionView):
             200: OpenApiResponse(
                 response=CollectionSerializer(many=True),
                 description="All collections that are stored for the user. For unknown external user ids, it's empty."
+            ),
+            403: OpenApiResponse(
+                description='Not Permitted. The authentication token is not given, doesn''t belong to a service '
+                            'or the service it belongs to lacks the permission to view collections.'
             )
         }
     )
@@ -103,6 +111,10 @@ class CollectionListView(mixins.CreateModelMixin, GenericCollectionView):
             ),
             400: OpenApiResponse(
                 description='Bad request'
+            ),
+            403: OpenApiResponse(
+                description='Not Permitted. The authentication token is not given, doesn''t belong to a service '
+                            'or the service it belongs to lacks the permission to add collections.'
             )
         }
     )
@@ -110,8 +122,8 @@ class CollectionListView(mixins.CreateModelMixin, GenericCollectionView):
     @method_decorator(user_passes_test(test_func=user_is_service))
     def post(self, request, *args, **kwargs):
         """
-        Adds the given collection to the data store.
-        The set is are mandatory. The origin is retrieved from the given user.
+        Adds the given collection to the data store. The set is mandatory.
+        The origin is retrieved from the posting Service, identified via Token(-Authentication).
         """
         origin_service = Service.objects.get(pk=self.request.user.id)
         request.data["service"] = origin_service.id

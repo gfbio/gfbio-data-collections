@@ -1,7 +1,6 @@
 import re
-from collection_service.collection.models import Collection
 from django.test import TestCase
-
+from collection_service.collection.models import Collection
 from collection_service.users.models import Service
 
 
