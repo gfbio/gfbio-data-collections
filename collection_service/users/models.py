@@ -34,11 +34,6 @@ class Service(User):
         verbose_name_plural = _("services")
 
     origin = CharField(_("Origin"), blank=True, max_length=255, unique=True)
-    first_name = None  # type: ignore
-    last_name = None  # type: ignore
-    password = None  # type: ignore
-    name = None  # type: ignore
-    email = None  # type: ignore
 
     def clean(self):
         self.set_unusable_password()
