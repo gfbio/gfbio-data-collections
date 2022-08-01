@@ -1,5 +1,6 @@
 import re
 from django.test import TestCase
+from django.utils import timezone
 from collection_service.collection.models import Collection
 from collection_service.users.models import Service
 
@@ -15,8 +16,8 @@ class TestCollectionModel(TestCase):
         self.assertEqual(17, test_collection.external_user_id)
         self.assertEqual("abc", test_collection.set[0])
         self.assertEqual("gfbio:test", test_collection.service.origin)
-        self.assertIsNone(test_collection.created)
-        self.assertIsNone(test_collection.modified)
+        self.assertTrue((timezone.now() - test_collection.created).total_seconds() < 4)
+        self.assertTrue((timezone.now() - test_collection.modified).total_seconds() < 4)
 
     def test_autoGuid(self):
         test_collection = Collection()
