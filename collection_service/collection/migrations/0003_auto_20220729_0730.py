@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('users', '0002_service'),
-        ('collection', '0002_auto_20220725_1606'),
+        ('collection', '0002_auto_20220728_1343'),
     ]
 
     operations = [
