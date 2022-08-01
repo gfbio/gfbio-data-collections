@@ -50,7 +50,8 @@ class ServiceAdmin(admin.ModelAdmin):
                     "user_permissions"
                 ),
             },
-        )
+        ),
+        ("Further Options", {"fields": ["validation_schema"]})
     )
     list_display = ["origin"]
     filter_horizontal = (

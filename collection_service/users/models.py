@@ -1,6 +1,6 @@
 import re
 from django.contrib.auth.models import AbstractUser
-from django.db.models import CharField
+from django.db.models import CharField, JSONField
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from rest_framework.serializers import ValidationError
@@ -34,6 +34,7 @@ class Service(User):
         verbose_name_plural = _("services")
 
     origin = CharField(_("Origin"), blank=True, max_length=255, unique=True)
+    validation_schema = JSONField(default=list, blank=True)
 
     def clean(self):
         self.set_unusable_password()

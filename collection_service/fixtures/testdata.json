@@ -10,7 +10,24 @@
         "model": "users.Service",
         "pk": "1",
         "fields": {
-            "origin": "gfbio:collection:testData"
+            "origin": "gfbio:collection:testData",
+            "validation_schema": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "id", "name"
+                    ]
+                }
+            }            
         }
     },
     {
