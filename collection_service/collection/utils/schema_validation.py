@@ -1,12 +1,4 @@
-import re
 from rest_framework import serializers
-
-
-def validate_origin_format(origin):
-    if not re.match(r"^[\w\d\_]+(\.[\w\d\_]+)*$", origin):
-        raise serializers.ValidationError(
-            "The origin needs to consist of namespaces (letters, numbers, undescores),"
-            + " optionally separated by dots.")
 
 
 def validate_json_not_trivial(json):

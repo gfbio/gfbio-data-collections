@@ -1,16 +1,27 @@
-from rest_framework import generics, mixins
+from rest_framework import generics, mixins, permissions
 from collection_service.collection.api.serializers import CollectionSerializer
 from collection_service.collection.models import Collection
+from collection_service.users.models import Service
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample, OpenApiResponse
+from django.contrib.auth.decorators import user_passes_test, permission_required
+from django.core.exceptions import PermissionDenied
+from django.utils.decorators import method_decorator
+
+
+def user_is_service(user):
+    service = Service.objects.filter(pk=user.id).first()
+    if not (service and service.origin):
+        raise PermissionDenied
+    return True
 
 
 class GenericCollectionView(generics.GenericAPIView):
     queryset = Collection.objects.all()
     serializer_class = CollectionSerializer
-    permission_classes = []
+    permission_classes = [permissions.IsAuthenticated]
 
 
-class CollectionDetailView(mixins.RetrieveModelMixin, GenericCollectionView):
+class CollectionDetailView(GenericCollectionView, mixins.RetrieveModelMixin):
     @extend_schema(
         parameters=[
             OpenApiParameter(
@@ -31,11 +42,17 @@ class CollectionDetailView(mixins.RetrieveModelMixin, GenericCollectionView):
                 response=CollectionSerializer(many=False),
                 description='The collection with the given id.'
             ),
+            403: OpenApiResponse(
+                description='Not Permitted. The authentication token is not given, doesn''t belong to a service '
+                            'or the service it belongs to lacks the permission to view collections.'
+            ),
             404: OpenApiResponse(
-                description='Not found.'
+                description='Not found. There is no collection with this id.'
             )
         }
     )
+    @method_decorator(permission_required(perm='collection.view_collection', raise_exception=True))
+    @method_decorator(user_passes_test(test_func=user_is_service))
     def get(self, request, *args, **kwargs):
         """Returns the collection with the given id."""
         return self.retrieve(request, *args, **kwargs)
@@ -62,9 +79,15 @@ class UserCollectionListView(mixins.ListModelMixin, GenericCollectionView):
             200: OpenApiResponse(
                 response=CollectionSerializer(many=True),
                 description="All collections that are stored for the user. For unknown external user ids, it's empty."
+            ),
+            403: OpenApiResponse(
+                description='Not Permitted. The authentication token is not given, doesn''t belong to a service '
+                            'or the service it belongs to lacks the permission to view collections.'
             )
         }
     )
+    @method_decorator(permission_required(perm='collection.view_collection', raise_exception=True))
+    @method_decorator(user_passes_test(test_func=user_is_service))
     def get(self, request, *args, **kwargs):
         """
         Returns a list of all collections for the given user/external_user-id.
@@ -88,12 +111,21 @@ class CollectionListView(mixins.CreateModelMixin, GenericCollectionView):
             ),
             400: OpenApiResponse(
                 description='Bad request'
+            ),
+            403: OpenApiResponse(
+                description='Not Permitted. The authentication token is not given, doesn''t belong to a service '
+                            'or the service it belongs to lacks the permission to add collections.'
             )
         }
     )
+    @method_decorator(permission_required(perm='collection.add_collection', raise_exception=True))
+    @method_decorator(user_passes_test(test_func=user_is_service))
     def post(self, request, *args, **kwargs):
         """
-        Adds the given collection to the data store.
-        Set and origin are mandatory.
+        Adds the given collection to the data store. The set is mandatory.
+        The origin is retrieved from the posting Service, identified via Token(-Authentication).
         """
+        origin_service = Service.objects.get(pk=self.request.user.id)
+        request.data["service"] = origin_service.id
+
         return self.create(request, *args, **kwargs)

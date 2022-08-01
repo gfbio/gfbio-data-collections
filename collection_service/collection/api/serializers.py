@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from collection_service.collection.models import Collection
-from collection_service.collection.utils.schema_validation import validate_json_not_trivial, validate_origin_format
+from collection_service.collection.utils.schema_validation import validate_json_not_trivial
 from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
 
 
@@ -10,7 +10,7 @@ from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
             'Positive response',
             value={
                 "id": "00c0ffee-c0ff-c0ff-c0ff-c0ffeec0ffee",
-                "origin": "gfbio.collection.testData",
+                "origin": "gfbio:collection:testData",
                 "set": [
                     {
                         "id": "44233",
@@ -18,7 +18,8 @@ from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
                     }
                 ],
                 "created": "2022-04-07T13:15:17.19",
-                "external_user_id": "XY-4999233348"
+                "external_user_id": "XY-4999233348",
+                "service": 1
             },
             request_only=False,
             response_only=True,
@@ -26,7 +27,6 @@ from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
         OpenApiExample(
             'Valid request',
             value={
-                "origin": "gfbio.collection.testData",
                 "set": [
                     {
                         "id": "44233",
@@ -41,11 +41,12 @@ from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
     ]
 )
 class CollectionSerializer(serializers.ModelSerializer):
+    origin = serializers.CharField(source='service.origin', read_only=True)
+
     class Meta:
         model = Collection
-        fields = ['id', 'external_user_id', 'origin', 'set', 'created']
+        fields = ['id', 'external_user_id', 'origin', 'set', 'created', 'service']
 
     def validate(self, attrs):
-        validate_origin_format(attrs['origin'])
         validate_json_not_trivial(attrs['set'])
         return super().validate(attrs)
