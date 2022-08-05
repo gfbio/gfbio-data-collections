@@ -1,3 +1,5 @@
+from django.http import JsonResponse
+from jsonschema import Draft4Validator
 from rest_framework import generics, mixins, permissions
 from collection_service.collection.api.serializers import CollectionSerializer
 from collection_service.collection.models import Collection
@@ -128,4 +130,20 @@ class CollectionListView(mixins.CreateModelMixin, GenericCollectionView):
         origin_service = Service.objects.get(pk=self.request.user.id)
         request.data["service"] = origin_service.id
 
+        schema = origin_service.validation_schema
+        if schema:
+            set = request.data["set"]
+            validator = Draft4Validator(schema)
+            if not validator.is_valid(set):
+                return JsonResponse(collect_validation_errors(set, validator), safe=False, status=400)
+
         return self.create(request, *args, **kwargs)
+
+
+def collect_validation_errors(data, validator):
+    return [
+        '{} : {}'.format(
+            error.relative_path.pop() if len(error.relative_path) else '',
+            error.message.replace('u\'', '\''))
+        for error in validator.iter_errors(data)
+    ]

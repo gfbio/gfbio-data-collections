@@ -17,6 +17,7 @@ class TestCollectionView(TestCase):
 
     read_token = None
     write_token = None
+    schema_service_token = None
     generated_collections = []
 
     @classmethod
@@ -31,6 +32,30 @@ class TestCollectionView(TestCase):
         write_permission_service = Service.objects.create(origin="gfbio:collections:write", username="write")
         write_permission_service.user_permissions.add(Permission.objects.get(codename="add_collection"))
         self.write_token = "Token " + Token.objects.create(user=write_permission_service).key
+
+        permission_service_with_schema = Service.objects.create(
+            origin="gfbio:collections:with_schema",
+            username="schema",
+            validation_schema={
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "id", "name"
+                    ]
+                }
+            }
+        )
+        permission_service_with_schema.user_permissions.add(Permission.objects.get(codename="add_collection"))
+        self.schema_service_token = "Token " + Token.objects.create(user=permission_service_with_schema).key
 
         collection_test_data = [
             # Two test-collections for user 17
@@ -268,3 +293,56 @@ class TestCollectionView(TestCase):
             HTTP_AUTHORIZATION=self.read_token
         )
         self.assertEqual(403, response.status_code)
+
+    def test_post_valid_collection_against_schema(self):
+        test_collection = {
+            "external_user_id": "17",
+            "set": [
+                {
+                    "id": "Test123",
+                    "name": "TestData"
+                },
+                {
+                    "id": "Test124",
+                    "name": "TestData2"
+                }
+            ],
+        }
+        response = self.api_client.post(
+            '/api/collections/',
+            test_collection,
+            format="json",
+            HTTP_AUTHORIZATION=self.schema_service_token
+        )
+
+        self.assertEqual(201, response.status_code)
+        content = json.loads(response.content.decode('utf-8'))
+        self.assertEqual("Test123", content["set"][0]["id"])
+        self.assertEqual("gfbio:collections:with_schema", content["origin"])
+
+    def test_post_valid_collection_against_schema_fails(self):
+        test_collection = {
+            "external_user_id": "17",
+            "set": [
+                {
+                    "id": "Test123",
+                    "name": "TestData"
+                },
+                {
+                    "id": 1235,
+                    "url": "TestData2"
+                }
+            ],
+        }
+        response = self.api_client.post(
+            '/api/collections/',
+            test_collection,
+            format="json",
+            HTTP_AUTHORIZATION=self.schema_service_token
+        )
+
+        self.assertEqual(400, response.status_code)
+        content = json.loads(response.content.decode('utf-8'))
+        print(content)
+        self.assertEqual("1 : 'name' is a required property", content[0])
+        self.assertEqual("id : 1235 is not of type 'string'", content[1])
