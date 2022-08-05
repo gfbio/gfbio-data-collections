@@ -3,14 +3,18 @@
         "model": "users.User",
         "pk": "1",
         "fields": {
-            "username": "gfbio:collection:testData"
+            "username": "gfbio:collection:demoService",
+            "user_permissions": [
+                ["view_collection", "collection", "collection"],
+                ["add_collection", "collection", "collection"]
+            ]
         }
     },
     {
         "model": "users.Service",
         "pk": "1",
         "fields": {
-            "origin": "gfbio:collection:testData",
+            "origin": "gfbio:collection:demoService",
             "validation_schema": {
                 "type": "array",
                 "items": {
@@ -28,6 +32,15 @@
                     ]
                 }
             }            
+        }
+    },
+    {
+        "model": "authtoken.token",
+        "pk": "1",
+        "fields": {
+            "key": "4be9861c714c188b1e5315896f9d5bd1d8d4ea46",
+            "user_id": 1,
+            "created": "2022-08-03T15:18:00.00+00"
         }
     },
     {

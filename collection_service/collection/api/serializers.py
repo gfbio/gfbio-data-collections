@@ -10,7 +10,7 @@ from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
             'Positive response',
             value={
                 "id": "00c0ffee-c0ff-c0ff-c0ff-c0ffeec0ffee",
-                "origin": "gfbio:collection:testData",
+                "origin": "gfbio:collection:demoService",
                 "set": [
                     {
                         "id": "44233",
