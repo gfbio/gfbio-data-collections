@@ -1,8 +1,8 @@
 include:
   - project: gfbio/cicd
     file:
-      - '.create_merge_request_v2.yml'
-      - '.web-test.yml'
+      - '.create_merge_request_v3.yml'
+      - '.web_test_v2.yml'
 
 
 stages:
@@ -12,7 +12,6 @@ stages:
   - update_stage
   - web_test_check
   - web_test_update
-  - web_test_update_env_url
   - web_test_stop
 
 
@@ -60,11 +59,11 @@ pytest:
 # COMPOSE_FILE - should be specified, default is production.yml
 web_test_update:
   variables:
-    PROJECT_NAME: "collection"
+    PROJECT_NAME: "collections"
     COMPOSE_FILE: "web-test.yml"
   script:
     # get issue id and test name
-    - ISSUE_ID=$(awk -F- '{print $1}' <<< ${CI_COMMIT_REF_NAME})
+    - ISSUE_ID=$(awk -F- '{print $2}' <<< ${CI_COMMIT_REF_NAME})
     - TEST_NAME=$ISSUE_ID-$PROJECT_NAME
     # your custom commands
     - rm -rf .envs && cp -r /home/gitlab-runner/.collection_envs ./.envs/
@@ -77,11 +76,6 @@ web_test_update:
     - docker stack rm $TEST_NAME || true
     - while [[ $(docker ps | grep $TEST_NAME | wc -l) > 0 ]]; do sleep 1; done
     - docker stack deploy -c $COMPOSE_FILE $TEST_NAME
-
-# will set correct url for environmnet so you can 'view environment' in gitlab
-web_test_update_env_url:
-  variables:
-    PROJECT_NAME: "collection"
 
 # will stop running environmnet
 web_test_stop:
