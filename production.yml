@@ -11,13 +11,12 @@ services:
       context: .
       dockerfile: ./compose/production/django/Dockerfile
     image: collection_service_production_django
-    platform: linux/x86_64
     depends_on:
       - postgres
       - redis
     env_file:
-      - /.envs/.production/.django
-      - /.envs/.production/.postgres
+      - ./.envs/.production/.django
+      - ./.envs/.production/.postgres
     command: /start
 
   postgres:
@@ -29,7 +28,7 @@ services:
       - production_postgres_data:/var/lib/postgresql/data:Z
       - production_postgres_data_backups:/backups:z
     env_file:
-      - /.envs/.production/.postgres
+      - ./.envs/.production/.postgres
 
   traefik:
     build:

@@ -3,9 +3,11 @@ include:
     file:
       - '.create_merge_request_v3.yml'
       - '.web_test_v2.yml'
+      - '.tag_release.yml'
 
 
 stages:
+  - init
   - create_merge_request
   - lint
   - test
@@ -13,6 +15,8 @@ stages:
   - web_test_check
   - web_test_update
   - web_test_stop
+  - tag_release_check
+  - tag_release
 
 
 variables:
@@ -101,3 +105,44 @@ update_staging:
     url: https://collections.gfbio.dev/
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
+
+
+tag_release_check:
+  variables:
+    MAIN_BRANCH_NAME: "master"
+  tags:
+    - col-svc-prod
+
+
+tag_release:
+  script:
+    - rm -r .envs && cp -r /home/gitlab-runner/.envs/ .envs
+    - sed -i "s/VERSION =.*/VERSION ='$(git describe --tags | egrep -o '[0-9]+\.[0-9]+\.[0-9]+')'/g" config/settings/base.py
+    - sed -i "s/http:\/\/localhost:8000/https:\/\/collections.gfbio.org/g" config/settings/base.py
+    - docker-compose -f production.yml build
+    - docker-compose -f production.yml up -d postgres
+    - docker-compose -f production.yml run --rm postgres backup
+    - docker-compose -f production.yml down
+    - docker-compose -f production.yml up -d
+  environment:
+    name: production
+    url: https://collections.gfbio.org
+  tags:
+    - col-svc-prod
+
+init:
+  stage: init
+  script:
+    - rm -r .envs && cp -r /home/gitlab-runner/.envs/ .envs
+    - sed -i "s/VERSION =.*/VERSION ='$(git describe --tags | egrep -o '[0-9]+\.[0-9]+\.[0-9]+')'/g" config/settings/base.py
+    - sed -i "s/http:\/\/localhost:8000/https:\/\/collections.gfbio.org/g" config/settings/base.py
+    - docker-compose -f production.yml build
+    - docker-compose -f production.yml up -d postgres
+    - docker-compose -f production.yml run --rm postgres backup
+    - docker-compose -f production.yml down
+    - docker-compose -f production.yml up -d
+  environment:
+    name: production
+    url: https://collections.gfbio.org
+  tags:
+    - col-svc-prod
