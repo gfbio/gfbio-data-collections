@@ -3,52 +3,31 @@ log:
 
 entryPoints:
   web:
-    # http
     address: ":80"
-    http:
-      # https://docs.traefik.io/routing/entrypoints/#entrypoint
-      redirections:
-        entryPoint:
-          to: web-secure
-
-  web-secure:
-    # https
-    address: ":443"
-
-  flower:
-    address: ":5555"
-
-certificatesResolvers:
-  letsencrypt:
-    # https://docs.traefik.io/master/https/acme/#lets-encrypt
-    acme:
-      email: "lfranz@gfbio.org"
-      storage: /etc/traefik/acme/acme.json
-      # https://docs.traefik.io/master/https/acme/#httpchallenge
-      httpChallenge:
-        entryPoint: web
+    forwardedHeaders:
+      trustedIPs:
+        - "192.168.0.188/32"
 
 http:
   routers:
-    web-secure-router:
-      rule: "Host(`collections.rdc.gfbio.dev `)"
+    web-router:
+      rule: "Host(`collections.gfbio.org`)"
       entryPoints:
-        - web-secure
+        - web
+      middlewares:
+        - csrf
+      service: django
+
+    web-secure-router:
+      rule: "Host(`collections.gfbio.org`)"
+      entryPoints:
+        - web
       middlewares:
         - csrf
       service: django
       tls:
-        # https://docs.traefik.io/master/routing/routers/#certresolver
         certResolver: letsencrypt
 
-    flower-secure-router:
-      rule: "Host(`collections.rdc.gfbio.dev `)"
-      entryPoints:
-        - flower
-      service: flower
-      tls:
-        # https://docs.traefik.io/master/routing/routers/#certresolver
-        certResolver: letsencrypt
 
   middlewares:
     csrf:
@@ -62,11 +41,6 @@ http:
       loadBalancer:
         servers:
           - url: http://django:5000
-
-    flower:
-      loadBalancer:
-        servers:
-          - url: http://flower:5555
 
 providers:
   # https://docs.traefik.io/master/providers/file/
