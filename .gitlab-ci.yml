@@ -7,7 +7,6 @@ include:
 
 
 stages:
-  - init
   - create_merge_request
   - lint
   - test
@@ -115,23 +114,6 @@ tag_release_check:
 
 
 tag_release:
-  script:
-    - rm -r .envs && cp -r /home/gitlab-runner/.envs/ .envs
-    - sed -i "s/VERSION =.*/VERSION ='$(git describe --tags | egrep -o '[0-9]+\.[0-9]+\.[0-9]+')'/g" config/settings/base.py
-    - sed -i "s/http:\/\/localhost:8000/https:\/\/collections.gfbio.org/g" config/settings/base.py
-    - docker-compose -f production.yml build
-    - docker-compose -f production.yml up -d postgres
-    - docker-compose -f production.yml run --rm postgres backup
-    - docker-compose -f production.yml down
-    - docker-compose -f production.yml up -d
-  environment:
-    name: production
-    url: https://collections.gfbio.org
-  tags:
-    - col-svc-prod
-
-init:
-  stage: init
   script:
     - rm -r .envs && cp -r /home/gitlab-runner/.envs/ .envs
     - sed -i "s/VERSION =.*/VERSION ='$(git describe --tags | egrep -o '[0-9]+\.[0-9]+\.[0-9]+')'/g" config/settings/base.py
