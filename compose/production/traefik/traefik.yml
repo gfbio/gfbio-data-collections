@@ -18,17 +18,6 @@ http:
         - csrf
       service: django
 
-    web-secure-router:
-      rule: "Host(`collections.gfbio.org`)"
-      entryPoints:
-        - web
-      middlewares:
-        - csrf
-      service: django
-      tls:
-        certResolver: letsencrypt
-
-
   middlewares:
     csrf:
       # https://docs.traefik.io/master/middlewares/headers/#hostsproxyheaders
