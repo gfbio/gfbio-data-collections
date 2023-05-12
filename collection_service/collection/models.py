@@ -12,6 +12,7 @@ class Collection(TimeStampedModel):
 
     class Meta:
         ordering = ['created']
+        permissions = (("change_collection_of_other_service", "Can change existing collections of another service."),)
 
     def __str__(self) -> str:
         return 'collection_{}'.format(self.id)

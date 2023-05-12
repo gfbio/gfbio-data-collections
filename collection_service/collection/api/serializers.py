@@ -1,7 +1,9 @@
 from rest_framework import serializers
 from collection_service.collection.models import Collection
 from collection_service.collection.utils.schema_validation import validate_json_not_trivial
+from collection_service.users.models import Service
 from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
+from jsonschema import Draft4Validator
 
 
 @extend_schema_serializer(
@@ -48,5 +50,24 @@ class CollectionSerializer(serializers.ModelSerializer):
         fields = ['id', 'external_user_id', 'origin', 'set', 'created', 'service']
 
     def validate(self, attrs):
-        validate_json_not_trivial(attrs['set'])
+        set = attrs['set']
+        validate_json_not_trivial(set)
+
+        service = Service.objects.get(pk=attrs['service'])
+        schema = service.validation_schema
+        if schema:
+            validator = Draft4Validator(schema)
+            if not validator.is_valid(set):
+                error_message = self.collect_validation_errors(set, validator)
+                raise serializers.ValidationError(error_message)
+
         return super().validate(attrs)
+
+    @staticmethod
+    def collect_validation_errors(data, validator):
+        return [
+            '{} : {}'.format(
+                error.relative_path.pop() if len(error.relative_path) else '',
+                error.message.replace('u\'', '\''))
+            for error in validator.iter_errors(data)
+        ]
