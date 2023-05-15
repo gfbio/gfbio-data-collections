@@ -1,5 +1,3 @@
-from django.http import JsonResponse
-from jsonschema import Draft4Validator
 from rest_framework import generics, mixins, permissions
 from collection_service.collection.api.serializers import CollectionSerializer
 from collection_service.collection.models import Collection
@@ -23,7 +21,8 @@ class GenericCollectionView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class CollectionDetailView(GenericCollectionView, mixins.RetrieveModelMixin):
+class CollectionDetailView(GenericCollectionView, mixins.UpdateModelMixin,
+                           mixins.DestroyModelMixin, mixins.RetrieveModelMixin):
     @extend_schema(
         parameters=[
             OpenApiParameter(
@@ -50,7 +49,7 @@ class CollectionDetailView(GenericCollectionView, mixins.RetrieveModelMixin):
             ),
             404: OpenApiResponse(
                 description='Not found. There is no collection with this id.'
-            )
+            ),
         }
     )
     @method_decorator(permission_required(perm='collection.view_collection', raise_exception=True))
@@ -58,6 +57,74 @@ class CollectionDetailView(GenericCollectionView, mixins.RetrieveModelMixin):
     def get(self, request, *args, **kwargs):
         """Returns the collection with the given id."""
         return self.retrieve(request, *args, **kwargs)
+
+    @extend_schema(
+        responses={
+            200: OpenApiResponse(
+                response=CollectionSerializer(many=False),
+                description='The updated object, with its generated fields id and updated set.',
+            ),
+            400: OpenApiResponse(
+                description='Bad request'
+            ),
+            403: OpenApiResponse(
+                description='Not Permitted. The authentication token is not given, doesn''t belong to a service '
+                            'or the service it belongs to lacks the permission to change collections. '
+                            'Or it is missing the permission to change anothers service collection.'
+            ),
+            404: OpenApiResponse(
+                description='Not found. Wrong id most probably. Maybe was already deleted.'
+            ),
+        }
+    )
+    @method_decorator(permission_required(perm=['collection.change_collection'], raise_exception=True))
+    @method_decorator(user_passes_test(test_func=user_is_service))
+    def put(self, request, *args, **kwargs):
+        """
+        Updates the given collection in the data store. The set is mandatory.
+        The origin is retrieved from the posting Service, identified via Token(-Authentication).
+        """
+        origin_service = Service.objects.get(pk=self.request.user.id)
+        existing = self.get_object()
+        if origin_service.id != existing.service.id:
+            if not self.request.user.has_perm('collection.change_collection_of_other_service'):
+                raise PermissionDenied
+
+        request.data["service"] = existing.service.id
+        return self.update(request, *args, **kwargs)
+
+    @extend_schema(
+        responses={
+            204: OpenApiResponse(
+                description='Empty body.',
+            ),
+            400: OpenApiResponse(
+                description='Bad request'
+            ),
+            403: OpenApiResponse(
+                description='Not Permitted. The authentication token is not given, doesn''t belong to a service '
+                            'or the service it belongs to lacks the permission to delete collections.'
+                            'Or it is missing the permission to change anothers service collection.'
+            ),
+            404: OpenApiResponse(
+                description='Not found. Wrong id most probably. Maybe was already deleted.'
+            ),
+        }
+    )
+    @method_decorator(permission_required(perm=['collection.delete_collection'], raise_exception=True))
+    @method_decorator(user_passes_test(test_func=user_is_service))
+    def delete(self, request, *args, **kwargs):
+        """
+        Updates the given collection in the data store. The set is mandatory.
+        The origin is retrieved from the posting Service, identified via Token(-Authentication).
+        """
+        origin_service = Service.objects.get(pk=self.request.user.id)
+        existing = self.get_object()
+        if origin_service.id != existing.service.id:
+            if not self.request.user.has_perm('collection.change_collection_of_other_service'):
+                raise PermissionDenied
+
+        return self.destroy(request, *args, **kwargs)
 
 
 class UserCollectionListView(mixins.ListModelMixin, GenericCollectionView):
@@ -130,20 +197,4 @@ class CollectionListView(mixins.CreateModelMixin, GenericCollectionView):
         origin_service = Service.objects.get(pk=self.request.user.id)
         request.data["service"] = origin_service.id
 
-        schema = origin_service.validation_schema
-        if schema:
-            set = request.data["set"]
-            validator = Draft4Validator(schema)
-            if not validator.is_valid(set):
-                return JsonResponse(collect_validation_errors(set, validator), safe=False, status=400)
-
         return self.create(request, *args, **kwargs)
-
-
-def collect_validation_errors(data, validator):
-    return [
-        '{} : {}'.format(
-            error.relative_path.pop() if len(error.relative_path) else '',
-            error.message.replace('u\'', '\''))
-        for error in validator.iter_errors(data)
-    ]
