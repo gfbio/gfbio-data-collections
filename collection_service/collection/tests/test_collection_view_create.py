@@ -13,10 +13,10 @@ from collection_service.users.models import Service
 pytestmark = pytest.mark.django_db
 
 
-class TestCollectionView(TestCase):
+class TestCollectionViewCreate(TestCase):
 
-    read_token = None
-    write_token = None
+    other_token = None
+    add_token = None
     schema_service_token = None
     generated_collections = []
 
@@ -25,13 +25,13 @@ class TestCollectionView(TestCase):
         client = APIClient()
         self.api_client = client
 
-        read_permission_service = Service.objects.create(origin="gfbio:collections:read", username="read")
-        read_permission_service.user_permissions.add(Permission.objects.get(codename="view_collection"))
-        self.read_token = "Token " + Token.objects.create(user=read_permission_service).key
+        add_permission_service = Service.objects.create(origin="gfbio:collections:add", username="add")
+        add_permission_service.user_permissions.add(Permission.objects.get(codename="add_collection"))
+        self.add_token = "Token " + Token.objects.create(user=add_permission_service).key
 
-        write_permission_service = Service.objects.create(origin="gfbio:collections:write", username="write")
-        write_permission_service.user_permissions.add(Permission.objects.get(codename="add_collection"))
-        self.write_token = "Token " + Token.objects.create(user=write_permission_service).key
+        other_permission_service = Service.objects.create(origin="gfbio:collections:read", username="read")
+        other_permission_service.user_permissions.add(Permission.objects.get(codename="view_collection"))
+        self.other_token = "Token " + Token.objects.create(user=other_permission_service).key
 
         permission_service_with_schema = Service.objects.create(
             origin="gfbio:collections:with_schema",
@@ -55,6 +55,7 @@ class TestCollectionView(TestCase):
             }
         )
         permission_service_with_schema.user_permissions.add(Permission.objects.get(codename="add_collection"))
+        permission_service_with_schema.user_permissions.add(Permission.objects.get(codename="change_collection"))
         self.schema_service_token = "Token " + Token.objects.create(user=permission_service_with_schema).key
 
         collection_test_data = [
@@ -64,22 +65,22 @@ class TestCollectionView(TestCase):
                     "00c0ffee",
                     "447-abc"
                 ],
-                "service": read_permission_service,
+                "service": other_permission_service,
                 "external_user_id": "17"
             },
             {
                 "set": [
                     "Code red"
                 ],
-                "service": write_permission_service,
+                "service": add_permission_service,
                 "external_user_id": "17"
             },
             # One test-collection for different user
             {
                 "set": [
-                    "Test5",
+                    "Test3",
                 ],
-                "service": read_permission_service,
+                "service": other_permission_service,
                 "external_user_id": "5"
             },
             # Collection with anonymous user
@@ -88,7 +89,7 @@ class TestCollectionView(TestCase):
                     "ano-1",
                     "ano-2"
                 ],
-                "service": read_permission_service
+                "service": other_permission_service
             }
         ]
 
@@ -99,69 +100,6 @@ class TestCollectionView(TestCase):
             if serializer.is_valid():
                 self.generated_collections.append(serializer.save())
 
-    def test_get_collections_list_for_known_external_user_id(self):
-        response = self.api_client.get('/api/collections/users/17/', HTTP_AUTHORIZATION=self.read_token)
-        content = json.loads(response.content)
-
-        self.assertEqual(200, response.status_code)
-        self.assertEqual(2, len(content))
-        self.assertEqual(str(self.generated_collections[0].id), content[0]["id"])
-        self.assertTrue("set" in content[0])
-        self.assertTrue("created" in content[0])
-        self.assertFalse("modified" in content[0])
-
-    def test_get_collections_list_for_unknown_external_user_id(self):
-        response = self.api_client.get('/api/collections/users/8/', HTTP_AUTHORIZATION=self.read_token)
-        content = json.loads(response.content)
-
-        self.assertEqual(200, response.status_code)
-        self.assertEqual(0, len(content))
-
-    def test_get_collections_list_not_authenticated(self):
-        response = self.api_client.get('/api/collections/users/17/')
-        self.assertEqual(403, response.status_code)
-
-    def test_get_collections_list_no_permission(self):
-        response = self.api_client.get('/api/collections/users/17/', HTTP_AUTHORIZATION=self.write_token)
-        self.assertEqual(403, response.status_code)
-
-    def test_get_collections_list_for_not_a_service(self):
-        user = Service.objects.create(username="TestUser")
-        user.user_permissions.add(Permission.objects.get(codename="view_collection"))
-
-        token = "Token " + Token.objects.create(user=user).key
-        response = self.api_client.get('/api/collections/users/17/', HTTP_AUTHORIZATION=token)
-
-        self.assertEqual(403, response.status_code)
-
-    def test_get_specific_collection(self):
-        test_id = str(self.generated_collections[0].id)
-        response = self.api_client.get(f'/api/collections/{test_id}/', HTTP_AUTHORIZATION=self.read_token)
-        content = json.loads(response.content)
-
-        self.assertEqual(200, response.status_code)
-        self.assertEqual(test_id, content["id"])
-        self.assertTrue("set" in content)
-        self.assertEqual("00c0ffee", content["set"][0])
-        self.assertEqual("gfbio:collections:read", content["origin"])
-
-    def test_get_invalid_collection(self):
-        response = self.api_client.get(
-            '/api/collections/87654321-4321-4321-4321-cba987654321/',
-            HTTP_AUTHORIZATION=self.read_token
-        )
-        self.assertEqual(404, response.status_code)
-
-    def test_get_specific_collection_not_authenticated(self):
-        test_id = str(self.generated_collections[0].id)
-        response = self.api_client.get(f'/api/collections/{test_id}/')
-        self.assertEqual(403, response.status_code)
-
-    def test_get_specific_collection_no_permission(self):
-        test_id = str(self.generated_collections[0].id)
-        response = self.api_client.get(f'/api/collections/{test_id}/', HTTP_AUTHORIZATION=self.write_token)
-        self.assertEqual(403, response.status_code)
-
     def test_post_valid_collection_with_user(self):
         test_collection = {
             "external_user_id": "17",
@@ -171,14 +109,14 @@ class TestCollectionView(TestCase):
             '/api/collections/',
             test_collection,
             format="json",
-            HTTP_AUTHORIZATION=self.write_token
+            HTTP_AUTHORIZATION=self.add_token
         )
 
         self.assertEqual(201, response.status_code)
         content = json.loads(response.content.decode('utf-8'))
         self.assertEqual("17", content["external_user_id"])
         self.assertEqual("abc", content["set"][0])
-        self.assertEqual("gfbio:collections:write", content["origin"])
+        self.assertEqual("gfbio:collections:add", content["origin"])
         self.assertTrue((timezone.now() - dateutil.parser.isoparse(content["created"])).total_seconds() < 10)
 
     def test_post_valid_collection_no_user_id(self):
@@ -189,7 +127,7 @@ class TestCollectionView(TestCase):
             '/api/collections/',
             test_collection,
             format="json",
-            HTTP_AUTHORIZATION=self.write_token
+            HTTP_AUTHORIZATION=self.add_token
         )
 
         self.assertEqual(201, response.status_code)
@@ -209,7 +147,7 @@ class TestCollectionView(TestCase):
             '/api/collections/',
             test_collection,
             format="json",
-            HTTP_AUTHORIZATION=self.write_token
+            HTTP_AUTHORIZATION=self.add_token
         )
 
         self.assertEqual(201, response.status_code)
@@ -224,7 +162,7 @@ class TestCollectionView(TestCase):
             '/api/collections/',
             test_collection,
             format="json",
-            HTTP_AUTHORIZATION=self.write_token
+            HTTP_AUTHORIZATION=self.add_token
         )
 
         self.assertEqual(400, response.status_code)
@@ -235,7 +173,7 @@ class TestCollectionView(TestCase):
             '/api/collections/',
             test_collection,
             format="json",
-            HTTP_AUTHORIZATION=self.write_token
+            HTTP_AUTHORIZATION=self.add_token
         )
 
         self.assertEqual(400, response.status_code)
@@ -250,7 +188,7 @@ class TestCollectionView(TestCase):
             '/api/collections/',
             test_collection,
             format="json",
-            HTTP_AUTHORIZATION=self.write_token
+            HTTP_AUTHORIZATION=self.add_token
         )
         content = json.loads(response.content)
 
@@ -267,7 +205,7 @@ class TestCollectionView(TestCase):
             '/api/collections/',
             test_collection,
             format="json",
-            HTTP_AUTHORIZATION=self.write_token
+            HTTP_AUTHORIZATION=self.add_token
         )
         content = json.loads(response.content)
 
@@ -290,7 +228,7 @@ class TestCollectionView(TestCase):
             '/api/collections/',
             test_collection,
             format="json",
-            HTTP_AUTHORIZATION=self.read_token
+            HTTP_AUTHORIZATION=self.other_token
         )
         self.assertEqual(403, response.status_code)
 
@@ -320,7 +258,7 @@ class TestCollectionView(TestCase):
         self.assertEqual("Test123", content["set"][0]["id"])
         self.assertEqual("gfbio:collections:with_schema", content["origin"])
 
-    def test_post_valid_collection_against_schema_fails(self):
+    def test_post_invalid_collection_against_schema_fails(self):
         test_collection = {
             "external_user_id": "17",
             "set": [
@@ -342,7 +280,6 @@ class TestCollectionView(TestCase):
         )
 
         self.assertEqual(400, response.status_code)
-        content = json.loads(response.content.decode('utf-8'))
-        print(content)
+        content = json.loads(response.content.decode('utf-8'))["non_field_errors"]
         self.assertEqual("1 : 'name' is a required property", content[0])
         self.assertEqual("id : 1235 is not of type 'string'", content[1])

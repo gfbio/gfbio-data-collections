@@ -86,11 +86,11 @@ class CollectionDetailView(GenericCollectionView, mixins.UpdateModelMixin,
         """
         origin_service = Service.objects.get(pk=self.request.user.id)
         existing = self.get_object()
-        if origin_service.id != existing.service:
+        if origin_service.id != existing.service.id:
             if not self.request.user.has_perm('collection.change_collection_of_other_service'):
                 raise PermissionDenied
 
-        request.data["service"] = existing.service
+        request.data["service"] = existing.service.id
         return self.update(request, *args, **kwargs)
 
     @extend_schema(
@@ -120,7 +120,7 @@ class CollectionDetailView(GenericCollectionView, mixins.UpdateModelMixin,
         """
         origin_service = Service.objects.get(pk=self.request.user.id)
         existing = self.get_object()
-        if origin_service.id != existing.service:
+        if origin_service.id != existing.service.id:
             if not self.request.user.has_perm('collection.change_collection_of_other_service'):
                 raise PermissionDenied
 
