@@ -1,19 +1,20 @@
-# Collection Service
+# GFBio e.V. Collection Service
 
-Collection Service
+## Description
 
-[![Built with Cookiecutter Django](https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg?logo=cookiecutter)](https://github.com/cookiecutter/cookiecutter-django/)
-[![Black code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
+Colletion service is provided by GFBio e.V. and is a central data hub to store and retrieve json for communication and synchronization of user data between different services.
 
-License: MIT
+It provides a Rest API for the backends of the connecting Servers to store or retrieve json-data. Each server gets its own secret key for secure retrieval/upload. Therefore the API is required to be accessed from the backends of the using servers.
 
-## Settings
+## Developer Guide
+
+### Settings
 
 Moved to [settings](http://cookiecutter-django.readthedocs.io/en/latest/settings.html).
 
-## Basic Commands
+### Basic Commands
 
-### Setting Up Your Users
+#### Setting Up Your Users
 
 -   To create a **normal user account**, just go to Sign Up and fill out the form. Once you submit it, you'll see a "Verify Your E-mail Address" page. Go to your console to see a simulated email verification message. Copy the link into your browser. Now the user's email should be verified and ready to go.
 
@@ -23,13 +24,7 @@ Moved to [settings](http://cookiecutter-django.readthedocs.io/en/latest/settings
 
 For convenience, you can keep your normal user logged in on Chrome and your superuser logged in on Firefox (or similar), so that you can see how the site behaves for both kinds of users.
 
-### Type checks
-
-Running type checks with mypy:
-
-    $ mypy collection_service
-
-### Test coverage
+#### Test coverage
 
 To run the tests, check your test coverage, and generate an HTML coverage report:
 
@@ -37,15 +32,15 @@ To run the tests, check your test coverage, and generate an HTML coverage report
     $ coverage html
     $ open htmlcov/index.html
 
-#### Running tests with pytest
+##### Running tests with pytest
 
     $ pytest
 
-### Live reloading and Sass CSS compilation
+#### Live reloading and Sass CSS compilation
 
 Moved to [Live reloading and SASS compilation](https://cookiecutter-django.readthedocs.io/en/latest/developing-locally.html#sass-compilation-live-reloading).
 
-### Celery
+#### Celery
 
 This app comes with Celery.
 
@@ -58,17 +53,17 @@ celery -A config.celery_app worker -l info
 
 Please note: For Celery's import magic to work, it is important *where* the celery commands are run. If you are in the same folder with *manage.py*, you should be right.
 
-### Sentry
+#### Sentry
 
 Sentry is an error logging aggregator service. You can sign up for a free account at <https://sentry.io/signup/?code=cookiecutter> or download and host it yourself.
 The system is set up with reasonable defaults, including 404 logging and integration with the WSGI application.
 
 You must set the DSN url in production.
 
-## Deployment
+### Deployment
 
 The following details how to deploy this application.
 
-### Docker
+#### Docker
 
 See detailed [cookiecutter-django Docker documentation](http://cookiecutter-django.readthedocs.io/en/latest/deployment-with-docker.html).
