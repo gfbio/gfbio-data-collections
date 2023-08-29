@@ -1,0 +1,33 @@
+{
+    "creators": [
+      {
+        "orcid": "0009-0007-0441-8630",
+        "affiliation": "GFBio - German Federation for Biological Data e.V.",
+        "name": "Franz, Linus"
+      },
+      {
+        "orcid": "0000-0003-0694-5817",
+        "affiliation": "GFBio - German Federation for Biological Data e.V.",
+        "name": "Weber, Marc"
+      },
+      {
+        "orcid": "0000-0003-4476-6764",
+        "affiliation": "GFBio - German Federation for Biological Data e.V.",
+        "name": "Kostadinov, Ivaylo"
+      }
+    ],
+    "license": "MIT",
+    "title": "Central data hub to store and retrieve json for communication and synchronization of user data between different services.",
+    "keywords": [
+      "Data Hub",
+      "Biodiversity",
+      "Ecology",
+      "GFBio"
+    ],
+    "communities": [
+      {
+        "identifier": "gfbio"
+      }
+    ]
+  }
+  
