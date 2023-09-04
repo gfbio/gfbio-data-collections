@@ -17,7 +17,7 @@
       }
     ],
     "license": "MIT",
-    "title": "Central data hub to store and retrieve json for communication and synchronization of user data between different services.",
+    "title": "GFBio Data Collections",
     "keywords": [
       "Data Hub",
       "Biodiversity",
@@ -30,4 +30,3 @@
       }
     ]
   }
-  
