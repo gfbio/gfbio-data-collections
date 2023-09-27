@@ -1,8 +1,12 @@
-# GFBio e.V. Collection Service
+# GFBio Data Collection Service
+
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8316119.svg)](https://doi.org/10.5281/zenodo.8316119)
+
 
 ## Description
 
-Colletion service is provided by GFBio e.V. and is a central data hub to store and retrieve json for communication and synchronization of user data between different services.
+Collection service is provided by GFBio e.V. and is a central data hub to store and retrieve json for communication and synchronization of user data between different services.
 
 It provides a Rest API for the backends of the connecting Servers to store or retrieve json-data. Each server gets its own secret key for secure retrieval/upload. Therefore the API is required to be accessed from the backends of the using servers.
 
@@ -70,3 +74,6 @@ See detailed [cookiecutter-django Docker documentation](http://cookiecutter-djan
 
 ## Contact Us
 Please email any questions and comments to our [Service Helpdesk](mailto:info@gfbio.org) (<info@gfbio.org>).
+
+## Acknowledgements
+- This work was supported by the German Research Foundation (DFG) within the project “Establishment of the National Research Data Infrastructure (NFDI)” in the consortium NFDI4Biodiversity (project number [442032008](https://gepris.dfg.de/gepris/projekt/442032008)).

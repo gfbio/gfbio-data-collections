@@ -18,6 +18,7 @@
     ],
     "license": "MIT",
     "title": "GFBio Data Collections",
+    "description": "Central data hub to store and retrieve json for communication and synchronization of user data between different services.",
     "keywords": [
       "Data Hub",
       "Biodiversity",
@@ -28,5 +29,6 @@
       {
         "identifier": "gfbio"
       }
-    ]
+    ],
+  "notes": "This work was supported by the German Research Foundation (DFG) within the project “Establishment of the National Research Data Infrastructure (NFDI)” in the consortium NFDI4Biodiversity (project number [442032008](https://gepris.dfg.de/gepris/projekt/442032008))."
   }

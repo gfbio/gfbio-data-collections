@@ -13,6 +13,7 @@ authors:
 title: "GFBio Data Collections"
 abstract: "Central data hub to store and retrieve json for communication and synchronization of user data between different services."
 type: software
+doi: 10.5281/zenodo.8316119
 keywords:
   - Data Hub
   - Biodiversity
