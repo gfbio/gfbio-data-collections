@@ -4,10 +4,13 @@ include:
       - '.create_merge_request_v3.yml'
       - '.web_test_v2.yml'
       - '.tag_release.yml'
+      - '.hotfix_workflow.yml'
 
 
 stages:
+  - check_issue_type
   - create_merge_request
+  - create_hotfix_merge_request
   - lint
   - test
   - update_stage
@@ -108,7 +111,7 @@ update_staging:
 
 tag_release_check:
   variables:
-    MAIN_BRANCH_NAME: "master"
+    MAIN_BRANCH_NAME: "production"
   tags:
     - col-svc-prod
 
